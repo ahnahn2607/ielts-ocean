@@ -174,6 +174,11 @@ footer{color:var(--mute);font-size:13px;text-align:center;padding:30px 16px 50px
 .vinput{width:100%;height:54px;border-radius:14px;border:1px solid var(--line);background:rgba(5,11,46,.7);padding:0 16px;font-size:18px;transition:border-color .2s,box-shadow .2s}
 .vinput:hover{border-color:rgba(127,209,255,.4)}.vinput:focus{outline:none;border-color:var(--glow);box-shadow:0 0 0 3px rgba(127,209,255,.18)}
 .vinput.ok{border-color:#9ff0c7}.vinput.bad{border-color:#ffb3c7}
+.vex{border-top:1px solid var(--line);margin-top:12px;padding-top:6px}
+.vex p{margin:8px 0;font-size:16px;line-height:1.55}
+.vex .tag{margin-right:6px}
+.vsyn{background:rgba(127,209,255,.08);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+.card.locked{opacity:.5}.card.locked:hover{transform:none;box-shadow:none}
 .vres-ok{color:#9ff0c7;font-weight:600}.vres-bad{color:#ffb3c7;font-weight:600}
 .w-ok,.w-miss{transition:background .2s}.w-miss:hover{background:rgba(255,179,199,.12)}
 @media(max-width:860px){.dlay{grid-template-columns:1fr}}
@@ -350,7 +355,7 @@ footer{color:var(--mute);font-size:13px;text-align:center;padding:30px 16px 50px
       <div id="vocabView" hidden>
         <section id="vLib">
           <div class="segnav" style="margin-bottom:10px"><h2 style="margin:0">Học từ vựng</h2><div class="subtabs" id="vLevels" role="tablist" aria-label="Chọn level" style="margin:0"></div></div>
-          <p class="small" style="max-width:72ch">Mỗi topic 40 mục: 10 từ đơn, 10 phrasal verb, 20 collocation. Web hỏi nghĩa tiếng Việt, bạn gõ cụm tiếng Anh. Trả lời đúng ngay lần đầu ở 2 lượt học khác nhau thì tính là đã thuộc. Phần trong ngoặc như (sth), (sb) không cần gõ.</p>
+          <p class="small" style="max-width:72ch">Học theo lộ trình: mỗi bài 40 mục (10 từ đơn, 10 phrasal verb, 20 collocation). Trả lời đúng cả 40 mục ít nhất một lần là hoàn thành bài và mở khóa bài tiếp theo. Đúng ngay lần đầu ở 2 lượt khác nhau thì tính là đã thuộc. Phần trong ngoặc như (sth), (sb) không cần gõ.</p>
           <p class="err" id="vErr" role="alert"></p>
           <div class="lessons" id="vList"></div>
         </section>
@@ -475,7 +480,7 @@ function chips(){
   $('nav').innerHTML=NAV.map(([f,l])=>`<button type="button" class="navlink" data-f="${esc(f)}"${f===act?' aria-current="page"':''}>${esc(l)}</button>`).join('');
 }
 function setHash(){
-  const h=view==='dictation'?'dictation':view==='vocab'?'hoc-tu-vung':(NAV.find(n=>n[0]===filter)||NAV[0])[2];
+  const h=view==='dictation'?'dictation':view==='vocab'?'tu-vung':filter==='Từ vựng'?'nguon-tu-vung':(NAV.find(n=>n[0]===filter)||NAV[0])[2];
   try{history.replaceState(null,'',h==='tong-quan'?location.pathname+location.search:'#'+h)}catch(e){}
 }
 function fmt(d){if(!d)return'';const [y,m,dd]=d.split('-');return`${dd}/${m}`}
@@ -647,7 +652,7 @@ $('cancelBtn').onclick=closeEditor;
 $('form').addEventListener('submit',e=>{e.preventDefault();$('saveBtn').click()});
 ['fName','fUrl'].forEach(id=>$(id).addEventListener('input',()=>{$('fErr').textContent=''}));
 $('addBtn').onclick=()=>openEditor(null);
-$('nav').addEventListener('click',e=>{const b=e.target.closest('.navlink');if(!b)return;filter=b.dataset.f;if((view==='dictation'&&filter==='Listening')||(view==='vocab'&&filter==='Từ vựng')){chips();return}setView('sources');render();b.scrollIntoView({block:'nearest',inline:'center'})});
+$('nav').addEventListener('click',e=>{const b=e.target.closest('.navlink');if(!b)return;filter=b.dataset.f;if((view==='dictation'&&filter==='Listening')||(view==='vocab'&&filter==='Từ vựng')){chips();return}if(filter==='Từ vựng'){setView('vocab');return}setView('sources');render();b.scrollIntoView({block:'nearest',inline:'center'})});
 $('brand').addEventListener('click',e=>{e.preventDefault();filter='Tất cả';setView('sources');render();window.scrollTo({top:0,behavior:'smooth'})});
 $('q').addEventListener('input',e=>{query=e.target.value;render()});
 $('list').addEventListener('change',e=>{
@@ -682,7 +687,7 @@ $('io').addEventListener('input',()=>{$('ioErr').textContent=''});
 $('resetBtn').onclick=()=>{const old=items;items=clone(SAMPLE);save();render();toast('Đã khôi phục dữ liệu mẫu',()=>{items=old;save();render()})};
 
 /* ---------- Chuyển mục ---------- */
-const SUBS={'Listening':[['sources','Nguồn luyện đề'],['dictation','Dictation']],'Từ vựng':[['sources','Nguồn & bộ thẻ'],['vocab','Học từ vựng']]};
+const SUBS={'Listening':[['sources','Nguồn luyện đề'],['dictation','Dictation']],'Từ vựng':[['vocab','Học từ vựng'],['sources','Nguồn & bộ thẻ']]};
 function setView(v){
   view=v;if(v==='dictation')filter='Listening';if(v==='vocab')filter='Từ vựng';
   const subs=SUBS[filter];$('subtabs').hidden=!subs;
@@ -698,8 +703,9 @@ $('subtabs').addEventListener('click',e=>{const b=e.target.closest('.sub');if(b)
 function routeFromHash(){
   const h=location.hash.slice(1);
   if(h==='dictation'){setView('dictation');return}
-  if(h==='hoc-tu-vung'){setView('vocab');return}
-  const n=NAV.find(x=>x[2]===h);filter=n?n[0]:'Tất cả';setView('sources');
+  if(h==='hoc-tu-vung'||h==='tu-vung'){setView('vocab');return}
+  if(h==='nguon-tu-vung'){filter='Từ vựng';setView('sources');return}
+  const n=NAV.find(x=>x[2]===h);filter=n?n[0]:'Tất cả';if(filter==='Từ vựng'){setView('vocab');return}setView('sources');
 }
 
 /* ---------- Dictation ---------- */
@@ -989,31 +995,42 @@ document.addEventListener('keyup',e=>{
 let VOC=null,vLevel='b',vCur=null,vQueue=[],vItem=-1,vState='ask',vRound=0,vDone=0,vFirst=0,vWrong=new Set();
 const LV={b:'B1–B2',c:'C1–C2'},TYPE={w:'Từ đơn',p:'Phrasal verb',c:'Collocation'};
 const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const VVER=3;let VIDX=null;const VSETS={};
 async function loadVocab(){
-  if(VOC)return VOC;
-  try{const r=await fetch('vocab.json?v=1',{cache:'no-cache'});if(!r.ok)throw 0;VOC=await r.json()}catch(e){VOC=null}
-  return VOC;
+  if(VIDX)return VIDX;
+  try{const r=await fetch('vocab/index.json?v='+VVER+'&t='+Date.now());if(!r.ok)throw 0;VIDX=await r.json()}catch(e){VIDX=null}
+  return VIDX;
+}
+async function loadSet(id,lv){
+  const k=id+'_'+lv;if(VSETS[k])return VSETS[k];
+  const r=await fetch('vocab/'+k+'.json?v='+VVER);if(!r.ok)throw new Error('missing');
+  return VSETS[k]=await r.json();
 }
 const vKey=(tid,lv)=>tid+'_'+lv;
-function vStats(t,lv){const p=vprog[vKey(t.id,lv)]||{},n=t[lv].length;let m=0;for(const k in p)if(p[k]>=2)m++;return{m,n,started:Object.keys(p).length>0}}
+function vStats(id,lv){const p=vprog[vKey(id,lv)]||{};let l=0,m=0;for(const k in p){if(p[k]>=1)l++;if(p[k]>=2)m++}return{l,m,n:40,started:Object.keys(p).length>0,done:l>=40}}
 async function showVLib(){
   vCur=null;$('vLib').hidden=false;$('vLearn').hidden=true;$('vErr').textContent='';
-  if(!VOC){$('vList').innerHTML='<p class="small">Đang tải bộ từ…</p>';await loadVocab()}
-  if(!VOC){$('vErr').textContent='Không tải được bộ từ vựng. Kiểm tra mạng rồi tải lại trang.';$('vList').innerHTML='';return}
+  if(!VIDX){$('vList').innerHTML='<p class="small">Đang tải lộ trình…</p>';await loadVocab()}
+  if(!VIDX){$('vErr').textContent='Không tải được bộ từ vựng. Kiểm tra mạng rồi tải lại trang.';$('vList').innerHTML='';return}
   renderVLib();
 }
 function renderVLib(){
   $('vLevels').innerHTML=Object.entries(LV).map(([k,l])=>`<button class="sub" role="tab" type="button" data-lv="${k}" aria-selected="${k===vLevel}">${l}</button>`).join('');
-  $('vList').innerHTML=VOC.topics.map(t=>{
-    const st=vStats(t,vLevel),pct=Math.round(st.m/st.n*100);
-    return`<article class="card">
-      <div class="top"><span class="tag b">${LV[vLevel]}</span><span class="tag s">${st.n} mục</span></div>
-      <h3>${esc(t.name)}</h3>
-      <p class="note">10 từ đơn · 10 phrasal verb · 20 collocation</p>
+  let prevDone=true,prevName='';
+  $('vList').innerHTML=VIDX.order.map((id,i)=>{
+    const name=VIDX.names[id],ready=VIDX.ready.includes(id+'_'+vLevel),st=vStats(id,vLevel),locked=!prevDone;
+    let html;
+    if(locked)html=`<article class="card locked"><div class="top"><span class="tag s">Bài ${i+1}</span><span class="tag s">Đã khóa</span></div><h3>${esc(name)}</h3><p class="note">Hoàn thành bài “${esc(prevName)}” để mở khóa.</p></article>`;
+    else if(!ready)html=`<article class="card locked"><div class="top"><span class="tag s">Bài ${i+1}</span><span class="tag s">Đang soạn</span></div><h3>${esc(name)}</h3><p class="note">Bài này đang được soạn, sẽ mở ngay khi xong.</p></article>`;
+    else{const pct=Math.round(st.l/st.n*100);
+      html=`<article class="card"><div class="top"><span class="tag b">Bài ${i+1}</span><span class="tag">${LV[vLevel]}</span>${st.done?'<span class="tag s">Hoàn thành</span>':''}</div>
+      <h3>${esc(name)}</h3><p class="note">10 từ đơn · 10 phrasal verb · 20 collocation</p>
       <div class="pbar"><i style="width:${pct}%"></i></div>
-      <p class="small" style="margin:0">Đã thuộc ${st.m}/${st.n}</p>
-      <div class="acts"><button type="button" class="btn pri" data-vt="${t.id}">${st.started?'Học tiếp':'Bắt đầu học'}</button>${st.started?`<button type="button" data-vreset="${t.id}">Học lại từ đầu</button>`:''}</div>
-    </article>`}).join('')+(VOC.upcoming||[]).map(n=>`<article class="card" style="opacity:.55"><div class="top"><span class="tag s">Sắp có</span></div><h3>${esc(n)}</h3><p class="note">Đang soạn 40 mục cho mỗi level.</p></article>`).join('');
+      <p class="small" style="margin:0">Đã học ${st.l}/${st.n} · Đã thuộc ${st.m}/${st.n}</p>
+      <div class="acts"><button type="button" class="btn pri" data-vt="${id}">${st.done?'Ôn tiếp':st.started?'Học tiếp':'Bắt đầu học'}</button>${st.started?`<button type="button" data-vreset="${id}">Học lại từ đầu</button>`:''}</div></article>`}
+    prevDone=ready&&st.done;prevName=name;
+    return html;
+  }).join('');
 }
 $('vLevels').addEventListener('click',e=>{const b=e.target.closest('[data-lv]');if(!b)return;vLevel=b.dataset.lv;renderVLib()});
 $('vList').addEventListener('click',e=>{
@@ -1030,20 +1047,25 @@ function vUpdateBar(){
   $('vCount').textContent=vRound?`Lượt này: ${Math.min(vDone+1,vRound)}/${vRound}`:'';
   return m;
 }
-function startTopic(tid){
-  const t=VOC.topics.find(x=>x.id===tid);if(!t)return;
-  vCur={tid,lv:vLevel,name:t.name,items:t[vLevel]};
-  $('vLib').hidden=true;$('vLearn').hidden=false;$('vTitle').textContent=t.name+' · '+LV[vLevel];
+async function startTopic(tid){
+  let items;try{items=await loadSet(tid,vLevel)}catch(e){$('vErr').textContent='Không tải được bài này. Kiểm tra mạng rồi thử lại.';return}
+  const name=VIDX.names[tid];
+  vCur={tid,lv:vLevel,name,items,wasDone:vStats(tid,vLevel).done};
+  $('vLib').hidden=true;$('vLearn').hidden=false;$('vTitle').textContent=name+' · '+LV[vLevel];
   window.scrollTo({top:$('vocabView').offsetTop-90,behavior:'smooth'});
   newRound();
+}
+function vExtra(it){
+  const ex=it[3],syn=it[4];if(!ex)return'';
+  return`<div class="vex"><p class="small">3 ví dụ trong 3 hoàn cảnh:</p>${ex.map(e=>{const k=e.indexOf(' — ');const c=k>0?e.slice(0,k):'',t=k>0?e.slice(k+3):e;return`<p>${c?`<span class="tag s">${esc(c)}</span>`:''}${esc(t)}</p>`}).join('')}${syn?`<p class="vsyn"><b>Dễ nhầm với: ${esc(syn[0])}</b><br>${esc(syn[1])}</p>`:''}</div>`;
 }
 function newRound(){
   const p=vProg(),idx=vCur.items.map((x,i)=>i).filter(i=>!(p[i]>=2));
   $('vAsk').hidden=false;
   if(!idx.length){vRound=0;vUpdateBar();$('vAsk').hidden=true;
     $('vRes').innerHTML=`<p class="pct">Bạn đã thuộc cả ${vCur.items.length} mục!</p><p class="small">Muốn ôn lại thì bấm "Học lại từ đầu" ở danh sách topic.</p><div class="ctrls"><button class="btn pri" type="button" data-vback>Về danh sách topic</button></div>`;return}
-  const started=shuffle(idx.filter(i=>p[i]!=null)),fresh=idx.filter(i=>p[i]==null);
-  vQueue=shuffle([...started,...fresh].slice(0,10));vRound=vQueue.length;vDone=0;vFirst=0;vWrong=new Set();
+  const notYet=shuffle(idx.filter(i=>p[i]!=null&&p[i]<1)),fresh=idx.filter(i=>p[i]==null),learned=shuffle(idx.filter(i=>p[i]>=1));
+  vQueue=shuffle([...notYet,...fresh,...learned].slice(0,10));vRound=vQueue.length;vDone=0;vFirst=0;vWrong=new Set();
   nextQ();
 }
 function hintOf(a){return a.split(/(\([^)]*\))/).map(part=>part.startsWith('(')?part:part.replace(/[A-Za-z]+/g,w=>w[0]+'_'.repeat(w.length-1))).join('')}
@@ -1066,7 +1088,7 @@ function vCheck(skip){
   if(vState==='done'){nextQ();return}
   if(vState==='retype'){
     const r=match(inp.value,en);
-    if(r==='ok'||r==='near'){vState='done';inp.className='vinput ok';$('vCheck').textContent='Câu tiếp';nextQ()}
+    if(r==='ok'||r==='near'){vState='done';inp.className='vinput ok';$('vCheck').textContent='Câu tiếp';inp.placeholder='Đúng rồi. Bấm Enter để sang câu tiếp';inp.value='';}
     else{inp.className='vinput bad';inp.select()}
     return;
   }
@@ -1076,18 +1098,21 @@ function vCheck(skip){
   if(r==='ok'||r==='near'){
     if(vWrong.has(vItem))p[vItem]=Math.max(p[vItem]||0,1);else{p[vItem]=(p[vItem]||0)+1;vFirst++}
     vDone++;vState='done';inp.className='vinput ok';
-    $('vRes').innerHTML=`<p class="vres-ok">${r==='ok'?'Chính xác!':'Gần đúng, chú ý chính tả:'}</p><p style="font-size:20px">${esc(en)}</p>${p[vItem]>=2?'<p class="small">Mục này đã được tính là thuộc.</p>':''}`;
+    $('vRes').innerHTML=`<p class="vres-ok">${r==='ok'?'Chính xác!':'Gần đúng, chú ý chính tả:'}</p><p style="font-size:20px">${esc(en)}</p>${p[vItem]>=2?'<p class="small">Mục này đã được tính là thuộc.</p>':''}${vExtra(vCur.items[vItem])}`;
     $('vCheck').textContent='Câu tiếp';$('vHintBtn').hidden=true;$('vSkip').hidden=true;
   }else{
     p[vItem]=0;vWrong.add(vItem);vQueue.splice(Math.min(3,vQueue.length),0,vItem);
     vState='retype';inp.className='vinput bad';inp.value='';inp.placeholder='Gõ lại đáp án đúng để ghi nhớ…';
-    $('vRes').innerHTML=`<p class="vres-bad">${skip?'Đáp án là:':'Chưa đúng. Đáp án là:'}</p><p style="font-size:20px">${esc(en)}</p>${typed&&!skip?`<p class="small">Bạn gõ: ${esc(typed)}</p>`:''}<p class="small">Gõ lại đáp án vào ô trên rồi bấm Enter. Mục này sẽ được hỏi lại sau vài câu.</p>`;
+    $('vRes').innerHTML=`<p class="vres-bad">${skip?'Đáp án là:':'Chưa đúng. Đáp án là:'}</p><p style="font-size:20px">${esc(en)}</p>${typed&&!skip?`<p class="small">Bạn gõ: ${esc(typed)}</p>`:''}<p class="small">Gõ lại đáp án vào ô trên rồi bấm Enter. Mục này sẽ được hỏi lại sau vài câu.</p>${vExtra(vCur.items[vItem])}`;
     $('vCheck').textContent='Xác nhận';$('vHintBtn').hidden=true;$('vSkip').hidden=true;inp.focus();
   }
   save();vUpdateBar();
 }
 function roundDone(){
   const m=vUpdateBar();$('vAsk').hidden=true;$('vCount').textContent='Xong lượt';
+  const st=vStats(vCur.tid,vCur.lv);
+  if(st.done&&!vCur.wasDone){vCur.wasDone=true;const i=VIDX.order.indexOf(vCur.tid),nx=VIDX.order[i+1];
+    $('vRes').innerHTML=`<p class="pct">Hoàn thành bài “${esc(vCur.name)}”!</p><p>Bạn đã học đủ 40/40 mục${nx?` và mở khóa bài tiếp theo: <b>${esc(VIDX.names[nx])}</b>`:''}.</p><div class="ctrls"><button class="btn pri" type="button" data-vback>Về lộ trình</button><button class="btn" type="button" data-vnext>Ôn thêm bài này</button></div>`;return}
   $('vRes').innerHTML=`<p class="pct">Xong lượt học!</p><p>Đúng ngay lần đầu ${vFirst}/${vRound} mục · Đã thuộc ${m}/${vCur.items.length}</p><div class="ctrls"><button class="btn pri" type="button" data-vnext>Học lượt tiếp</button><button class="btn" type="button" data-vback>Về danh sách topic</button></div>`;
 }
 $('vRes').addEventListener('click',e=>{if(e.target.closest('[data-vnext]'))newRound();if(e.target.closest('[data-vback]'))showVLib()});
