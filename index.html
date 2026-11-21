@@ -178,6 +178,10 @@ footer{color:var(--mute);font-size:13px;text-align:center;padding:30px 16px 50px
 .vex p{margin:8px 0;font-size:16px;line-height:1.55}
 .vex .tag{margin-right:6px}
 .vsyn{background:rgba(127,209,255,.08);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+.feat{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:18px;align-items:center;background:linear-gradient(135deg,rgba(47,107,255,.35),rgba(10,31,92,.7));border:1px solid rgba(127,209,255,.45);border-radius:22px;padding:22px;margin:6px 0 22px}
+.feat h2{margin:6px 0 8px}.feat ul{margin:8px 0 0;padding-left:18px;color:var(--mute);font-size:15px}.feat li{margin:4px 0}
+.feat .go{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+@media(max-width:700px){.feat{grid-template-columns:1fr}}
 .card.locked{opacity:.5}.card.locked:hover{transform:none;box-shadow:none}
 .vres-ok{color:#9ff0c7;font-weight:600}.vres-bad{color:#ffb3c7;font-weight:600}
 .w-ok,.w-miss{transition:background .2s}.w-miss:hover{background:rgba(255,179,199,.12)}
@@ -292,6 +296,7 @@ footer{color:var(--mute);font-size:13px;text-align:center;padding:30px 16px 50px
       </section>
 
       <p class="sample-note" id="sampleNote">Các thẻ gắn nhãn "Mẫu" là ví dụ: thay bằng giáo trình của bạn, hoặc xóa đi.</p>
+      <div id="feature"></div>
       <div id="list"></div>
       </div>
 
@@ -498,8 +503,22 @@ function card(i){
     <div class="acts"><button type="button" data-act="edit" data-id="${i.id}">Sửa</button><button type="button" data-act="del" data-id="${i.id}">Xóa</button></div>
   </article>`;
 }
+const WRITING_TOOL='https://claude.ai/artifact/5xexYmDU8Pzom2rfqYYURk';
+function renderFeature(){
+  $('feature').innerHTML=filter==='Writing'?`<section class="feat card" aria-labelledby="featT">
+    <div><div class="top"><span class="tag b">Công cụ luyện viết</span><span class="tag s">Claude chấm và chữa</span></div>
+      <h2 id="featT">Writing Mắt Xích</h2>
+      <ul>
+        <li><b>Task 1:</b> viết từng câu theo công thức nhận xét trước, số liệu sau, 70 giây mỗi câu.</li>
+        <li><b>Task 2:</b> thesis, chuỗi ý 2 thân bài, kiểm tra mắt xích để không nhảy cóc, rồi viết đoạn thân bài.</li>
+        <li>Đề lấy từ các ngày thi tháng 10–11/2026, có theo dõi tiến độ.</li>
+      </ul></div>
+    <div class="go"><a class="btn pri" style="display:inline-flex;align-items:center;text-decoration:none" href="${WRITING_TOOL}" target="_blank" rel="noopener">Mở Writing Mắt Xích ↗</a>
+      <p class="small" style="margin:0">Công cụ mở trên claude.ai vì phần chấm bài cần Claude. Tiến độ được lưu ngay trong công cụ đó.</p></div>
+  </section>`:'';
+}
 function render(){
-  stats();chips();
+  stats();chips();renderFeature();
   $('sampleNote').hidden=!items.some(i=>i.sample);
   const q=query.trim().toLowerCase();
   const vis=items.filter(i=>(filter==='Tất cả'||i.skill===filter)&&(!q||(i.name+' '+i.note+' '+i.type).toLowerCase().includes(q)));
