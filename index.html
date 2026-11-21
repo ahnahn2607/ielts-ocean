@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IELTS Ocean</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:wght@500;600&family=Inter:wght@400;500;600&display=swap">
+<style>
+:root{color-scheme:dark;--bg:#050B2E;--deep:#0A1F5C;--blue:#2F6BFF;--glow:#7FD1FF;--ink:#E6F4FF;--mute:rgba(230,244,255,.7);--line:rgba(127,209,255,.18);--card:rgba(10,31,92,.55)}
+*{box-sizing:border-box;min-width:0}
+html{scroll-padding-top:90px}
+body{margin:0;background:radial-gradient(120% 80% at 70% 0%,#0A1F5C 0%,#050B2E 60%) fixed,var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif;overflow-x:clip;min-height:100vh}
+a{color:var(--glow)}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--glow);outline-offset:2px}
+[hidden]{display:none!important}
+.sea{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.jf{position:absolute;bottom:-160px;left:var(--x);width:var(--s);opacity:var(--o,.55);animation:rise var(--d) linear infinite;animation-delay:var(--dl)}
+.jf .bell{transform-origin:50% 20%;animation:pulse 3.4s ease-in-out infinite}
+.bub{position:absolute;bottom:-20px;left:var(--x);width:var(--s);height:var(--s);border-radius:50%;border:1px solid rgba(127,209,255,.45);animation:rise var(--d) linear infinite;animation-delay:var(--dl)}
+@keyframes rise{from{transform:translate(0,0)}50%{transform:translate(28px,-60vh)}to{transform:translate(-10px,calc(-100vh - 320px))}}
+@keyframes pulse{0%,100%{transform:scale(1,1)}50%{transform:scale(1.08,.9)}}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+main,.auth{position:relative;z-index:1}
+.band{padding:clamp(28px,4vw,56px) max(5vw,16px)}
+.wrap{max-width:1240px;margin:0 auto}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:24px;align-items:center}
+h1{font:400 clamp(64px,10vw,124px)/1 'Great Vibes',cursive;margin:0;color:var(--ink);text-shadow:0 0 28px rgba(127,209,255,.45)}
+.lede{font-size:17px;color:var(--mute);margin:8px 0 22px;max-width:46ch}
+.stats{display:flex;flex-wrap:wrap;gap:10px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 16px;min-width:120px}
+.stat b{display:block;font:600 26px/1.1 'Playfair Display',serif;color:var(--glow)}
+.stat span{font-size:13px;color:var(--mute)}
+.bigjf{width:100%;max-width:340px;justify-self:center;animation:bob 6s ease-in-out infinite;filter:drop-shadow(0 0 30px rgba(127,209,255,.5))}
+.bar{position:sticky;top:0;z-index:5;background:rgba(5,11,46,.82);backdrop-filter:blur(10px);border-block:1px solid var(--line)}
+.bar .wrap{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:12px max(5vw,16px)}
+.search{flex:1 1 220px;height:44px;border-radius:999px;border:1px solid var(--line);background:rgba(10,31,92,.6);padding:0 18px;font-size:16px}
+.search::placeholder{color:rgba(230,244,255,.5)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{height:36px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:transparent;cursor:pointer;font-size:14px;color:var(--mute)}
+.chip[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn{height:44px;padding:0 18px;border-radius:999px;border:1px solid var(--line);background:transparent;cursor:pointer;font-size:15px}
+.btn.pri{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:500}
+.btn.pri:hover{background:#4a7fff}
+.btn:not(.pri):hover{border-color:var(--glow)}
+.btn:disabled{opacity:.6;cursor:wait}
+.acct{display:flex;align-items:center;gap:8px;font-size:14px;margin-left:auto}
+.av{width:34px;height:34px;border-radius:50%;background:var(--blue);display:grid;place-items:center;font-weight:600;overflow:hidden;flex:none}
+.av img{width:100%;height:100%;object-fit:cover}
+.who{display:flex;flex-direction:column;line-height:1.2}
+.sync{font-size:12px;color:var(--mute)}
+.sync.ok{color:#9ff0c7}.sync.bad{color:#ffb3c7}
+.sample-note{font-size:13px;color:var(--mute);margin:0 0 8px}
+section.skill{margin-top:34px}
+h2{font:500 clamp(26px,3vw,34px)/1.1 'Playfair Display',serif;margin:0 0 14px;display:flex;align-items:baseline;gap:12px}
+h2 small{font:400 14px Inter,sans-serif;color:var(--mute)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:8px;transition:border-color .2s}
+.card:hover{border-color:rgba(127,209,255,.5)}
+.card.done{background:rgba(47,107,255,.16)}
+.top{display:flex;gap:6px;flex-wrap:wrap}
+.tag{font-size:12px;padding:2px 10px;border-radius:999px;background:rgba(127,209,255,.14);color:var(--glow)}
+.tag.s{background:rgba(230,244,255,.08);color:var(--mute)}
+h3{font:600 17px/1.35 Inter,sans-serif;margin:0}
+h3 a{color:var(--ink);text-decoration:none}
+h3 a:hover{color:var(--glow);text-decoration:underline}
+.nolink{font-size:13px;color:#ffb3c7;margin:0}
+.note{font-size:14px;color:var(--mute);margin:0;flex:1}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding-top:10px}
+.chk{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;min-height:36px}
+.chk input{width:20px;height:20px;accent-color:var(--blue)}
+.date{font-size:12px;color:var(--glow)}
+.score{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--mute)}
+.score input{width:62px;height:36px;border-radius:10px;border:1px solid var(--line);background:rgba(5,11,46,.6);text-align:center;font-size:16px}
+.acts{display:flex;gap:6px}
+.acts button{height:36px;padding:0 12px;border-radius:10px;border:1px solid transparent;background:transparent;color:var(--mute);cursor:pointer;font-size:13px}
+.acts button:hover{border-color:var(--line);color:var(--ink)}
+.empty{text-align:center;color:var(--mute);padding:40px 0}
+.panel{background:rgba(10,31,92,.85);border:1px solid rgba(127,209,255,.4);border-radius:20px;padding:20px;margin-top:20px}
+.panel h2{font-size:26px}
+.form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.form.one{grid-template-columns:1fr}
+.form label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mute)}
+.form .full{grid-column:1/-1}
+.form input,.form select,.form textarea{height:44px;border-radius:12px;border:1px solid var(--line);background:rgba(5,11,46,.7);padding:0 12px;font-size:16px}
+.form textarea{height:80px;padding:10px 12px;resize:vertical}
+.err{color:#ffb3c7;font-size:13px;min-height:1em;margin:6px 0 0}
+.msg{color:#9ff0c7;font-size:13px;margin:6px 0 0}
+.formacts{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+details.backup{margin-top:44px;border-top:1px solid var(--line);padding-top:18px}
+details.backup summary{cursor:pointer;font:500 20px 'Playfair Display',serif}
+details.backup p{color:var(--mute);font-size:14px;max-width:70ch}
+details.backup textarea{width:100%;height:120px;border-radius:12px;border:1px solid var(--line);background:rgba(5,11,46,.7);padding:10px;font:13px/1.4 ui-monospace,monospace}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;display:flex;gap:12px;align-items:center;z-index:9;font-size:14px;box-shadow:0 8px 30px rgba(0,0,0,.4)}
+.toast button{background:none;border:0;color:var(--blue);font-weight:600;cursor:pointer;font-size:14px}
+footer{color:var(--mute);font-size:13px;text-align:center;padding:30px 16px 50px}
+.auth{min-height:100vh;display:grid;place-items:center;padding:24px 16px}
+.authcard{width:min(430px,100%);background:rgba(10,31,92,.8);border:1px solid rgba(127,209,255,.35);border-radius:26px;padding:26px 24px 22px;backdrop-filter:blur(8px)}
+.authcard h1{font-size:clamp(60px,16vw,80px);text-align:center}
+.authcard .lede{text-align:center;margin:4px auto 0;font-size:15px}
+.tabs{display:grid;grid-template-columns:1fr 1fr;background:rgba(5,11,46,.6);border-radius:999px;padding:4px;margin:18px 0 14px}
+.tab{height:40px;border:0;border-radius:999px;background:transparent;color:var(--mute);cursor:pointer;font-size:15px}
+.tab[aria-selected=true]{background:var(--blue);color:#fff;font-weight:500}
+.wide{width:100%}
+.gbtn{width:100%;height:48px;border-radius:999px;background:#fff;color:#1f1f1f;border:0;display:flex;gap:10px;align-items:center;justify-content:center;font-weight:500;cursor:pointer;font-size:15px}
+.gbtn:hover{background:#eef4ff}
+.or{display:flex;align-items:center;gap:10px;color:var(--mute);font-size:13px;margin:16px 0}
+.or::before,.or::after{content:'';flex:1;height:1px;background:var(--line)}
+.linkbtn{background:none;border:0;color:var(--glow);cursor:pointer;font-size:14px;text-decoration:underline;padding:8px 0;min-height:36px}
+.center{text-align:center}
+.warn{background:rgba(255,179,199,.12);border:1px solid rgba(255,179,199,.4);color:#ffd6e2;border-radius:12px;padding:10px 12px;font-size:13px;margin-top:14px}
+.loading{color:var(--mute);text-align:center;font-size:15px}
+@media(max-width:700px){.hero .wrap{grid-template-columns:1fr}.bigjf{max-width:200px;grid-row:1}.form{grid-template-columns:1fr}.acct{margin-left:0}}
+@media(prefers-reduced-motion:reduce){.jf,.bub,.bigjf,.jf .bell{animation:none}.bub{display:none}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <radialGradient id="bellg" cx="50%" cy="35%" r="65%">
+      <stop offset="0" stop-color="#E6F4FF" stop-opacity=".95"/>
+      <stop offset=".45" stop-color="#7FD1FF" stop-opacity=".75"/>
+      <stop offset="1" stop-color="#2F6BFF" stop-opacity=".35"/>
+    </radialGradient>
+    <symbol id="jelly" viewBox="0 0 100 160">
+      <g class="bell">
+        <path d="M8 52 C8 18 30 4 50 4 C70 4 92 18 92 52 C84 58 74 55 66 58 C58 61 42 61 34 58 C26 55 16 58 8 52Z" fill="url(#bellg)"/>
+        <path d="M22 40 C26 22 38 14 50 14" stroke="#E6F4FF" stroke-opacity=".7" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <ellipse cx="50" cy="40" rx="14" ry="9" fill="#E6F4FF" fill-opacity=".35"/>
+      </g>
+      <g fill="none" stroke="#7FD1FF" stroke-linecap="round" stroke-opacity=".75">
+        <path d="M22 58 C16 80 28 98 20 122 C14 140 22 150 18 158" stroke-width="2"/>
+        <path d="M36 60 C32 84 42 104 36 128 C32 142 38 150 36 156" stroke-width="1.6"/>
+        <path d="M50 61 C54 86 44 108 50 132 C54 146 48 152 50 158" stroke-width="2.4"/>
+        <path d="M64 60 C70 82 58 102 64 126 C68 140 62 148 64 154" stroke-width="1.6"/>
+        <path d="M78 58 C84 80 72 98 80 120 C86 138 78 150 82 158" stroke-width="2"/>
+      </g>
+      <g fill="none" stroke="#E6F4FF" stroke-opacity=".5" stroke-width="5" stroke-linecap="round">
+        <path d="M42 62 C40 76 48 86 44 98"/>
+        <path d="M58 62 C60 76 52 86 56 98"/>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="sea" id="sea" aria-hidden="true"></div>
+
+<section class="auth" id="authScreen">
+  <div class="authcard">
+    <h1>IELTS Ocean</h1>
+    <p class="lede">Đăng nhập để lưu tiến độ và mở trên mọi máy.</p>
+    <p class="loading" id="authLoading">Đang kết nối…</p>
+    <div id="authBody" hidden>
+      <div class="tabs" role="tablist">
+        <button type="button" class="tab" role="tab" id="tabIn" aria-selected="true">Đăng nhập</button>
+        <button type="button" class="tab" role="tab" id="tabUp" aria-selected="false">Tạo tài khoản</button>
+      </div>
+      <form id="authForm" class="form one" novalidate>
+        <label>Email<input id="aEmail" type="email" autocomplete="email" placeholder="ban@gmail.com"></label>
+        <label>Mật khẩu<input id="aPass" type="password" autocomplete="current-password" placeholder="Ít nhất 6 ký tự"></label>
+        <label id="aPass2Wrap" hidden>Nhập lại mật khẩu<input id="aPass2" type="password" autocomplete="new-password"></label>
+        <button class="btn pri wide" id="aSubmit" type="submit">Đăng nhập</button>
+      </form>
+      <p class="err" id="aErr" role="alert"></p>
+      <p class="msg" id="aMsg" role="status"></p>
+      <div class="center"><button type="button" class="linkbtn" id="forgotBtn">Quên mật khẩu?</button></div>
+      <div class="or">hoặc</div>
+      <button type="button" class="gbtn" id="googleBtn">
+        <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+        Đăng nhập bằng Google
+      </button>
+      <div class="center"><button type="button" class="linkbtn" id="localBtn">Dùng thử không cần tài khoản</button></div>
+      <p class="warn" id="cfgWarn" hidden>Chưa kết nối được Firebase. Hãy dán cấu hình Firebase vào phần FIREBASE_CONFIG trong file, rồi tải lại trang. Trong lúc chờ, bạn vẫn có thể dùng thử không cần tài khoản.</p>
+    </div>
+  </div>
+</section>
+
+<main id="app" hidden>
+  <header class="band hero">
+    <div class="wrap">
+      <div>
+        <h1>IELTS Ocean</h1>
+        <p class="lede">Mọi nguồn luyện đề, từ vựng và công cụ học IELTS của bạn, gom về một vùng biển. Bấm là mở, làm xong thì tick và ghi điểm.</p>
+        <div class="stats" id="stats"></div>
+      </div>
+      <svg class="bigjf" viewBox="0 0 100 160" role="img" aria-label="Con sứa phát sáng"><use href="#jelly"/></svg>
+    </div>
+  </header>
+
+  <div class="bar">
+    <div class="wrap">
+      <input class="search" id="q" type="search" placeholder="Tìm nguồn, ví dụ Cambridge 19" aria-label="Tìm kiếm">
+      <div class="chips" id="chips" role="group" aria-label="Lọc theo kỹ năng"></div>
+      <button class="btn pri" id="addBtn" type="button">Thêm link</button>
+      <div class="acct" id="acct"></div>
+    </div>
+  </div>
+
+  <div class="band" style="padding-top:22px">
+    <div class="wrap">
+      <section class="panel" id="editor" hidden aria-labelledby="edTitle">
+        <h2 id="edTitle">Thêm nguồn mới</h2>
+        <form id="form" class="form" novalidate>
+          <label class="full">Tên nguồn<input id="fName" maxlength="120" placeholder="Cambridge IELTS 19 – Listening Test 1"></label>
+          <label class="full">Đường link<input id="fUrl" inputmode="url" placeholder="https://..."></label>
+          <label>Kỹ năng<select id="fSkill"></select></label>
+          <label>Loại<select id="fType"></select></label>
+          <label class="full">Ghi chú<textarea id="fNote" maxlength="400" placeholder="Làm vào cuối tuần, bấm giờ 30 phút"></textarea></label>
+        </form>
+        <p class="err" id="fErr" role="alert"></p>
+        <div class="formacts">
+          <button class="btn pri" id="saveBtn" type="button">Lưu</button>
+          <button class="btn" id="cancelBtn" type="button">Hủy</button>
+        </div>
+      </section>
+
+      <p class="sample-note" id="sampleNote">Các thẻ gắn nhãn "Mẫu" là ví dụ: thay bằng giáo trình của bạn, hoặc xóa đi.</p>
+      <div id="list"></div>
+
+      <details class="backup">
+        <summary>Sao lưu và chuyển dữ liệu</summary>
+        <p>Khi đăng nhập, dữ liệu tự đồng bộ giữa các máy. Mục này dùng để sao lưu thêm, hoặc chuyển dữ liệu từ chế độ dùng thử sang tài khoản: bấm "Sao chép dữ liệu", rồi dán vào ô bên dưới ở nơi cần chuyển tới và bấm "Nhập dữ liệu".</p>
+        <textarea id="io" aria-label="Dữ liệu sao lưu" placeholder="Dán dữ liệu sao lưu vào đây"></textarea>
+        <p class="err" id="ioErr" role="alert"></p>
+        <div class="formacts">
+          <button class="btn" id="copyBtn" type="button">Sao chép dữ liệu</button>
+          <button class="btn" id="importBtn" type="button">Nhập dữ liệu</button>
+          <button class="btn" id="resetBtn" type="button">Khôi phục dữ liệu mẫu</button>
+        </div>
+      </details>
+    </div>
+  </div>
+  <footer>IELTS Ocean · lặn sâu mỗi ngày một chút</footer>
+</main>
+<div id="toastBox"></div>
+
+<script type="module">
+/* ====== DÁN CẤU HÌNH FIREBASE CỦA BẠN VÀO ĐÂY ====== */
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyCrUQBQ9dtM8T7iy56qH9FzBKdpqmQtf7A",
+  authDomain: "ielts-ocean.firebaseapp.com",
+  projectId: "ielts-ocean",
+  storageBucket: "ielts-ocean.firebasestorage.app",
+  messagingSenderId: "830064496932",
+  appId: "1:830064496932:web:e78765efd093d62024a3b1"
+};
+/* ==================================================== */
+
+const FB='https://www.gstatic.com/firebasejs/10.12.2/';
+const SKILLS=['Listening','Reading','Writing','Speaking','Từ vựng','Công cụ của tôi'];
+const TYPES=['Đề luyện','Video shadowing','Bộ từ vựng','Công cụ','Tài liệu'];
+const KEY='ielts-ocean-v1', MODE_KEY='ielts-ocean-mode';
+const SAMPLE=[
+  {name:'Cambridge Dictionary',url:'https://dictionary.cambridge.org',skill:'Từ vựng',type:'Công cụ',note:'Tra nghĩa, phát âm và câu ví dụ.'},
+  {name:'Ozdic – từ điển collocation',url:'https://www.ozdic.com',skill:'Từ vựng',type:'Công cụ',note:'Tìm từ hay đi cùng nhau khi viết và nói.'},
+  {name:'OpenQuiz – Speaking Input',url:'',skill:'Từ vựng',type:'Bộ từ vựng',note:'Bộ thẻ lấy từ tab SPEAKING của sổ lỗi.'},
+  {name:'OpenQuiz – Writing',url:'',skill:'Từ vựng',type:'Bộ từ vựng',note:'Collocation trang trọng cho WT1 và WT2.'},
+  {name:'Sổ lỗi IELTS',url:'',skill:'Công cụ của tôi',type:'Công cụ',note:'Ghi LỖI / SỬA / VARIATION sau mỗi lần chữa bài.'},
+  {name:'SPEAKING THỤC ANH – lộ trình 14 ngày',url:'',skill:'Speaking',type:'Tài liệu',note:'S1 phát âm, S2 câu hỏi forecast, S3 luyện với AI.'},
+  {name:'Kênh shadowing trên YouTube',url:'https://www.youtube.com',skill:'Speaking',type:'Video shadowing',note:'5–7 phút mỗi ngày, một phương pháp cố định.'},
+  {name:'Đề Listening mẫu',url:'https://example.com',skill:'Listening',type:'Đề luyện',note:'Thay bằng trang bạn hay lấy đề.'},
+  {name:'Đề Reading mẫu',url:'https://example.com',skill:'Reading',type:'Đề luyện',note:'Bấm giờ 60 phút cho 3 passage.'},
+  {name:'Đề Writing Task 2 mẫu',url:'https://example.com',skill:'Writing',type:'Đề luyện',note:'Mỗi đoạn thân bài phát triển trọn một ý.'}
+].map((x,i)=>({id:'s'+i,done:false,doneDate:'',score:'',sample:true,...x}));
+
+let items=[], filter='Tất cả', query='', editingId=null, lastDeleted=null, toastTimer=null;
+let mode=null, user=null, fb=null, saveTimer=null, signUp=false;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const clone=a=>JSON.parse(JSON.stringify(a));
+const lsGet=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
+const lsSet=(k,v)=>{try{v===null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){}};
+
+function loadLocal(){try{const d=JSON.parse(lsGet(KEY));if(Array.isArray(d))return d}catch(e){}return null}
+
+/* ---------- Lưu dữ liệu ---------- */
+function setSync(text,cls=''){const el=$('syncTxt');if(el){el.textContent=text;el.className='sync '+cls}}
+function save(){
+  if(mode==='local'){lsSet(KEY,JSON.stringify(items));return}
+  if(mode==='cloud'&&user){
+    setSync('Đang lưu…');clearTimeout(saveTimer);
+    saveTimer=setTimeout(async()=>{
+      try{await fb.setDoc(fb.doc(fb.db,'users',user.uid),{items,updatedAt:fb.serverTimestamp()});setSync('Đã đồng bộ','ok')}
+      catch(e){console.error(e);setSync('Lỗi lưu, kiểm tra mạng','bad')}
+    },700);
+  }
+}
+
+/* ---------- Giao diện chính ---------- */
+function sea(){
+  let h='';
+  const jf=[[6,70,38,-4,.5],[22,46,52,-30,.35],[38,90,44,-12,.45],[58,56,60,-40,.3],[74,80,40,-20,.5],[88,50,56,-8,.35],[48,36,48,-26,.3]];
+  for(const [x,s,d,dl,o] of jf)h+=`<svg class="jf" viewBox="0 0 100 160" style="--x:${x}%;--s:${s}px;--d:${d}s;--dl:${dl}s;--o:${o}"><use href="#jelly"/></svg>`;
+  for(let i=0;i<14;i++){const x=(i*37)%100,s=4+(i*7)%9,d=14+(i*5)%16;h+=`<span class="bub" style="--x:${x}%;--s:${s}px;--d:${d}s;--dl:-${(i*3)%17}s"></span>`}
+  $('sea').innerHTML=h;
+}
+function acct(){
+  if(mode==='cloud'&&user){
+    const name=user.displayName||user.email||'Bạn';
+    const av=user.photoURL?`<img src="${esc(user.photoURL)}" alt="" referrerpolicy="no-referrer">`:esc(name.trim().charAt(0).toUpperCase());
+    $('acct').innerHTML=`<span class="av">${av}</span><span class="who"><span>${esc(name)}</span><span class="sync ok" id="syncTxt">Đã đồng bộ</span></span><button class="btn" type="button" id="outBtn">Đăng xuất</button>`;
+  }else{
+    $('acct').innerHTML=`<span class="who"><span>Chế độ dùng thử</span><span class="sync" id="syncTxt">Chỉ lưu trên máy này</span></span><button class="btn" type="button" id="outBtn">Đăng nhập</button>`;
+  }
+}
+function stats(){
+  const done=items.filter(i=>i.done);
+  const sc=done.map(i=>parseFloat(i.score)).filter(n=>!isNaN(n)&&n<=9);
+  const avg=sc.length?(Math.round(sc.reduce((a,b)=>a+b,0)/sc.length*2)/2).toFixed(1):'–';
+  const today=new Date().toISOString().slice(0,10);
+  const t=items.filter(i=>i.done&&i.doneDate===today).length;
+  $('stats').innerHTML=[[items.length,'nguồn đang lưu'],[done.length,'đã làm xong'],[t,'xong hôm nay'],[avg,'band TB đã ghi']]
+    .map(([b,s])=>`<div class="stat"><b>${b}</b><span>${s}</span></div>`).join('');
+}
+function chips(){$('chips').innerHTML=['Tất cả',...SKILLS].map(s=>`<button type="button" class="chip" data-f="${esc(s)}" aria-pressed="${s===filter}">${esc(s)}</button>`).join('')}
+function fmt(d){if(!d)return'';const [y,m,dd]=d.split('-');return`${dd}/${m}`}
+function card(i){
+  const title=i.url?`<a href="${esc(i.url)}" target="_blank" rel="noopener">${esc(i.name)} ↗</a>`:esc(i.name);
+  return`<article class="card${i.done?' done':''}">
+    <div class="top"><span class="tag">${esc(i.type)}</span>${i.sample?'<span class="tag s">Mẫu</span>':''}</div>
+    <h3>${title}</h3>
+    ${i.url?'':'<p class="nolink">Chưa có link, bấm Sửa để thêm</p>'}
+    <p class="note">${esc(i.note)}</p>
+    <div class="row">
+      <label class="chk"><input type="checkbox" data-act="done" data-id="${i.id}" ${i.done?'checked':''}> Đã làm <span class="date">${fmt(i.doneDate)}</span></label>
+      <label class="score">Điểm <input data-act="score" data-id="${i.id}" value="${esc(i.score)}" inputmode="decimal" maxlength="5" placeholder="–" aria-label="Điểm hoặc band"></label>
+    </div>
+    <div class="acts"><button type="button" data-act="edit" data-id="${i.id}">Sửa</button><button type="button" data-act="del" data-id="${i.id}">Xóa</button></div>
+  </article>`;
+}
+function render(){
+  stats();chips();
+  $('sampleNote').hidden=!items.some(i=>i.sample);
+  const q=query.trim().toLowerCase();
+  const vis=items.filter(i=>(filter==='Tất cả'||i.skill===filter)&&(!q||(i.name+' '+i.note+' '+i.type).toLowerCase().includes(q)));
+  if(!vis.length){$('list').innerHTML=`<p class="empty">${items.length?'Không tìm thấy nguồn nào khớp.':'Chưa có nguồn nào. Bấm "Thêm link" để bắt đầu.'}</p>`;return}
+  $('list').innerHTML=SKILLS.map(s=>{
+    const g=vis.filter(i=>i.skill===s);if(!g.length)return'';
+    const d=g.filter(i=>i.done).length;
+    return`<section class="skill"><h2>${esc(s)} <small>${d}/${g.length} đã làm</small></h2><div class="grid">${g.map(card).join('')}</div></section>`;
+  }).join('');
+}
+function toast(msg,undo){
+  clearTimeout(toastTimer);
+  $('toastBox').innerHTML=`<div class="toast" role="status">${esc(msg)}${undo?'<button type="button" id="undoBtn">Hoàn tác</button>':''}</div>`;
+  if(undo)$('undoBtn').onclick=()=>{undo();$('toastBox').innerHTML=''};
+  toastTimer=setTimeout(()=>{$('toastBox').innerHTML=''},5500);
+}
+
+/* ---------- Chuyển màn hình ---------- */
+function showAuth(){
+  $('app').hidden=true;$('authScreen').hidden=false;$('authLoading').hidden=true;$('authBody').hidden=false;
+  $('cfgWarn').hidden=!!fb;$('aErr').textContent='';$('aMsg').textContent='';
+}
+function showApp(){$('authScreen').hidden=true;$('app').hidden=false;acct();render();window.scrollTo(0,0)}
+function enterLocal(){
+  mode='local';user=null;lsSet(MODE_KEY,'local');
+  items=loadLocal()||clone(SAMPLE);showApp();
+}
+async function enterCloud(u){
+  mode='cloud';user=u;lsSet(MODE_KEY,null);
+  $('authBody').hidden=true;$('authLoading').hidden=false;$('authLoading').textContent='Đang tải dữ liệu của bạn…';$('authScreen').hidden=false;$('app').hidden=true;
+  try{
+    const snap=await fb.getDoc(fb.doc(fb.db,'users',u.uid));
+    if(snap.exists()&&Array.isArray(snap.data().items)){items=snap.data().items;showApp()}
+    else{
+      const local=loadLocal();
+      items=local&&local.some(i=>!i.sample)?local:clone(SAMPLE);
+      showApp();save();
+      if(local&&local.some(i=>!i.sample))toast('Đã chuyển dữ liệu dùng thử vào tài khoản');
+    }
+  }catch(e){
+    console.error(e);items=loadLocal()||clone(SAMPLE);showApp();
+    setSync('Không tải được dữ liệu online','bad');
+    toast('Không đọc được dữ liệu online. Kiểm tra Firestore Rules.');
+  }
+}
+
+/* ---------- Firebase ---------- */
+async function initFirebase(){
+  if(!FIREBASE_CONFIG.apiKey||!FIREBASE_CONFIG.projectId)return null;
+  try{
+    const [A,U,F]=await Promise.all([import(FB+'firebase-app.js'),import(FB+'firebase-auth.js'),import(FB+'firebase-firestore.js')]);
+    const app=A.initializeApp(FIREBASE_CONFIG);
+    const auth=U.getAuth(app);auth.languageCode='vi';
+    return{auth,db:F.getFirestore(app),...U,doc:F.doc,getDoc:F.getDoc,setDoc:F.setDoc,serverTimestamp:F.serverTimestamp};
+  }catch(e){console.error(e);return null}
+}
+const ERR={
+  'auth/invalid-email':'Email chưa đúng dạng.',
+  'auth/invalid-credential':'Sai email hoặc mật khẩu.',
+  'auth/wrong-password':'Sai mật khẩu.',
+  'auth/user-not-found':'Chưa có tài khoản với email này.',
+  'auth/email-already-in-use':'Email này đã có tài khoản, hãy chuyển sang Đăng nhập.',
+  'auth/weak-password':'Mật khẩu cần ít nhất 6 ký tự.',
+  'auth/too-many-requests':'Thử sai nhiều lần quá, đợi một lúc rồi thử lại.',
+  'auth/popup-closed-by-user':'Bạn đã đóng cửa sổ Google trước khi đăng nhập xong.',
+  'auth/cancelled-popup-request':'Bạn đã đóng cửa sổ Google trước khi đăng nhập xong.',
+  'auth/unauthorized-domain':'Tên miền này chưa được cho phép. Thêm nó vào Authentication → Settings → Authorized domains.',
+  'auth/operation-not-allowed':'Cách đăng nhập này chưa được bật trong Firebase Authentication.',
+  'auth/network-request-failed':'Mất kết nối mạng, thử lại nhé.'
+};
+const errText=e=>ERR[e&&e.code]||'Có lỗi xảy ra, thử lại nhé.';
+function busy(b){['aSubmit','googleBtn','forgotBtn'].forEach(id=>$(id).disabled=b)}
+function needFb(){if(fb)return true;$('aErr').textContent='Chưa cấu hình Firebase nên chưa đăng nhập được.';return false}
+
+function setTab(up){
+  signUp=up;$('tabIn').setAttribute('aria-selected',!up);$('tabUp').setAttribute('aria-selected',up);
+  $('aPass2Wrap').hidden=!up;$('forgotBtn').hidden=up;
+  $('aSubmit').textContent=up?'Tạo tài khoản':'Đăng nhập';
+  $('aPass').autocomplete=up?'new-password':'current-password';
+  $('aErr').textContent='';$('aMsg').textContent='';
+}
+$('tabIn').onclick=()=>setTab(false);
+$('tabUp').onclick=()=>setTab(true);
+['aEmail','aPass','aPass2'].forEach(id=>$(id).addEventListener('input',()=>{$('aErr').textContent=''}));
+
+$('authForm').addEventListener('submit',async e=>{
+  e.preventDefault();$('aMsg').textContent='';
+  const email=$('aEmail').value.trim(),pass=$('aPass').value;
+  if(!email||!email.includes('@')){$('aErr').textContent='Nhập email của bạn.';$('aEmail').focus();return}
+  if(pass.length<6){$('aErr').textContent='Mật khẩu cần ít nhất 6 ký tự.';$('aPass').focus();return}
+  if(signUp&&pass!==$('aPass2').value){$('aErr').textContent='Hai mật khẩu chưa khớp nhau.';$('aPass2').focus();return}
+  if(!needFb())return;
+  busy(true);
+  try{signUp?await fb.createUserWithEmailAndPassword(fb.auth,email,pass):await fb.signInWithEmailAndPassword(fb.auth,email,pass)}
+  catch(err){$('aErr').textContent=errText(err)}
+  finally{busy(false)}
+});
+$('forgotBtn').onclick=async()=>{
+  const email=$('aEmail').value.trim();$('aMsg').textContent='';
+  if(!email||!email.includes('@')){$('aErr').textContent='Nhập email trước, rồi bấm Quên mật khẩu.';$('aEmail').focus();return}
+  if(!needFb())return;
+  busy(true);
+  try{await fb.sendPasswordResetEmail(fb.auth,email);$('aMsg').textContent='Đã gửi email đặt lại mật khẩu. Kiểm tra cả thư mục Spam nhé.'}
+  catch(err){$('aErr').textContent=errText(err)}
+  finally{busy(false)}
+};
+$('googleBtn').onclick=async()=>{
+  $('aMsg').textContent='';if(!needFb())return;
+  const p=new fb.GoogleAuthProvider();p.setCustomParameters({prompt:'select_account'});
+  busy(true);
+  try{await fb.signInWithPopup(fb.auth,p)}
+  catch(err){
+    if(err.code==='auth/popup-blocked'||err.code==='auth/operation-not-supported-in-this-environment'){try{await fb.signInWithRedirect(fb.auth,p);return}catch(e2){err=e2}}
+    $('aErr').textContent=errText(err);
+  }finally{busy(false)}
+};
+$('localBtn').onclick=enterLocal;
+
+/* ---------- Sự kiện trong trang chính ---------- */
+$('acct').addEventListener('click',async e=>{
+  if(e.target.id!=='outBtn')return;
+  if(mode==='cloud'&&fb){clearTimeout(saveTimer);try{await fb.signOut(fb.auth)}catch(err){}}
+  else{lsSet(MODE_KEY,null);mode=null;items=[];showAuth()}
+});
+function openEditor(id){
+  editingId=id;const i=items.find(x=>x.id===id);
+  $('edTitle').textContent=i?'Sửa nguồn':'Thêm nguồn mới';
+  $('fName').value=i?i.name:'';$('fUrl').value=i?i.url:'';
+  $('fSkill').value=i?i.skill:(filter!=='Tất cả'?filter:SKILLS[0]);
+  $('fType').value=i?i.type:TYPES[0];$('fNote').value=i?i.note:'';
+  $('fErr').textContent='';$('editor').hidden=false;
+  $('editor').scrollIntoView({behavior:'smooth',block:'center'});$('fName').focus({preventScroll:true});
+}
+function closeEditor(){$('editor').hidden=true;editingId=null}
+$('fSkill').innerHTML=SKILLS.map(s=>`<option>${esc(s)}</option>`).join('');
+$('fType').innerHTML=TYPES.map(s=>`<option>${esc(s)}</option>`).join('');
+$('saveBtn').onclick=()=>{
+  const name=$('fName').value.trim();let url=$('fUrl').value.trim();
+  if(!name){$('fErr').textContent='Nhập tên nguồn trước đã.';$('fName').focus();return}
+  if(url&&!/^https?:\/\//i.test(url))url='https://'+url;
+  if(url){try{new URL(url)}catch(e){$('fErr').textContent='Link chưa đúng dạng, thử lại nhé.';$('fUrl').focus();return}}
+  const data={name,url,skill:$('fSkill').value,type:$('fType').value,note:$('fNote').value.trim()};
+  const wasEdit=!!editingId;
+  if(wasEdit)Object.assign(items.find(x=>x.id===editingId),data,{sample:false});
+  else items.unshift({id:'u'+Date.now(),done:false,doneDate:'',score:'',sample:false,...data});
+  save();closeEditor();render();toast(wasEdit?'Đã lưu thay đổi':'Đã thêm nguồn mới');
+};
+$('cancelBtn').onclick=closeEditor;
+$('form').addEventListener('submit',e=>{e.preventDefault();$('saveBtn').click()});
+['fName','fUrl'].forEach(id=>$(id).addEventListener('input',()=>{$('fErr').textContent=''}));
+$('addBtn').onclick=()=>openEditor(null);
+$('chips').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;filter=b.dataset.f;render()});
+$('q').addEventListener('input',e=>{query=e.target.value;render()});
+$('list').addEventListener('change',e=>{
+  const t=e.target,i=items.find(x=>x.id===t.dataset.id);if(!i)return;
+  if(t.dataset.act==='done'){i.done=t.checked;i.doneDate=t.checked?new Date().toISOString().slice(0,10):'';save();render()}
+  if(t.dataset.act==='score'){i.score=t.value.trim().replace(',','.');save();stats()}
+});
+$('list').addEventListener('click',e=>{
+  const b=e.target.closest('button[data-act]');if(!b)return;
+  const idx=items.findIndex(x=>x.id===b.dataset.id);if(idx<0)return;
+  if(b.dataset.act==='edit')openEditor(items[idx].id);
+  if(b.dataset.act==='del'){
+    const item=items[idx];items.splice(idx,1);save();render();
+    toast('Đã xóa "'+item.name+'"',()=>{items.splice(idx,0,item);save();render()});
+  }
+});
+$('copyBtn').onclick=async()=>{
+  const txt=JSON.stringify(items);$('io').value=txt;$('ioErr').textContent='';
+  try{await navigator.clipboard.writeText(txt);toast('Đã sao chép dữ liệu')}
+  catch(e){$('io').select();toast('Dữ liệu đã hiện trong ô, bạn tự bôi đen và sao chép nhé')}
+};
+$('importBtn').onclick=()=>{
+  try{const d=JSON.parse($('io').value);if(!Array.isArray(d)||!d.every(x=>x&&x.name&&x.id))throw 0;
+    const old=items;items=d;save();render();$('ioErr').textContent='';
+    toast('Đã nhập '+d.length+' nguồn',()=>{items=old;save();render()})}
+  catch(e){$('ioErr').textContent='Dữ liệu dán vào không đúng định dạng sao lưu.'}
+};
+$('io').addEventListener('input',()=>{$('ioErr').textContent=''});
+$('resetBtn').onclick=()=>{const old=items;items=clone(SAMPLE);save();render();toast('Đã khôi phục dữ liệu mẫu',()=>{items=old;save();render()})};
+
+/* ---------- Khởi động ---------- */
+sea();
+fb=await initFirebase();
+if(fb){
+  fb.onAuthStateChanged(fb.auth,u=>{
+    if(u)enterCloud(u);
+    else if(lsGet(MODE_KEY)==='local')enterLocal();
+    else{mode=null;user=null;items=[];showAuth()}
+  });
+}else if(lsGet(MODE_KEY)==='local')enterLocal();
+else showAuth();
+</script>
+</body>
+</html>
