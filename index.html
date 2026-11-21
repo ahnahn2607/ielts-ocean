@@ -135,10 +135,45 @@ footer{color:var(--mute);font-size:13px;text-align:center;padding:30px 16px 50px
 .kbd{font:12px ui-monospace,monospace;border:1px solid var(--line);border-radius:6px;padding:1px 6px;color:var(--mute)}
 .small{font-size:13px;color:var(--mute)}
 .lessons{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
-.thumb{aspect-ratio:16/9;border-radius:12px;background:#000 center/cover no-repeat}
+.thumb{aspect-ratio:16/9;border-radius:12px;background:#000 center/100% auto no-repeat;transition:background-size .45s ease}
+.navwrap{gap:14px!important;flex-wrap:nowrap!important}
+.brand{font:400 30px/1 'Great Vibes',cursive;color:var(--ink);text-decoration:none;text-shadow:0 0 14px rgba(127,209,255,.45);white-space:nowrap;transition:text-shadow .3s,transform .3s}
+.brand:hover{text-shadow:0 0 26px rgba(127,209,255,.95);transform:scale(1.04)}
+.nav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0}
+.nav::-webkit-scrollbar{display:none}
+.navlink{position:relative;height:42px;padding:0 14px;border:0;background:transparent;color:var(--mute);font-size:15px;cursor:pointer;border-radius:10px;white-space:nowrap;transition:color .2s,background .2s}
+.navlink::after{content:'';position:absolute;left:14px;right:14px;bottom:5px;height:2px;border-radius:2px;background:var(--glow);transform:scaleX(0);transition:transform .25s ease}
+.navlink:hover{color:var(--ink);background:rgba(127,209,255,.08)}
+.navlink:hover::after{transform:scaleX(.45)}
+.navlink[aria-current=page]{color:var(--ink);font-weight:600}
+.navlink[aria-current=page]::after{transform:scaleX(1);box-shadow:0 0 10px var(--glow)}
+.subtabs{display:inline-flex;gap:4px;padding:4px;border-radius:999px;background:rgba(10,31,92,.6);border:1px solid var(--line);margin-bottom:18px}
+.sub{height:38px;padding:0 18px;border:0;border-radius:999px;background:transparent;color:var(--mute);cursor:pointer;font-size:15px;transition:color .2s,background .2s}
+.sub:hover{color:var(--ink);background:rgba(127,209,255,.1)}
+.sub[aria-selected=true]{background:var(--ink);color:var(--bg);font-weight:600}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.card{transition:transform .25s ease,border-color .25s,box-shadow .25s}
+.card:hover{transform:translateY(-4px);border-color:rgba(127,209,255,.55);box-shadow:0 14px 32px -14px rgba(47,107,255,.7)}
+.card:hover .thumb{background-size:112% auto}
+.btn{transition:transform .15s,background .2s,border-color .2s,box-shadow .2s}
+.btn:hover{transform:translateY(-1px)}
+.btn:active,.chip:active,.navlink:active,.sub:active{transform:scale(.96)}
+.btn.pri:hover{box-shadow:0 8px 20px -8px rgba(47,107,255,.95)}
+.chip{transition:border-color .2s,color .2s,background .2s,transform .15s}
+.chip:hover{border-color:var(--glow);color:var(--ink)}
+.stat{transition:transform .2s,border-color .2s}
+.stat:hover{transform:translateY(-3px);border-color:rgba(127,209,255,.5)}
+.acts button{transition:border-color .2s,color .2s,background .2s}
+.acts button:hover{background:rgba(127,209,255,.08)}
+.gbtn{transition:background .2s,transform .15s,box-shadow .2s}
+.gbtn:hover{transform:translateY(-1px);box-shadow:0 8px 20px -10px rgba(255,255,255,.6)}
+.search,.form input,.form select,.form textarea,.dinput,.score input{transition:border-color .2s,box-shadow .2s}
+.search:hover,.form input:hover,.form textarea:hover,.dinput:hover{border-color:rgba(127,209,255,.4)}
+.search:focus,.form input:focus,.form select:focus,.form textarea:focus,.dinput:focus,.score input:focus{outline:none;border-color:var(--glow);box-shadow:0 0 0 3px rgba(127,209,255,.18)}
+.w-ok,.w-miss{transition:background .2s}.w-miss:hover{background:rgba(255,179,199,.12)}
 @media(max-width:860px){.dlay{grid-template-columns:1fr}}
-@media(max-width:700px){.hero .wrap{grid-template-columns:1fr}.bigjf{max-width:200px;grid-row:1}.form{grid-template-columns:1fr}.acct{margin-left:0}}
-@media(prefers-reduced-motion:reduce){.jf,.bub,.bigjf,.jf .bell{animation:none}.bub{display:none}}
+@media(max-width:700px){.brand{font-size:24px}.acct .who{display:none}.hero .wrap{grid-template-columns:1fr}.bigjf{max-width:200px;grid-row:1}.form{grid-template-columns:1fr}.acct{margin-left:0}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}.card:hover,.btn:hover,.stat:hover{transform:none}.jf,.bub,.bigjf,.jf .bell{animation:none}.bub{display:none}}
 </style>
 </head>
 <body>
@@ -215,20 +250,23 @@ footer{color:var(--mute);font-size:13px;text-align:center;padding:30px 16px 50px
   </header>
 
   <div class="bar">
-    <div class="wrap">
-      <div class="views" role="tablist" aria-label="Chọn mục">
-        <button class="view" role="tab" type="button" data-v="sources" aria-selected="true">Nguồn học</button>
-        <button class="view" role="tab" type="button" data-v="dictation" aria-selected="false">Dictation</button>
-      </div>
-      <input class="search srcOnly" id="q" type="search" placeholder="Tìm nguồn, ví dụ Cambridge 19" aria-label="Tìm kiếm">
-      <div class="chips srcOnly" id="chips" role="group" aria-label="Lọc theo kỹ năng"></div>
-      <button class="btn pri srcOnly" id="addBtn" type="button">Thêm link</button>
+    <div class="wrap navwrap">
+      <a class="brand" href="#" id="brand">IELTS Ocean</a>
+      <nav class="nav" id="nav" aria-label="Chọn kỹ năng"></nav>
       <div class="acct" id="acct"></div>
     </div>
   </div>
 
   <div class="band" style="padding-top:22px">
     <div class="wrap">
+      <div class="subtabs" id="subtabs" role="tablist" aria-label="Mục Listening" hidden>
+        <button class="sub" role="tab" type="button" data-v="sources" aria-selected="true">Nguồn luyện đề</button>
+        <button class="sub" role="tab" type="button" data-v="dictation" aria-selected="false">Dictation</button>
+      </div>
+      <div class="toolbar srcOnly">
+        <input class="search" id="q" type="search" placeholder="Tìm nguồn, ví dụ Cambridge 19" aria-label="Tìm kiếm">
+        <button class="btn pri" id="addBtn" type="button">Thêm link</button>
+      </div>
       <div id="sourcesView">
       <section class="panel" id="editor" hidden aria-labelledby="edTitle">
         <h2 id="edTitle">Thêm nguồn mới</h2>
@@ -404,7 +442,15 @@ function stats(){
   $('stats').innerHTML=[[items.length,'nguồn đang lưu'],[done.length,'đã làm xong'],[t,'xong hôm nay'],[avg,'band TB đã ghi']]
     .map(([b,s])=>`<div class="stat"><b>${b}</b><span>${s}</span></div>`).join('');
 }
-function chips(){$('chips').innerHTML=['Tất cả',...SKILLS].map(s=>`<button type="button" class="chip" data-f="${esc(s)}" aria-pressed="${s===filter}">${esc(s)}</button>`).join('')}
+const NAV=[['Tất cả','Tổng quan','tong-quan'],['Listening','Listening','listening'],['Reading','Reading','reading'],['Writing','Writing','writing'],['Speaking','Speaking','speaking'],['Từ vựng','Từ vựng','tu-vung'],['Công cụ của tôi','Công cụ','cong-cu']];
+function chips(){
+  const act=view==='dictation'?'Listening':filter;
+  $('nav').innerHTML=NAV.map(([f,l])=>`<button type="button" class="navlink" data-f="${esc(f)}"${f===act?' aria-current="page"':''}>${esc(l)}</button>`).join('');
+}
+function setHash(){
+  const h=view==='dictation'?'dictation':(NAV.find(n=>n[0]===filter)||NAV[0])[2];
+  try{history.replaceState(null,'',h==='tong-quan'?location.pathname+location.search:'#'+h)}catch(e){}
+}
 function fmt(d){if(!d)return'';const [y,m,dd]=d.split('-');return`${dd}/${m}`}
 function card(i){
   const title=i.url?`<a href="${esc(i.url)}" target="_blank" rel="noopener">${esc(i.name)} ↗</a>`:esc(i.name);
@@ -445,7 +491,7 @@ function showAuth(){
   $('app').hidden=true;$('authScreen').hidden=false;$('authLoading').hidden=true;$('authBody').hidden=false;
   $('cfgWarn').hidden=!!fb;$('aErr').textContent='';$('aMsg').textContent='';
 }
-function showApp(){$('authScreen').hidden=true;$('app').hidden=false;acct();render();setView(location.hash==='#dictation'?'dictation':'sources');window.scrollTo(0,0)}
+function showApp(){$('authScreen').hidden=true;$('app').hidden=false;acct();render();routeFromHash();window.scrollTo(0,0)}
 function enterLocal(){
   mode='local';user=null;lsSet(MODE_KEY,'local');
   items=loadLocal()||clone(SAMPLE);lessons=loadLessons();showApp();
@@ -574,7 +620,8 @@ $('cancelBtn').onclick=closeEditor;
 $('form').addEventListener('submit',e=>{e.preventDefault();$('saveBtn').click()});
 ['fName','fUrl'].forEach(id=>$(id).addEventListener('input',()=>{$('fErr').textContent=''}));
 $('addBtn').onclick=()=>openEditor(null);
-$('chips').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;filter=b.dataset.f;render()});
+$('nav').addEventListener('click',e=>{const b=e.target.closest('.navlink');if(!b)return;filter=b.dataset.f;if(view==='dictation'&&filter==='Listening'){chips();return}setView('sources');render();b.scrollIntoView({block:'nearest',inline:'center'})});
+$('brand').addEventListener('click',e=>{e.preventDefault();filter='Tất cả';setView('sources');render();window.scrollTo({top:0,behavior:'smooth'})});
 $('q').addEventListener('input',e=>{query=e.target.value;render()});
 $('list').addEventListener('change',e=>{
   const t=e.target,i=items.find(x=>x.id===t.dataset.id);if(!i)return;
@@ -609,14 +656,20 @@ $('resetBtn').onclick=()=>{const old=items;items=clone(SAMPLE);save();render();t
 
 /* ---------- Chuyển mục ---------- */
 function setView(v){
-  view=v;
-  document.querySelectorAll('.view').forEach(b=>b.setAttribute('aria-selected',b.dataset.v===v));
+  view=v;if(v==='dictation')filter='Listening';
+  $('subtabs').hidden=filter!=='Listening';
+  document.querySelectorAll('.sub').forEach(b=>b.setAttribute('aria-selected',b.dataset.v===v));
   document.querySelectorAll('.srcOnly').forEach(el=>el.hidden=v!=='sources');
   $('sourcesView').hidden=v!=='sources';$('dictView').hidden=v!=='dictation';
-  if(v==='dictation'){if(!cur)showLib()}else stopPlayer();
-  try{history.replaceState(null,'',v==='dictation'?'#dictation':location.pathname+location.search)}catch(e){}
+  if(v==='dictation'){if(!cur)showLib()}else{stopPlayer();render()}
+  chips();setHash();
 }
-document.querySelector('.views').addEventListener('click',e=>{const b=e.target.closest('.view');if(b)setView(b.dataset.v)});
+$('subtabs').addEventListener('click',e=>{const b=e.target.closest('.sub');if(b)setView(b.dataset.v)});
+function routeFromHash(){
+  const h=location.hash.slice(1);
+  if(h==='dictation'){setView('dictation');return}
+  const n=NAV.find(x=>x[2]===h);filter=n?n[0]:'Tất cả';setView('sources');
+}
 
 /* ---------- Dictation ---------- */
 let cur=null, idx=0, checked=false, player=null, playerReady=false, stopTimer=null, ytP=null, ctrlAlone=false;
