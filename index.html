@@ -112,6 +112,30 @@ footer{color:var(--mute);font-size:13px;text-align:center;padding:30px 16px 50px
 .center{text-align:center}
 .warn{background:rgba(255,179,199,.12);border:1px solid rgba(255,179,199,.4);color:#ffd6e2;border-radius:12px;padding:10px 12px;font-size:13px;margin-top:14px}
 .loading{color:var(--mute);text-align:center;font-size:15px}
+.views{display:flex;gap:4px;background:rgba(10,31,92,.6);border:1px solid var(--line);border-radius:999px;padding:4px}
+.view{height:36px;padding:0 16px;border:0;border-radius:999px;background:transparent;color:var(--mute);cursor:pointer;font-size:14px}
+.view[aria-selected=true]{background:var(--ink);color:var(--bg);font-weight:600}
+.dlay{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:20px;align-items:start}
+.player{position:relative;aspect-ratio:16/9;border-radius:18px;overflow:hidden;background:#000;border:1px solid var(--line)}
+.player iframe,.player>div{position:absolute;inset:0;width:100%;height:100%}
+.dpanel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.segnav{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.segnav b{font:600 20px 'Playfair Display',serif}
+.pbar{height:6px;background:rgba(127,209,255,.15);border-radius:99px;overflow:hidden}
+.pbar i{display:block;height:100%;background:var(--glow);width:0;transition:width .3s}
+.ctrls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.ctrls select{height:44px;border-radius:999px;border:1px solid var(--line);background:rgba(5,11,46,.7);padding:0 12px;font-size:15px}
+.dinput{width:100%;min-height:96px;border-radius:14px;border:1px solid var(--line);background:rgba(5,11,46,.7);padding:12px;font-size:17px;line-height:1.5;resize:vertical}
+.hint{font:15px/1.7 ui-monospace,monospace;color:var(--glow);letter-spacing:.5px;margin:0}
+.result{font-size:17px;line-height:1.8}
+.result p{margin:4px 0}
+.w-ok{color:#9ff0c7}.w-miss{color:#ffb3c7;text-decoration:underline wavy;text-underline-offset:4px}.w-extra{color:rgba(255,179,199,.75);text-decoration:line-through}
+.pct{font:600 24px 'Playfair Display',serif;color:var(--glow)}
+.kbd{font:12px ui-monospace,monospace;border:1px solid var(--line);border-radius:6px;padding:1px 6px;color:var(--mute)}
+.small{font-size:13px;color:var(--mute)}
+.lessons{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.thumb{aspect-ratio:16/9;border-radius:12px;background:#000 center/cover no-repeat}
+@media(max-width:860px){.dlay{grid-template-columns:1fr}}
 @media(max-width:700px){.hero .wrap{grid-template-columns:1fr}.bigjf{max-width:200px;grid-row:1}.form{grid-template-columns:1fr}.acct{margin-left:0}}
 @media(prefers-reduced-motion:reduce){.jf,.bub,.bigjf,.jf .bell{animation:none}.bub{display:none}}
 </style>
@@ -191,15 +215,20 @@ footer{color:var(--mute);font-size:13px;text-align:center;padding:30px 16px 50px
 
   <div class="bar">
     <div class="wrap">
-      <input class="search" id="q" type="search" placeholder="Tìm nguồn, ví dụ Cambridge 19" aria-label="Tìm kiếm">
-      <div class="chips" id="chips" role="group" aria-label="Lọc theo kỹ năng"></div>
-      <button class="btn pri" id="addBtn" type="button">Thêm link</button>
+      <div class="views" role="tablist" aria-label="Chọn mục">
+        <button class="view" role="tab" type="button" data-v="sources" aria-selected="true">Nguồn học</button>
+        <button class="view" role="tab" type="button" data-v="dictation" aria-selected="false">Dictation</button>
+      </div>
+      <input class="search srcOnly" id="q" type="search" placeholder="Tìm nguồn, ví dụ Cambridge 19" aria-label="Tìm kiếm">
+      <div class="chips srcOnly" id="chips" role="group" aria-label="Lọc theo kỹ năng"></div>
+      <button class="btn pri srcOnly" id="addBtn" type="button">Thêm link</button>
       <div class="acct" id="acct"></div>
     </div>
   </div>
 
   <div class="band" style="padding-top:22px">
     <div class="wrap">
+      <div id="sourcesView">
       <section class="panel" id="editor" hidden aria-labelledby="edTitle">
         <h2 id="edTitle">Thêm nguồn mới</h2>
         <form id="form" class="form" novalidate>
@@ -218,6 +247,60 @@ footer{color:var(--mute);font-size:13px;text-align:center;padding:30px 16px 50px
 
       <p class="sample-note" id="sampleNote">Các thẻ gắn nhãn "Mẫu" là ví dụ: thay bằng giáo trình của bạn, hoặc xóa đi.</p>
       <div id="list"></div>
+      </div>
+
+      <div id="dictView" hidden>
+        <section id="dLib">
+          <div class="panel" style="margin-top:0">
+            <h2>Tạo bài dictation</h2>
+            <form id="dForm" class="form" novalidate>
+              <label class="full">Link YouTube<input id="dUrl" inputmode="url" placeholder="https://www.youtube.com/watch?v=..."></label>
+              <label class="full">Tên bài (không bắt buộc)<input id="dTitle" maxlength="120" placeholder="Để trống thì lấy tên video"></label>
+              <label class="full">Transcript<textarea id="dText" style="height:170px" placeholder="Dán bản chép lời có mốc thời gian, ví dụ:&#10;0:03&#10;Have you ever wondered&#10;0:06&#10;why we dream at night?"></textarea></label>
+            </form>
+            <p class="small" id="dPreview">Trên YouTube: bấm "…" dưới video → Hiện bản chép lời → bôi đen toàn bộ và copy. Cũng nhận phụ đề dạng SRT hoặc VTT.</p>
+            <p class="err" id="dErr" role="alert"></p>
+            <div class="formacts"><button class="btn pri" id="dCreate" type="button">Tạo bài</button></div>
+          </div>
+          <h2 style="margin-top:34px">Bài của bạn</h2>
+          <div class="lessons" id="dList"></div>
+        </section>
+
+        <section id="dPractice" hidden>
+          <div class="segnav" style="margin-bottom:14px">
+            <button class="btn" id="dBack" type="button">← Danh sách bài</button>
+            <span class="small" id="dLessonTitle"></span>
+          </div>
+          <div class="dlay">
+            <div>
+              <div class="player"><div id="ytp"></div></div>
+              <p class="small">Mẹo: tắt phụ đề (CC) trên video để không nhìn thấy đáp án.</p>
+            </div>
+            <div class="dpanel">
+              <div class="segnav">
+                <button class="btn" id="dPrev" type="button" aria-label="Câu trước">‹</button>
+                <b id="dCount">Câu 1/1</b>
+                <button class="btn" id="dNext" type="button" aria-label="Câu sau">›</button>
+              </div>
+              <div class="pbar"><i id="dBar"></i></div>
+              <div class="ctrls">
+                <button class="btn pri" id="dPlay" type="button">Nghe câu này</button>
+                <select id="dRate" aria-label="Tốc độ phát"><option value="1">1x</option><option value="0.75">0.75x</option><option value="0.5">0.5x</option></select>
+                <button class="btn" id="dHint" type="button">Gợi ý</button>
+                <button class="btn" id="dShow" type="button">Đáp án</button>
+              </div>
+              <p class="hint" id="dHintBox" hidden></p>
+              <textarea class="dinput" id="dIn" placeholder="Gõ những gì bạn nghe được…" spellcheck="false" autocomplete="off" autocapitalize="off"></textarea>
+              <div class="ctrls">
+                <button class="btn pri" id="dCheck" type="button">Kiểm tra</button>
+                <span class="small"><span class="kbd">Enter</span> kiểm tra / sang câu · <span class="kbd">Ctrl</span> nghe lại</span>
+              </div>
+              <p class="err" id="dInErr" role="alert"></p>
+              <div id="dRes" class="result" aria-live="polite"></div>
+            </div>
+          </div>
+        </section>
+      </div>
 
       <details class="backup">
         <summary>Sao lưu và chuyển dữ liệu</summary>
@@ -251,7 +334,7 @@ const FIREBASE_CONFIG = {
 const FB='https://www.gstatic.com/firebasejs/10.12.2/';
 const SKILLS=['Listening','Reading','Writing','Speaking','Từ vựng','Công cụ của tôi'];
 const TYPES=['Đề luyện','Video shadowing','Bộ từ vựng','Công cụ','Tài liệu'];
-const KEY='ielts-ocean-v1', MODE_KEY='ielts-ocean-mode';
+const KEY='ielts-ocean-v1', LKEY='ielts-ocean-lessons-v1', MODE_KEY='ielts-ocean-mode';
 const SAMPLE=[
   {name:'Cambridge Dictionary',url:'https://dictionary.cambridge.org',skill:'Từ vựng',type:'Công cụ',note:'Tra nghĩa, phát âm và câu ví dụ.'},
   {name:'Ozdic – từ điển collocation',url:'https://www.ozdic.com',skill:'Từ vựng',type:'Công cụ',note:'Tìm từ hay đi cùng nhau khi viết và nói.'},
@@ -265,6 +348,7 @@ const SAMPLE=[
   {name:'Đề Writing Task 2 mẫu',url:'https://example.com',skill:'Writing',type:'Đề luyện',note:'Mỗi đoạn thân bài phát triển trọn một ý.'}
 ].map((x,i)=>({id:'s'+i,done:false,doneDate:'',score:'',sample:true,...x}));
 
+let lessons=[], view='sources';
 let items=[], filter='Tất cả', query='', editingId=null, lastDeleted=null, toastTimer=null;
 let mode=null, user=null, fb=null, saveTimer=null, signUp=false;
 const $=id=>document.getElementById(id);
@@ -274,15 +358,16 @@ const lsGet=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
 const lsSet=(k,v)=>{try{v===null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){}};
 
 function loadLocal(){try{const d=JSON.parse(lsGet(KEY));if(Array.isArray(d))return d}catch(e){}return null}
+function loadLessons(){try{const d=JSON.parse(lsGet(LKEY));if(Array.isArray(d))return d}catch(e){}return[]}
 
 /* ---------- Lưu dữ liệu ---------- */
 function setSync(text,cls=''){const el=$('syncTxt');if(el){el.textContent=text;el.className='sync '+cls}}
 function save(){
-  if(mode==='local'){lsSet(KEY,JSON.stringify(items));return}
+  if(mode==='local'){lsSet(KEY,JSON.stringify(items));lsSet(LKEY,JSON.stringify(lessons));return}
   if(mode==='cloud'&&user){
     setSync('Đang lưu…');clearTimeout(saveTimer);
     saveTimer=setTimeout(async()=>{
-      try{await fb.setDoc(fb.doc(fb.db,'users',user.uid),{items,updatedAt:fb.serverTimestamp()});setSync('Đã đồng bộ','ok')}
+      try{await fb.setDoc(fb.doc(fb.db,'users',user.uid),{items,lessons,updatedAt:fb.serverTimestamp()});setSync('Đã đồng bộ','ok')}
       catch(e){console.error(e);setSync('Lỗi lưu, kiểm tra mạng','bad')}
     },700);
   }
@@ -351,28 +436,29 @@ function toast(msg,undo){
 
 /* ---------- Chuyển màn hình ---------- */
 function showAuth(){
+  stopPlayer();cur=null;lessons=[];
   $('app').hidden=true;$('authScreen').hidden=false;$('authLoading').hidden=true;$('authBody').hidden=false;
   $('cfgWarn').hidden=!!fb;$('aErr').textContent='';$('aMsg').textContent='';
 }
-function showApp(){$('authScreen').hidden=true;$('app').hidden=false;acct();render();window.scrollTo(0,0)}
+function showApp(){$('authScreen').hidden=true;$('app').hidden=false;acct();render();setView(location.hash==='#dictation'?'dictation':'sources');window.scrollTo(0,0)}
 function enterLocal(){
   mode='local';user=null;lsSet(MODE_KEY,'local');
-  items=loadLocal()||clone(SAMPLE);showApp();
+  items=loadLocal()||clone(SAMPLE);lessons=loadLessons();showApp();
 }
 async function enterCloud(u){
   mode='cloud';user=u;lsSet(MODE_KEY,null);
   $('authBody').hidden=true;$('authLoading').hidden=false;$('authLoading').textContent='Đang tải dữ liệu của bạn…';$('authScreen').hidden=false;$('app').hidden=true;
   try{
     const snap=await fb.getDoc(fb.doc(fb.db,'users',u.uid));
-    if(snap.exists()&&Array.isArray(snap.data().items)){items=snap.data().items;showApp()}
+    if(snap.exists()&&Array.isArray(snap.data().items)){items=snap.data().items;lessons=Array.isArray(snap.data().lessons)?snap.data().lessons:[];showApp()}
     else{
       const local=loadLocal();
-      items=local&&local.some(i=>!i.sample)?local:clone(SAMPLE);
+      items=local&&local.some(i=>!i.sample)?local:clone(SAMPLE);lessons=loadLessons();
       showApp();save();
       if(local&&local.some(i=>!i.sample))toast('Đã chuyển dữ liệu dùng thử vào tài khoản');
     }
   }catch(e){
-    console.error(e);items=loadLocal()||clone(SAMPLE);showApp();
+    console.error(e);items=loadLocal()||clone(SAMPLE);lessons=loadLessons();showApp();
     setSync('Không tải được dữ liệu online','bad');
     toast('Không đọc được dữ liệu online. Kiểm tra Firestore Rules.');
   }
@@ -500,18 +586,238 @@ $('list').addEventListener('click',e=>{
   }
 });
 $('copyBtn').onclick=async()=>{
-  const txt=JSON.stringify(items);$('io').value=txt;$('ioErr').textContent='';
+  const txt=JSON.stringify({items,lessons});$('io').value=txt;$('ioErr').textContent='';
   try{await navigator.clipboard.writeText(txt);toast('Đã sao chép dữ liệu')}
   catch(e){$('io').select();toast('Dữ liệu đã hiện trong ô, bạn tự bôi đen và sao chép nhé')}
 };
 $('importBtn').onclick=()=>{
-  try{const d=JSON.parse($('io').value);if(!Array.isArray(d)||!d.every(x=>x&&x.name&&x.id))throw 0;
-    const old=items;items=d;save();render();$('ioErr').textContent='';
-    toast('Đã nhập '+d.length+' nguồn',()=>{items=old;save();render()})}
+  try{const raw=JSON.parse($('io').value);
+    const d=Array.isArray(raw)?raw:raw&&raw.items;
+    if(!Array.isArray(d)||!d.every(x=>x&&x.name&&x.id))throw 0;
+    const nl=raw&&Array.isArray(raw.lessons)?raw.lessons:null;
+    const old=items,oldL=lessons;items=d;if(nl)lessons=nl;save();render();renderLib();$('ioErr').textContent='';
+    toast('Đã nhập '+d.length+' nguồn'+(nl?' và '+nl.length+' bài dictation':''),()=>{items=old;lessons=oldL;save();render();renderLib()})}
   catch(e){$('ioErr').textContent='Dữ liệu dán vào không đúng định dạng sao lưu.'}
 };
 $('io').addEventListener('input',()=>{$('ioErr').textContent=''});
 $('resetBtn').onclick=()=>{const old=items;items=clone(SAMPLE);save();render();toast('Đã khôi phục dữ liệu mẫu',()=>{items=old;save();render()})};
+
+/* ---------- Chuyển mục ---------- */
+function setView(v){
+  view=v;
+  document.querySelectorAll('.view').forEach(b=>b.setAttribute('aria-selected',b.dataset.v===v));
+  document.querySelectorAll('.srcOnly').forEach(el=>el.hidden=v!=='sources');
+  $('sourcesView').hidden=v!=='sources';$('dictView').hidden=v!=='dictation';
+  if(v==='dictation'){if(!cur)showLib()}else stopPlayer();
+  try{history.replaceState(null,'',v==='dictation'?'#dictation':location.pathname+location.search)}catch(e){}
+}
+document.querySelector('.views').addEventListener('click',e=>{const b=e.target.closest('.view');if(b)setView(b.dataset.v)});
+
+/* ---------- Dictation ---------- */
+let cur=null, idx=0, checked=false, player=null, playerReady=false, stopTimer=null, ytP=null, ctrlAlone=false;
+
+function ytId(u){
+  u=(u||'').trim();
+  const m=u.match(/(?:youtu\.be\/|[?&]v=|\/shorts\/|\/embed\/|\/live\/)([\w-]{11})/);
+  if(m)return m[1];
+  return /^[\w-]{11}$/.test(u)?u:null;
+}
+function tSec(t){
+  const [hms,frac]=t.replace(',','.').split('.');
+  const s=hms.split(':').map(Number).reduce((a,b)=>a*60+b,0);
+  return s+(frac?Number('0.'+frac):0);
+}
+function cleanText(t){return t.replace(/<[^>]+>/g,' ').replace(/&nbsp;/g,' ').replace(/\s+/g,' ').trim()}
+function wc(t){return t.split(/\s+/).filter(Boolean).length}
+function parseTranscript(raw){
+  const lines=raw.replace(/\r/g,'').split('\n').map(l=>l.trim());
+  const TS='(?:\\d{1,2}:)?\\d{1,2}:\\d{2}(?:[.,]\\d{1,3})?';
+  const reArrow=new RegExp('^('+TS+')\\s*-->\\s*('+TS+')');
+  const reAlone=new RegExp('^('+TS+')$');
+  const reLead=new RegExp('^('+TS+')\\s+(.+)$');
+  const skip=/^(WEBVTT|NOTE|Kind:|Language:|\d+$|\d+\s*(giây|seconds?|phút|minutes?)\b)/i;
+  const cues=[];let last=null;
+  for(const l of lines){
+    if(!l)continue;
+    let m;
+    if(m=l.match(reArrow)){last={s:tSec(m[1]),e:tSec(m[2]),t:''};cues.push(last);continue}
+    if(m=l.match(reAlone)){last={s:tSec(m[1]),t:''};cues.push(last);continue}
+    if(m=l.match(reLead)){last={s:tSec(m[1]),t:m[2]};cues.push(last);continue}
+    if(skip.test(l))continue;
+    if(last)last.t+=(last.t?' ':'')+l;
+  }
+  let list=cues.map(c=>({...c,t:cleanText(c.t)})).filter(c=>c.t&&nzWords(c.t).length);
+  list.sort((a,b)=>a.s-b.s);
+  list=list.filter((c,i)=>i===0||c.t!==list[i-1].t);
+  list.forEach((c,i)=>{const nx=list[i+1];if(!c.e||c.e<=c.s)c.e=nx?nx.s:c.s+5;if(nx&&c.e>nx.s+0.5)c.e=nx.s});
+  const out=[];
+  for(const c of list){
+    const p=out[out.length-1];
+    if(p&&((p.e-p.s)<2.5||wc(p.t)<4)&&(c.e-p.s)<=9){p.t+=' '+c.t;p.e=c.e}
+    else out.push({s:c.s,e:c.e,t:c.t});
+  }
+  return out.map(c=>({s:Math.round(c.s*100)/100,e:Math.round(c.e*100)/100,t:c.t}));
+}
+const nz=w=>w.toLowerCase().replace(/[^\p{L}\p{N}]/gu,'');
+const SPLIT=/[\s\-–—\/]+/;
+function nzWords(t){return t.replace(/\[[^\]]*\]|\([^)]*\)/g,' ').split(SPLIT).map(nz).filter(Boolean)}
+function expTokens(t){return t.replace(/\[[^\]]*\]|\([^)]*\)/g,' ').split(SPLIT).map(o=>({o,n:nz(o)})).filter(x=>x.n)}
+
+function compare(expected,typed){
+  const E=expTokens(expected),U=typed.split(SPLIT).map(o=>({o,n:nz(o)})).filter(x=>x.n);
+  const m=E.length,n=U.length,dp=Array.from({length:m+1},()=>new Array(n+1).fill(0));
+  for(let i=m-1;i>=0;i--)for(let j=n-1;j>=0;j--)dp[i][j]=E[i].n===U[j].n?dp[i+1][j+1]+1:Math.max(dp[i+1][j],dp[i][j+1]);
+  const okE=new Set(),okU=new Set();let i=0,j=0;
+  while(i<m&&j<n){if(E[i].n===U[j].n){okE.add(i);okU.add(j);i++;j++}else if(dp[i+1][j]>=dp[i][j+1])i++;else j++}
+  const pct=m?Math.round(okE.size/m*100):0;
+  const html=E.map((x,k)=>`<span class="${okE.has(k)?'w-ok':'w-miss'}">${esc(x.o)}</span>`).join(' ');
+  const extra=U.filter((x,k)=>!okU.has(k)).map(x=>`<span class="w-extra">${esc(x.o)}</span>`).join(' ');
+  return{pct,html,extra};
+}
+
+function loadYT(){
+  if(ytP)return ytP;
+  ytP=new Promise((res,rej)=>{
+    if(window.YT&&window.YT.Player)return res();
+    window.onYouTubeIframeAPIReady=()=>res();
+    const s=document.createElement('script');s.src='https://www.youtube.com/iframe_api';
+    s.onerror=()=>{ytP=null;rej(new Error('yt'))};document.head.appendChild(s);
+  });
+  return ytP;
+}
+function stopPlayer(){clearInterval(stopTimer);stopTimer=null;try{player&&playerReady&&player.pauseVideo()}catch(e){}}
+
+function lessonStats(l){
+  const sc=Object.values(l.scores||{});
+  return{done:sc.length,avg:sc.length?Math.round(sc.reduce((a,b)=>a+b,0)/sc.length):0};
+}
+function renderLib(){
+  if(!lessons.length){$('dList').innerHTML='<p class="small">Chưa có bài nào. Dán link và transcript ở trên để tạo bài đầu tiên.</p>';return}
+  $('dList').innerHTML=lessons.map(l=>{
+    const st=lessonStats(l);
+    return`<article class="card">
+      <div class="thumb" style="background-image:url('https://i.ytimg.com/vi/${esc(l.videoId)}/mqdefault.jpg')"></div>
+      <h3>${esc(l.title)}</h3>
+      <p class="note">${st.done}/${l.segs.length} câu đã làm${st.done?' · trung bình '+st.avg+'%':''}</p>
+      <div class="acts"><button type="button" class="btn pri" data-open="${l.id}">${st.done?'Luyện tiếp':'Bắt đầu'}</button><button type="button" data-ldel="${l.id}">Xóa</button></div>
+    </article>`}).join('');
+}
+function showLib(){stopPlayer();cur=null;$('dLib').hidden=false;$('dPractice').hidden=true;renderLib()}
+
+$('dText').addEventListener('input',()=>{
+  $('dErr').textContent='';
+  const v=$('dText').value.trim();
+  if(!v){$('dPreview').textContent='Trên YouTube: bấm "…" dưới video → Hiện bản chép lời → bôi đen toàn bộ và copy. Cũng nhận phụ đề dạng SRT hoặc VTT.';return}
+  const n=parseTranscript(v).length;
+  $('dPreview').textContent=n?`Đọc được ${n} câu từ transcript.`:'Chưa thấy mốc thời gian nào (dạng 0:03). Hãy copy cả phần số giây.';
+});
+$('dUrl').addEventListener('input',()=>{$('dErr').textContent=''});
+$('dCreate').onclick=()=>{
+  const id=ytId($('dUrl').value);
+  if(!id){$('dErr').textContent='Link YouTube chưa đúng. Dán link dạng youtube.com/watch?v=… hoặc youtu.be/…';$('dUrl').focus();return}
+  const segs=parseTranscript($('dText').value);
+  if(!segs.length){$('dErr').textContent='Không đọc được mốc thời gian trong transcript. Copy cả phần số giây như 0:03 nhé.';$('dText').focus();return}
+  const title=$('dTitle').value.trim();
+  const l={id:'d'+Date.now(),videoId:id,title:title||'Video '+id,autoTitle:!title,segs,pos:0,scores:{},created:Date.now()};
+  lessons.unshift(l);save();
+  $('dUrl').value='';$('dTitle').value='';$('dText').value='';$('dText').dispatchEvent(new Event('input'));
+  try{if(JSON.stringify({items,lessons}).length>850000)toast('Dữ liệu sắp đầy, nên xóa bớt bài cũ')}catch(e){}
+  openLesson(l.id);
+};
+$('dList').addEventListener('click',e=>{
+  const o=e.target.closest('[data-open]'),d=e.target.closest('[data-ldel]');
+  if(o)openLesson(o.dataset.open);
+  if(d){const k=lessons.findIndex(l=>l.id===d.dataset.ldel);if(k<0)return;const l=lessons[k];lessons.splice(k,1);save();renderLib();
+    toast('Đã xóa bài "'+l.title+'"',()=>{lessons.splice(k,0,l);save();renderLib()})}
+});
+$('dBack').onclick=showLib;
+
+async function openLesson(id){
+  cur=lessons.find(l=>l.id===id);if(!cur)return;
+  $('dLib').hidden=true;$('dPractice').hidden=false;$('dLessonTitle').textContent=cur.title;
+  $('dInErr').textContent='';
+  goSeg(Math.min(cur.pos||0,cur.segs.length-1),false);
+  window.scrollTo({top:$('dictView').offsetTop-80,behavior:'smooth'});
+  try{await loadYT()}catch(e){$('dInErr').textContent='Không tải được trình phát YouTube. Kiểm tra mạng rồi tải lại trang.';return}
+  if(player&&playerReady){player.cueVideoById(cur.videoId);applyRate();fillTitle();return}
+  if(player)return;
+  player=new YT.Player('ytp',{videoId:cur.videoId,
+    playerVars:{playsinline:1,rel:0,modestbranding:1,cc_load_policy:0,origin:location.origin},
+    events:{
+      onReady:()=>{playerReady=true;applyRate();fillTitle()},
+      onError:e=>{stopPlayer();$('dInErr').textContent=(e.data===101||e.data===150)?'Chủ kênh không cho phép nhúng video này. Hãy chọn video khác.':'Không phát được video này (mã lỗi '+e.data+').'}
+    }});
+}
+function fillTitle(){
+  if(!cur||!cur.autoTitle)return;
+  setTimeout(()=>{try{const t=player.getVideoData().title;if(t&&cur&&cur.autoTitle){cur.title=t;cur.autoTitle=false;$('dLessonTitle').textContent=t;save()}}catch(e){}},1500);
+}
+function applyRate(){try{player.setPlaybackRate(Number($('dRate').value))}catch(e){}}
+$('dRate').onchange=()=>{applyRate();$('dIn').focus()};
+
+function goSeg(i,autoplay){
+  if(!cur)return;
+  idx=Math.max(0,Math.min(i,cur.segs.length-1));checked=false;cur.pos=idx;
+  $('dCount').textContent=`Câu ${idx+1}/${cur.segs.length}`;
+  $('dBar').style.width=Math.round(Object.keys(cur.scores||{}).length/cur.segs.length*100)+'%';
+  $('dIn').value='';$('dHintBox').hidden=true;$('dInErr').textContent='';
+  const prev=(cur.scores||{})[idx];
+  $('dRes').innerHTML=prev!=null?`<p class="small">Lần trước: ${prev}%</p>`:'';
+  $('dCheck').textContent='Kiểm tra';
+  save();
+  if(autoplay)playSeg();
+}
+function playSeg(){
+  if(!cur)return;
+  if(!playerReady){$('dInErr').textContent='Video đang tải, đợi một chút rồi bấm lại.';return}
+  $('dInErr').textContent='';
+  const s=cur.segs[idx],end=s.e+0.25;
+  clearInterval(stopTimer);applyRate();
+  player.seekTo(Math.max(0,s.s-0.1),true);player.playVideo();
+  stopTimer=setInterval(()=>{
+    let t=0;try{t=player.getCurrentTime()}catch(e){}
+    if(t>=end){try{player.pauseVideo()}catch(e){}clearInterval(stopTimer);stopTimer=null}
+  },60);
+  $('dIn').focus();
+}
+function check(){
+  if(!cur)return;
+  const typed=$('dIn').value.trim();
+  if(!typed){$('dInErr').textContent='Gõ câu bạn nghe được trước đã.';$('dIn').focus();return}
+  const r=compare(cur.segs[idx].t,typed);
+  cur.scores=cur.scores||{};cur.scores[idx]=r.pct;checked=true;save();
+  $('dBar').style.width=Math.round(Object.keys(cur.scores).length/cur.segs.length*100)+'%';
+  $('dRes').innerHTML=`<p><span class="pct">${r.pct}%</span> <span class="small">${r.pct===100?'Chuẩn từng từ!':'Chữ đỏ là phần nghe sót hoặc sai.'}</span></p><p>${r.html}</p>${r.extra?`<p class="small">Bạn gõ thừa hoặc sai: ${r.extra}</p>`:''}`;
+  $('dCheck').textContent=idx<cur.segs.length-1?'Câu tiếp':'Xem kết quả';
+}
+function next(){
+  if(idx<cur.segs.length-1){goSeg(idx+1,true);return}
+  stopPlayer();const st=lessonStats(cur);
+  $('dRes').innerHTML=`<p><span class="pct">Xong bài!</span></p><p class="small">Đã làm ${st.done}/${cur.segs.length} câu, trung bình ${st.avg}%. Bấm ‹ để quay lại những câu điểm thấp.</p>`;
+  checked=false;$('dCheck').textContent='Kiểm tra';
+}
+$('dPlay').onclick=playSeg;
+$('dPrev').onclick=()=>goSeg(idx-1,true);
+$('dNext').onclick=()=>goSeg(idx+1,true);
+$('dCheck').onclick=()=>checked?next():check();
+$('dHint').onclick=()=>{
+  if(!cur)return;
+  $('dHintBox').textContent=expTokens(cur.segs[idx].t).map(x=>x.o.charAt(0)+'_'.repeat(Math.max(0,x.n.length-1))).join(' ');
+  $('dHintBox').hidden=false;$('dIn').focus();
+};
+$('dShow').onclick=()=>{if(!cur)return;$('dRes').innerHTML=`<p class="small">Đáp án:</p><p>${esc(cur.segs[idx].t)}</p>`;$('dIn').focus()};
+$('dIn').addEventListener('input',()=>{$('dInErr').textContent=''});
+$('dIn').addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){e.preventDefault();checked?next():check()}
+});
+document.addEventListener('keydown',e=>{
+  if(view!=='dictation'||$('dPractice').hidden)return;
+  ctrlAlone=e.key==='Control'&&!e.repeat?true:(e.key==='Control'?ctrlAlone:false);
+});
+document.addEventListener('keyup',e=>{
+  if(view!=='dictation'||$('dPractice').hidden)return;
+  if(e.key==='Control'&&ctrlAlone){ctrlAlone=false;playSeg()}
+});
 
 /* ---------- Khởi động ---------- */
 sea();
