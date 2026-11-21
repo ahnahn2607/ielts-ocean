@@ -634,33 +634,59 @@ function tSec(t){
 function cleanText(t){return t.replace(/<[^>]+>/g,' ').replace(/&nbsp;/g,' ').replace(/\s+/g,' ').trim()}
 function wc(t){return t.split(/\s+/).filter(Boolean).length}
 function parseTranscript(raw){
-  const lines=raw.replace(/\r/g,'').split('\n').map(l=>l.trim());
+  const lines=raw.replace(/\r/g,'').replace(/ /g,' ').split('\n').map(l=>l.trim());
   const TS='(?:\\d{1,2}:)?\\d{1,2}:\\d{2}(?:[.,]\\d{1,3})?';
+  const UNIT='(?:hours?|giờ|minutes?|mins?|phút|seconds?|secs?|giây)';
+  const LABEL='(?:\\d+\\s*'+UNIT+'(?:\\s*,\\s*|\\s+(?:and|và)\\s+|\\s*))+';
   const reArrow=new RegExp('^('+TS+')\\s*-->\\s*('+TS+')');
-  const reAlone=new RegExp('^('+TS+')$');
-  const reLead=new RegExp('^('+TS+')\\s+(.+)$');
-  const skip=/^(WEBVTT|NOTE|Kind:|Language:|\d+$|\d+\s*(giây|seconds?|phút|minutes?)\b)/i;
+  const reLead=new RegExp('^('+TS+')(?:\\s*'+LABEL+')?\\s*(.*)$','i');
+  const reLabelOnly=new RegExp('^'+LABEL+'$','i');
+  const skip=/^(WEBVTT|NOTE\b|Kind:|Language:|\d+$|(Chapter|Chương|Phần)\s+\d+\s*[:.\-–])/i;
   const cues=[];let last=null;
   for(const l of lines){
     if(!l)continue;
     let m;
     if(m=l.match(reArrow)){last={s:tSec(m[1]),e:tSec(m[2]),t:''};cues.push(last);continue}
-    if(m=l.match(reAlone)){last={s:tSec(m[1]),t:''};cues.push(last);continue}
-    if(m=l.match(reLead)){last={s:tSec(m[1]),t:m[2]};cues.push(last);continue}
-    if(skip.test(l))continue;
+    if(skip.test(l)||reLabelOnly.test(l))continue;
+    if(m=l.match(reLead)){last={s:tSec(m[1]),t:m[2]||''};cues.push(last);continue}
     if(last)last.t+=(last.t?' ':'')+l;
   }
   let list=cues.map(c=>({...c,t:cleanText(c.t)})).filter(c=>c.t&&nzWords(c.t).length);
   list.sort((a,b)=>a.s-b.s);
   list=list.filter((c,i)=>i===0||c.t!==list[i-1].t);
-  list.forEach((c,i)=>{const nx=list[i+1];if(!c.e||c.e<=c.s)c.e=nx?nx.s:c.s+5;if(nx&&c.e>nx.s+0.5)c.e=nx.s});
+  list.forEach((c,i)=>{const nx=list[i+1];if(!c.e||c.e<=c.s){const est=c.s+Math.max(5,wc(c.t)*0.6);c.e=nx?Math.min(nx.s,est):est}if(nx&&c.e>nx.s+0.5)c.e=nx.s});
+  if(!list.length)return[];
+  const punct=list.filter(c=>/[.?!]/.test(c.t)).length/list.length;
+  const out=punct>=0.3?bySentence(list):byCue(list);
+  return out.map(c=>({s:Math.round(c.s*100)/100,e:Math.round(c.e*100)/100,t:c.t}));
+}
+function byCue(list){
   const out=[];
   for(const c of list){
     const p=out[out.length-1];
     if(p&&((p.e-p.s)<2.5||wc(p.t)<4)&&(c.e-p.s)<=9){p.t+=' '+c.t;p.e=c.e}
     else out.push({s:c.s,e:c.e,t:c.t});
   }
-  return out.map(c=>({s:Math.round(c.s*100)/100,e:Math.round(c.e*100)/100,t:c.t}));
+  return out;
+}
+function bySentence(list){
+  const words=[];
+  for(const c of list){
+    const ws=c.t.split(/\s+/).filter(Boolean),d=(c.e-c.s)/ws.length;
+    ws.forEach((w,i)=>words.push({w,s:c.s+d*i,e:c.s+d*(i+1)}));
+  }
+  const abbr=/^(mr|mrs|ms|dr|st|vs|etc|e\.g|i\.e|u\.s|a\.m|p\.m)\.$/i;
+  const out=[];let cur=[];
+  const flush=()=>{if(!cur.length)return;out.push({s:cur[0].s,e:cur[cur.length-1].e,t:cur.map(x=>x.w).join(' ')});cur=[]};
+  for(const x of words){
+    if(cur.length>=20&&/^(and|but|because|cuz|so|then|or|which|when)$/i.test(x.w))flush();
+    cur.push(x);
+    const end=/[.?!…]["”'’)\]]*$/.test(x.w)&&!abbr.test(x.w);
+    if((end&&cur.length>=3)||(cur.length>=22&&/[,;:]["”'’)]*$/.test(x.w))||cur.length>=32)flush();
+  }
+  flush();
+  for(let i=out.length-1;i>0;i--){if(wc(out[i].t)<3&&out[i].s-out[i-1].e<1.5){out[i-1].t+=' '+out[i].t;out[i-1].e=out[i].e;out.splice(i,1)}}
+  return out;
 }
 const nz=w=>w.toLowerCase().replace(/[^\p{L}\p{N}]/gu,'');
 const SPLIT=/[\s\-–—\/]+/;
@@ -822,9 +848,9 @@ function playSeg(){
   if(!cur)return;
   if(!playerReady){$('dInErr').textContent='Video đang tải, đợi một chút rồi bấm lại.';return}
   $('dInErr').textContent='';
-  const s=cur.segs[idx],end=s.e+0.25;
+  const s=cur.segs[idx],end=s.e+0.4;
   clearInterval(stopTimer);applyRate();
-  player.seekTo(Math.max(0,s.s-0.1),true);player.playVideo();
+  player.seekTo(Math.max(0,s.s-0.25),true);player.playVideo();
   stopTimer=setInterval(()=>{
     let t=0;try{t=player.getCurrentTime()}catch(e){}
     if(t>=end){try{player.pauseVideo()}catch(e){}clearInterval(stopTimer);stopTimer=null}
