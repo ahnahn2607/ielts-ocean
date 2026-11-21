@@ -170,6 +170,11 @@ footer{color:var(--mute);font-size:13px;text-align:center;padding:30px 16px 50px
 .search,.form input,.form select,.form textarea,.dinput,.score input{transition:border-color .2s,box-shadow .2s}
 .search:hover,.form input:hover,.form textarea:hover,.dinput:hover{border-color:rgba(127,209,255,.4)}
 .search:focus,.form input:focus,.form select:focus,.form textarea:focus,.dinput:focus,.score input:focus{outline:none;border-color:var(--glow);box-shadow:0 0 0 3px rgba(127,209,255,.18)}
+.vprompt{font:500 22px/1.45 'Playfair Display',serif;margin:8px 0}
+.vinput{width:100%;height:54px;border-radius:14px;border:1px solid var(--line);background:rgba(5,11,46,.7);padding:0 16px;font-size:18px;transition:border-color .2s,box-shadow .2s}
+.vinput:hover{border-color:rgba(127,209,255,.4)}.vinput:focus{outline:none;border-color:var(--glow);box-shadow:0 0 0 3px rgba(127,209,255,.18)}
+.vinput.ok{border-color:#9ff0c7}.vinput.bad{border-color:#ffb3c7}
+.vres-ok{color:#9ff0c7;font-weight:600}.vres-bad{color:#ffb3c7;font-weight:600}
 .w-ok,.w-miss{transition:background .2s}.w-miss:hover{background:rgba(255,179,199,.12)}
 @media(max-width:860px){.dlay{grid-template-columns:1fr}}
 @media(max-width:700px){.brand{font-size:24px}.acct .who{display:none}.hero .wrap{grid-template-columns:1fr}.bigjf{max-width:200px;grid-row:1}.form{grid-template-columns:1fr}.acct{margin-left:0}}
@@ -259,10 +264,7 @@ footer{color:var(--mute);font-size:13px;text-align:center;padding:30px 16px 50px
 
   <div class="band" style="padding-top:22px">
     <div class="wrap">
-      <div class="subtabs" id="subtabs" role="tablist" aria-label="Mục Listening" hidden>
-        <button class="sub" role="tab" type="button" data-v="sources" aria-selected="true">Nguồn luyện đề</button>
-        <button class="sub" role="tab" type="button" data-v="dictation" aria-selected="false">Dictation</button>
-      </div>
+      <div class="subtabs" id="subtabs" role="tablist" hidden></div>
       <div class="toolbar srcOnly">
         <input class="search" id="q" type="search" placeholder="Tìm nguồn, ví dụ Cambridge 19" aria-label="Tìm kiếm">
         <button class="btn pri" id="addBtn" type="button">Thêm link</button>
@@ -345,6 +347,30 @@ footer{color:var(--mute);font-size:13px;text-align:center;padding:30px 16px 50px
         </section>
       </div>
 
+      <div id="vocabView" hidden>
+        <section id="vLib">
+          <div class="segnav" style="margin-bottom:10px"><h2 style="margin:0">Học từ vựng</h2><div class="subtabs" id="vLevels" role="tablist" aria-label="Chọn level" style="margin:0"></div></div>
+          <p class="small" style="max-width:72ch">Mỗi topic 40 mục: 10 từ đơn, 10 phrasal verb, 20 collocation. Web hỏi nghĩa tiếng Việt, bạn gõ cụm tiếng Anh. Trả lời đúng ngay lần đầu ở 2 lượt học khác nhau thì tính là đã thuộc. Phần trong ngoặc như (sth), (sb) không cần gõ.</p>
+          <p class="err" id="vErr" role="alert"></p>
+          <div class="lessons" id="vList"></div>
+        </section>
+        <section id="vLearn" hidden>
+          <div class="segnav" style="margin-bottom:14px"><button class="btn" id="vBack" type="button">← Các topic</button><span class="small" id="vTitle"></span></div>
+          <div class="dpanel" style="max-width:760px;margin:0 auto">
+            <div class="segnav"><b id="vCount"></b><span class="small" id="vMastered"></span></div>
+            <div class="pbar"><i id="vBar"></i></div>
+            <div id="vAsk">
+              <div class="top"><span class="tag" id="vType"></span><span class="tag s" id="vWords"></span></div>
+              <p class="vprompt" id="vPrompt"></p>
+              <p class="hint" id="vHint" hidden></p>
+              <input class="vinput" id="vIn" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Gõ cụm tiếng Anh…" aria-label="Câu trả lời tiếng Anh">
+              <div class="ctrls" style="margin-top:12px"><button class="btn pri" id="vCheck" type="button">Kiểm tra</button><button class="btn" id="vHintBtn" type="button">Gợi ý</button><button class="btn" id="vSkip" type="button">Không biết</button><span class="small"><span class="kbd">Enter</span> kiểm tra / câu tiếp</span></div>
+            </div>
+            <div id="vRes" class="result" aria-live="polite"></div>
+          </div>
+        </section>
+      </div>
+
       <details class="backup">
         <summary>Sao lưu và chuyển dữ liệu</summary>
         <p>Khi đăng nhập, dữ liệu tự đồng bộ giữa các máy. Mục này dùng để sao lưu thêm, hoặc chuyển dữ liệu từ chế độ dùng thử sang tài khoản: bấm "Sao chép dữ liệu", rồi dán vào ô bên dưới ở nơi cần chuyển tới và bấm "Nhập dữ liệu".</p>
@@ -377,7 +403,7 @@ const FIREBASE_CONFIG = {
 const FB='https://www.gstatic.com/firebasejs/10.12.2/';
 const SKILLS=['Listening','Reading','Writing','Speaking','Từ vựng','Công cụ của tôi'];
 const TYPES=['Đề luyện','Video shadowing','Bộ từ vựng','Công cụ','Tài liệu'];
-const KEY='ielts-ocean-v1', LKEY='ielts-ocean-lessons-v1', MODE_KEY='ielts-ocean-mode';
+const KEY='ielts-ocean-v1', LKEY='ielts-ocean-lessons-v1', VKEY='ielts-ocean-vocab-v1', MODE_KEY='ielts-ocean-mode';
 const SAMPLE=[
   {name:'Cambridge Dictionary',url:'https://dictionary.cambridge.org',skill:'Từ vựng',type:'Công cụ',note:'Tra nghĩa, phát âm và câu ví dụ.'},
   {name:'Ozdic – từ điển collocation',url:'https://www.ozdic.com',skill:'Từ vựng',type:'Công cụ',note:'Tìm từ hay đi cùng nhau khi viết và nói.'},
@@ -391,7 +417,7 @@ const SAMPLE=[
   {name:'Đề Writing Task 2 mẫu',url:'https://example.com',skill:'Writing',type:'Đề luyện',note:'Mỗi đoạn thân bài phát triển trọn một ý.'}
 ].map((x,i)=>({id:'s'+i,done:false,doneDate:'',score:'',sample:true,...x}));
 
-let lessons=[], view='sources';
+let lessons=[], view='sources', vprog={};
 let items=[], filter='Tất cả', query='', editingId=null, lastDeleted=null, toastTimer=null;
 let mode=null, user=null, fb=null, saveTimer=null, signUp=false;
 const $=id=>document.getElementById(id);
@@ -401,16 +427,17 @@ const lsGet=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
 const lsSet=(k,v)=>{try{v===null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){}};
 
 function loadLocal(){try{const d=JSON.parse(lsGet(KEY));if(Array.isArray(d))return d}catch(e){}return null}
+function loadVProg(){try{const d=JSON.parse(lsGet(VKEY));if(d&&typeof d==='object')return d}catch(e){}return{}}
 function loadLessons(){try{const d=JSON.parse(lsGet(LKEY));if(Array.isArray(d))return d}catch(e){}return[]}
 
 /* ---------- Lưu dữ liệu ---------- */
 function setSync(text,cls=''){const el=$('syncTxt');if(el){el.textContent=text;el.className='sync '+cls}}
 function save(){
-  if(mode==='local'){lsSet(KEY,JSON.stringify(items));lsSet(LKEY,JSON.stringify(lessons));return}
+  if(mode==='local'){lsSet(KEY,JSON.stringify(items));lsSet(LKEY,JSON.stringify(lessons));lsSet(VKEY,JSON.stringify(vprog));return}
   if(mode==='cloud'&&user){
     setSync('Đang lưu…');clearTimeout(saveTimer);
     saveTimer=setTimeout(async()=>{
-      try{await fb.setDoc(fb.doc(fb.db,'users',user.uid),{items,lessons,updatedAt:fb.serverTimestamp()});setSync('Đã đồng bộ','ok')}
+      try{await fb.setDoc(fb.doc(fb.db,'users',user.uid),{items,lessons,vprog,updatedAt:fb.serverTimestamp()});setSync('Đã đồng bộ','ok')}
       catch(e){console.error(e);setSync('Lỗi lưu, kiểm tra mạng','bad')}
     },700);
   }
@@ -444,11 +471,11 @@ function stats(){
 }
 const NAV=[['Tất cả','Tổng quan','tong-quan'],['Listening','Listening','listening'],['Reading','Reading','reading'],['Writing','Writing','writing'],['Speaking','Speaking','speaking'],['Từ vựng','Từ vựng','tu-vung'],['Công cụ của tôi','Công cụ','cong-cu']];
 function chips(){
-  const act=view==='dictation'?'Listening':filter;
+  const act=view==='dictation'?'Listening':view==='vocab'?'Từ vựng':filter;
   $('nav').innerHTML=NAV.map(([f,l])=>`<button type="button" class="navlink" data-f="${esc(f)}"${f===act?' aria-current="page"':''}>${esc(l)}</button>`).join('');
 }
 function setHash(){
-  const h=view==='dictation'?'dictation':(NAV.find(n=>n[0]===filter)||NAV[0])[2];
+  const h=view==='dictation'?'dictation':view==='vocab'?'hoc-tu-vung':(NAV.find(n=>n[0]===filter)||NAV[0])[2];
   try{history.replaceState(null,'',h==='tong-quan'?location.pathname+location.search:'#'+h)}catch(e){}
 }
 function fmt(d){if(!d)return'';const [y,m,dd]=d.split('-');return`${dd}/${m}`}
@@ -487,24 +514,24 @@ function toast(msg,undo){
 
 /* ---------- Chuyển màn hình ---------- */
 function showAuth(){
-  stopPlayer();cur=null;lessons=[];
+  stopPlayer();cur=null;lessons=[];vprog={};vCur=null;
   $('app').hidden=true;$('authScreen').hidden=false;$('authLoading').hidden=true;$('authBody').hidden=false;
   $('cfgWarn').hidden=!!fb;$('aErr').textContent='';$('aMsg').textContent='';
 }
 function showApp(){$('authScreen').hidden=true;$('app').hidden=false;acct();render();routeFromHash();window.scrollTo(0,0)}
 function enterLocal(){
   mode='local';user=null;lsSet(MODE_KEY,'local');
-  items=loadLocal()||clone(SAMPLE);lessons=loadLessons();showApp();
+  items=loadLocal()||clone(SAMPLE);lessons=loadLessons();vprog=loadVProg();showApp();
 }
 async function enterCloud(u){
   mode='cloud';user=u;lsSet(MODE_KEY,null);
   $('authBody').hidden=true;$('authLoading').hidden=false;$('authLoading').textContent='Đang tải dữ liệu của bạn…';$('authScreen').hidden=false;$('app').hidden=true;
   try{
     const snap=await fb.getDoc(fb.doc(fb.db,'users',u.uid));
-    if(snap.exists()&&Array.isArray(snap.data().items)){items=snap.data().items;lessons=Array.isArray(snap.data().lessons)?snap.data().lessons:[];showApp()}
+    if(snap.exists()&&Array.isArray(snap.data().items)){items=snap.data().items;lessons=Array.isArray(snap.data().lessons)?snap.data().lessons:[];vprog=snap.data().vprog||{};showApp()}
     else{
       const local=loadLocal();
-      items=local&&local.some(i=>!i.sample)?local:clone(SAMPLE);lessons=loadLessons();
+      items=local&&local.some(i=>!i.sample)?local:clone(SAMPLE);lessons=loadLessons();vprog=loadVProg();
       showApp();save();
       if(local&&local.some(i=>!i.sample))toast('Đã chuyển dữ liệu dùng thử vào tài khoản');
     }
@@ -620,7 +647,7 @@ $('cancelBtn').onclick=closeEditor;
 $('form').addEventListener('submit',e=>{e.preventDefault();$('saveBtn').click()});
 ['fName','fUrl'].forEach(id=>$(id).addEventListener('input',()=>{$('fErr').textContent=''}));
 $('addBtn').onclick=()=>openEditor(null);
-$('nav').addEventListener('click',e=>{const b=e.target.closest('.navlink');if(!b)return;filter=b.dataset.f;if(view==='dictation'&&filter==='Listening'){chips();return}setView('sources');render();b.scrollIntoView({block:'nearest',inline:'center'})});
+$('nav').addEventListener('click',e=>{const b=e.target.closest('.navlink');if(!b)return;filter=b.dataset.f;if((view==='dictation'&&filter==='Listening')||(view==='vocab'&&filter==='Từ vựng')){chips();return}setView('sources');render();b.scrollIntoView({block:'nearest',inline:'center'})});
 $('brand').addEventListener('click',e=>{e.preventDefault();filter='Tất cả';setView('sources');render();window.scrollTo({top:0,behavior:'smooth'})});
 $('q').addEventListener('input',e=>{query=e.target.value;render()});
 $('list').addEventListener('change',e=>{
@@ -655,19 +682,23 @@ $('io').addEventListener('input',()=>{$('ioErr').textContent=''});
 $('resetBtn').onclick=()=>{const old=items;items=clone(SAMPLE);save();render();toast('Đã khôi phục dữ liệu mẫu',()=>{items=old;save();render()})};
 
 /* ---------- Chuyển mục ---------- */
+const SUBS={'Listening':[['sources','Nguồn luyện đề'],['dictation','Dictation']],'Từ vựng':[['sources','Nguồn & bộ thẻ'],['vocab','Học từ vựng']]};
 function setView(v){
-  view=v;if(v==='dictation')filter='Listening';
-  $('subtabs').hidden=filter!=='Listening';
-  document.querySelectorAll('.sub').forEach(b=>b.setAttribute('aria-selected',b.dataset.v===v));
+  view=v;if(v==='dictation')filter='Listening';if(v==='vocab')filter='Từ vựng';
+  const subs=SUBS[filter];$('subtabs').hidden=!subs;
+  $('subtabs').innerHTML=subs?subs.map(([k,l])=>`<button class="sub" role="tab" type="button" data-v="${k}" aria-selected="${k===v}">${esc(l)}</button>`).join(''):'';
   document.querySelectorAll('.srcOnly').forEach(el=>el.hidden=v!=='sources');
-  $('sourcesView').hidden=v!=='sources';$('dictView').hidden=v!=='dictation';
-  if(v==='dictation'){if(!cur)showLib()}else{stopPlayer();render()}
+  $('sourcesView').hidden=v!=='sources';$('dictView').hidden=v!=='dictation';$('vocabView').hidden=v!=='vocab';
+  if(v==='dictation'){if(!cur)showLib()}else stopPlayer();
+  if(v==='vocab'&&!vCur)showVLib();
+  if(v==='sources')render();
   chips();setHash();
 }
 $('subtabs').addEventListener('click',e=>{const b=e.target.closest('.sub');if(b)setView(b.dataset.v)});
 function routeFromHash(){
   const h=location.hash.slice(1);
   if(h==='dictation'){setView('dictation');return}
+  if(h==='hoc-tu-vung'){setView('vocab');return}
   const n=NAV.find(x=>x[2]===h);filter=n?n[0]:'Tất cả';setView('sources');
 }
 
@@ -953,6 +984,118 @@ document.addEventListener('keyup',e=>{
   if(view!=='dictation'||$('dPractice').hidden)return;
   if(e.key==='Control'&&ctrlAlone){ctrlAlone=false;playSeg()}
 });
+
+/* ---------- Học từ vựng ---------- */
+let VOC=null,vLevel='b',vCur=null,vQueue=[],vItem=-1,vState='ask',vRound=0,vDone=0,vFirst=0,vWrong=new Set();
+const LV={b:'B1–B2',c:'C1–C2'},TYPE={w:'Từ đơn',p:'Phrasal verb',c:'Collocation'};
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+async function loadVocab(){
+  if(VOC)return VOC;
+  try{const r=await fetch('vocab.json?v=1',{cache:'no-cache'});if(!r.ok)throw 0;VOC=await r.json()}catch(e){VOC=null}
+  return VOC;
+}
+const vKey=(tid,lv)=>tid+'_'+lv;
+function vStats(t,lv){const p=vprog[vKey(t.id,lv)]||{},n=t[lv].length;let m=0;for(const k in p)if(p[k]>=2)m++;return{m,n,started:Object.keys(p).length>0}}
+async function showVLib(){
+  vCur=null;$('vLib').hidden=false;$('vLearn').hidden=true;$('vErr').textContent='';
+  if(!VOC){$('vList').innerHTML='<p class="small">Đang tải bộ từ…</p>';await loadVocab()}
+  if(!VOC){$('vErr').textContent='Không tải được bộ từ vựng. Kiểm tra mạng rồi tải lại trang.';$('vList').innerHTML='';return}
+  renderVLib();
+}
+function renderVLib(){
+  $('vLevels').innerHTML=Object.entries(LV).map(([k,l])=>`<button class="sub" role="tab" type="button" data-lv="${k}" aria-selected="${k===vLevel}">${l}</button>`).join('');
+  $('vList').innerHTML=VOC.topics.map(t=>{
+    const st=vStats(t,vLevel),pct=Math.round(st.m/st.n*100);
+    return`<article class="card">
+      <div class="top"><span class="tag b">${LV[vLevel]}</span><span class="tag s">${st.n} mục</span></div>
+      <h3>${esc(t.name)}</h3>
+      <p class="note">10 từ đơn · 10 phrasal verb · 20 collocation</p>
+      <div class="pbar"><i style="width:${pct}%"></i></div>
+      <p class="small" style="margin:0">Đã thuộc ${st.m}/${st.n}</p>
+      <div class="acts"><button type="button" class="btn pri" data-vt="${t.id}">${st.started?'Học tiếp':'Bắt đầu học'}</button>${st.started?`<button type="button" data-vreset="${t.id}">Học lại từ đầu</button>`:''}</div>
+    </article>`}).join('')+(VOC.upcoming||[]).map(n=>`<article class="card" style="opacity:.55"><div class="top"><span class="tag s">Sắp có</span></div><h3>${esc(n)}</h3><p class="note">Đang soạn 40 mục cho mỗi level.</p></article>`).join('');
+}
+$('vLevels').addEventListener('click',e=>{const b=e.target.closest('[data-lv]');if(!b)return;vLevel=b.dataset.lv;renderVLib()});
+$('vList').addEventListener('click',e=>{
+  const s=e.target.closest('[data-vt]');if(s){startTopic(s.dataset.vt);return}
+  const r=e.target.closest('[data-vreset]');if(!r)return;
+  const k=vKey(r.dataset.vreset,vLevel),old=vprog[k];delete vprog[k];save();renderVLib();
+  toast('Đã đặt lại tiến độ topic này',()=>{vprog[k]=old;save();renderVLib()});
+});
+$('vBack').onclick=showVLib;
+function vProg(){const k=vKey(vCur.tid,vCur.lv);return vprog[k]||(vprog[k]={})}
+function vUpdateBar(){
+  const p=vProg(),n=vCur.items.length;let m=0;for(const k in p)if(p[k]>=2)m++;
+  $('vBar').style.width=Math.round(m/n*100)+'%';$('vMastered').textContent=`Đã thuộc ${m}/${n}`;
+  $('vCount').textContent=vRound?`Lượt này: ${Math.min(vDone+1,vRound)}/${vRound}`:'';
+  return m;
+}
+function startTopic(tid){
+  const t=VOC.topics.find(x=>x.id===tid);if(!t)return;
+  vCur={tid,lv:vLevel,name:t.name,items:t[vLevel]};
+  $('vLib').hidden=true;$('vLearn').hidden=false;$('vTitle').textContent=t.name+' · '+LV[vLevel];
+  window.scrollTo({top:$('vocabView').offsetTop-90,behavior:'smooth'});
+  newRound();
+}
+function newRound(){
+  const p=vProg(),idx=vCur.items.map((x,i)=>i).filter(i=>!(p[i]>=2));
+  $('vAsk').hidden=false;
+  if(!idx.length){vRound=0;vUpdateBar();$('vAsk').hidden=true;
+    $('vRes').innerHTML=`<p class="pct">Bạn đã thuộc cả ${vCur.items.length} mục!</p><p class="small">Muốn ôn lại thì bấm "Học lại từ đầu" ở danh sách topic.</p><div class="ctrls"><button class="btn pri" type="button" data-vback>Về danh sách topic</button></div>`;return}
+  const started=shuffle(idx.filter(i=>p[i]!=null)),fresh=idx.filter(i=>p[i]==null);
+  vQueue=shuffle([...started,...fresh].slice(0,10));vRound=vQueue.length;vDone=0;vFirst=0;vWrong=new Set();
+  nextQ();
+}
+function hintOf(a){return a.split(/(\([^)]*\))/).map(part=>part.startsWith('(')?part:part.replace(/[A-Za-z]+/g,w=>w[0]+'_'.repeat(w.length-1))).join('')}
+function nextQ(){
+  if(!vQueue.length){roundDone();return}
+  vItem=vQueue.shift();vState='ask';
+  const [en,ty,vi]=vCur.items[vItem];
+  $('vAsk').hidden=false;$('vType').textContent=TYPE[ty];
+  $('vWords').textContent=norm(en).split(' ').length+' từ';
+  $('vPrompt').textContent=vi;$('vHint').hidden=true;$('vRes').innerHTML='';
+  const inp=$('vIn');inp.value='';inp.className='vinput';inp.placeholder='Gõ cụm tiếng Anh…';inp.disabled=false;
+  $('vCheck').textContent='Kiểm tra';$('vHintBtn').hidden=false;$('vSkip').hidden=false;
+  vUpdateBar();inp.focus({preventScroll:true});
+}
+function norm(s){return s.toLowerCase().replace(/\([^)]*\)/g,' ').replace(/[’‘`´]/g,"'").replace(/\b(sth|sb|smb|something|someone|somebody)\b/g,' ').replace(/-/g,' ').replace(/[^a-z0-9' ]/g,' ').replace(/\s+/g,' ').trim()}
+function lev(a,b){const m=a.length,n=b.length,d=Array.from({length:m+1},(_,i)=>[i]);for(let j=1;j<=n;j++)d[0][j]=j;for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return d[m][n]}
+function match(typed,en){const t=norm(typed),a=norm(en);if(!t)return null;if(t===a)return'ok';return lev(t,a)<=Math.max(1,Math.floor(a.length/12))?'near':'bad'}
+function vCheck(skip){
+  const en=vCur.items[vItem][0],inp=$('vIn'),p=vProg();
+  if(vState==='done'){nextQ();return}
+  if(vState==='retype'){
+    const r=match(inp.value,en);
+    if(r==='ok'||r==='near'){vState='done';inp.className='vinput ok';$('vCheck').textContent='Câu tiếp';nextQ()}
+    else{inp.className='vinput bad';inp.select()}
+    return;
+  }
+  const r=skip?'bad':match(inp.value,en);
+  if(r===null){inp.focus();return}
+  const typed=inp.value.trim();
+  if(r==='ok'||r==='near'){
+    if(vWrong.has(vItem))p[vItem]=Math.max(p[vItem]||0,1);else{p[vItem]=(p[vItem]||0)+1;vFirst++}
+    vDone++;vState='done';inp.className='vinput ok';
+    $('vRes').innerHTML=`<p class="vres-ok">${r==='ok'?'Chính xác!':'Gần đúng, chú ý chính tả:'}</p><p style="font-size:20px">${esc(en)}</p>${p[vItem]>=2?'<p class="small">Mục này đã được tính là thuộc.</p>':''}`;
+    $('vCheck').textContent='Câu tiếp';$('vHintBtn').hidden=true;$('vSkip').hidden=true;
+  }else{
+    p[vItem]=0;vWrong.add(vItem);vQueue.splice(Math.min(3,vQueue.length),0,vItem);
+    vState='retype';inp.className='vinput bad';inp.value='';inp.placeholder='Gõ lại đáp án đúng để ghi nhớ…';
+    $('vRes').innerHTML=`<p class="vres-bad">${skip?'Đáp án là:':'Chưa đúng. Đáp án là:'}</p><p style="font-size:20px">${esc(en)}</p>${typed&&!skip?`<p class="small">Bạn gõ: ${esc(typed)}</p>`:''}<p class="small">Gõ lại đáp án vào ô trên rồi bấm Enter. Mục này sẽ được hỏi lại sau vài câu.</p>`;
+    $('vCheck').textContent='Xác nhận';$('vHintBtn').hidden=true;$('vSkip').hidden=true;inp.focus();
+  }
+  save();vUpdateBar();
+}
+function roundDone(){
+  const m=vUpdateBar();$('vAsk').hidden=true;$('vCount').textContent='Xong lượt';
+  $('vRes').innerHTML=`<p class="pct">Xong lượt học!</p><p>Đúng ngay lần đầu ${vFirst}/${vRound} mục · Đã thuộc ${m}/${vCur.items.length}</p><div class="ctrls"><button class="btn pri" type="button" data-vnext>Học lượt tiếp</button><button class="btn" type="button" data-vback>Về danh sách topic</button></div>`;
+}
+$('vRes').addEventListener('click',e=>{if(e.target.closest('[data-vnext]'))newRound();if(e.target.closest('[data-vback]'))showVLib()});
+$('vCheck').onclick=()=>vCheck(false);
+$('vSkip').onclick=()=>vCheck(true);
+$('vHintBtn').onclick=()=>{$('vHint').textContent=hintOf(vCur.items[vItem][0]);$('vHint').hidden=false;$('vIn').focus()};
+$('vIn').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.isComposing){e.preventDefault();vCheck(false)}});
+$('vIn').addEventListener('input',()=>{if(vState!=='done')$('vIn').className='vinput'});
 
 /* ---------- Khởi động ---------- */
 sea();
