@@ -182,7 +182,7 @@ const RULES=[
 ];
 
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const flo=x=>Math.floor(x*2+1e-9)/2;
+const flo=x=>Math.round(x*2+1e-9)/2;
 const fmt=x=>x.toFixed(1);
 let st={tab:null,sk:'w2',cr:'TR'},store=null,el=null;
 
@@ -248,7 +248,7 @@ function render(target,s){
   if(!st.tab)st.tab=(d.w2||d.sp||d.w1)?'me':'an';
   el.innerHTML=`<section class="card lr" aria-labelledby="lrT">
     <div><span class="tag b">Luật rừng</span>
-      <h2 class="lr-title" id="lrT">đi đêm lắm có ngày kẹt band!</h2>
+      <h2 class="lr-title" id="lrT">Đi đêm lắm có ngày kẹt band!</h2>
       <p class="small" style="margin:0">Bản gốc band descriptors của IELTS, phần mổ xẻ từng band của từng tiêu chí, và chỗ để bạn nhập điểm rồi nhận lộ trình lên band.</p></div>
     <div class="lr-docs">${DOCS.map(x=>`<a class="lr-doc" href="${x.f}" target="_blank" rel="noopener"><span class="ic">PDF</span><span><b>${x.t}</b><span class="small">${x.s} · mở ↗</span></span></a>`).join('')}</div>
     <div class="tabs" role="tablist">
@@ -373,7 +373,7 @@ function skillCard(kind){
 
 function results(){
   const r=el.querySelector('#lrRes');if(!r)return;
-  r.innerHTML=skillCard('w')+skillCard('s')+`<p class="small" style="margin:0">Điểm Writing ước tính theo trọng số Task 2 gấp đôi Task 1; cả hai kỹ năng được làm tròn xuống 0.5 cho an toàn. IELTS không công bố cách làm tròn chi tiết, nên đây chỉ là ước tính.</p>`;
+  r.innerHTML=skillCard('w')+skillCard('s')+`<p class="small" style="margin:0">Điểm Writing ước tính theo trọng số Task 2 gấp đôi Task 1; làm tròn đến 0.5 gần nhất, giống cách IELTS làm tròn điểm overall. IELTS không công bố cách làm tròn chi tiết cho từng kỹ năng, nên đây chỉ là ước tính.</p>`;
   r.onclick=e=>{const s=e.target.closest('[data-see]');if(!s)return;const [k,c]=s.dataset.see.split('|');st.sk=k;st.cr=c;st.tab='an';render(el,store);el.scrollIntoView({behavior:'smooth',block:'start'})};
 }
 
