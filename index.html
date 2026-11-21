@@ -63,6 +63,7 @@ h2 small{font:400 14px Inter,sans-serif;color:var(--mute)}
 .top{display:flex;gap:6px;flex-wrap:wrap}
 .tag{font-size:12px;padding:2px 10px;border-radius:999px;background:rgba(127,209,255,.14);color:var(--glow)}
 .tag.s{background:rgba(230,244,255,.08);color:var(--mute)}
+.tag.b{background:rgba(47,107,255,.35);color:#fff;font-weight:600}
 h3{font:600 17px/1.35 Inter,sans-serif;margin:0}
 h3 a{color:var(--ink);text-decoration:none}
 h3 a:hover{color:var(--glow);text-decoration:underline}
@@ -265,7 +266,7 @@ footer{color:var(--mute);font-size:13px;text-align:center;padding:30px 16px 50px
           <h2 style="margin-top:34px">Bài của bạn</h2>
           <div class="lessons" id="dList"></div>
           <h2 style="margin-top:40px">Thư viện gợi ý</h2>
-          <p class="small" style="max-width:70ch">Bấm "Chọn bài", rồi mở video trên YouTube: "…" → Hiện bản chép lời → copy và dán vào ô Transcript ở trên. Nếu bản chép lời có chọn ngôn ngữ, ưu tiên "English" thay vì "English (auto-generated)" để câu có dấu chấm, cắt câu đẹp hơn.</p>
+          <p class="small" style="max-width:70ch">Band là mức gợi ý theo tốc độ nói, giọng và độ khó từ vựng. Bấm "Chọn bài", rồi mở video trên YouTube: "…" → Hiện bản chép lời → copy và dán vào ô Transcript ở trên. Nếu bản chép lời có chọn ngôn ngữ, ưu tiên "English" thay vì "English (auto-generated)" để câu có dấu chấm, cắt câu đẹp hơn.</p>
           <div class="chips" id="libChips" role="group" aria-label="Lọc thư viện theo thể loại"></div>
           <div class="lessons" id="libList" style="margin-top:14px"></div>
         </section>
@@ -734,41 +735,45 @@ function renderLib(){
     </article>`}).join('');
 }
 const LIB_CATS=['Vlog & self-help','Cắt từ phim','Phỏng vấn & podcast','Kiến thức','Tranh luận & xã hội'];
-const LIB_USE={'Vlog & self-help':'Giọng nói chuyện tự nhiên, hợp để học cách diễn đạt cho Speaking.','Cắt từ phim':'Hội thoại đời thường, luyện nghe nối âm và tốc độ nói thật.','Phỏng vấn & podcast':'Hỏi đáp quan điểm, gần với Speaking Part 3.','Kiến thức':'Từ vựng học thuật, hợp cho Listening và Reading.','Tranh luận & xã hội':'Lập luận hai phía, lấy ý cho Writing Task 2.'};
+const LIB_TOPICS=['Bản thân & lối sống','Công việc & sự nghiệp','Gia đình & các mối quan hệ','Âm nhạc, người nổi tiếng & giới trẻ','Sức khoẻ & cơ thể','Khoa học, tâm lý & ngôn ngữ'];
 const LIB=[
-  ['h373Xpt6gvQ',0,'Listen to this everyday to become magnetic','Thewizardliz','2:46',0],
-  ['bWejiefPZt0',0,'You don’t get what you want, you get what you prepare for','Thewizardliz','14:31',0],
-  ['61H5iXSJznc',0,'10 things i learned at 26','Via Li','21:55',0],
-  ['N65Wd3KO28U',0,'alone in new york – trying to adjust to the city (again…)','Via Li','25:35',0],
-  ['K0PtX2BiowA',1,'Learn English with SUITS – Louis Wants to Be Harvey','Learn English With TV Series','18:36',0],
-  ['wSgwNecMX_4',1,'Learn English with LITTLE WOMEN','Learn English With TV Series','19:28',0],
-  ['uziY3iDy71U',1,'Learn English with UP – Russel Meets Kevin the Snipe','Learn English With TV Series','21:35',0],
-  ['N5vBLtVW3po',2,'CORTIS Spill Secrets After Sipping the Truth Serum','Allure','10:03',1],
-  ['DN_o3DrGtL4',2,'CORTIS Play Truth or Dare','Teen Vogue','15:48',1],
-  ['TM_ioS5WR_Q',2,'CORTIS Reveal Uncomfortable Truths in the Hot Seat','Vanity Fair','16:32',1],
-  ['O2roQA060zk',2,'Martin & James of CORTIS: To Be Cringe Is To Be Free | Hey Tablo Ep. 32','TABLO','1:23:57',1],
-  ['M378RpYDKqA',3,'Simply Explaining Complex Questions EVERYONE Has','EverythingProfessor','16:14',0],
-  ['AipMVd94VVs',3,'Everyday Habits Quietly Killing You','EverythingProfessor','15:05',0],
-  ['tULOWR3nY48',3,'All of Human Language Explained','20 Minute Professor','18:22',0],
-  ['rNjdRw0R4lA',3,'All of Human Psychology Explained in 20 Minutes','20 Minute Professor','20:44',0],
-  ['2c81cbv0SKk',4,'1 Millionaire Boss vs 20 Gen Z Workers (ft. Kevin O’Leary)','Jubilee','1:53:17',0],
-  ['o05-SkstlbU',4,'Body Positivity Activists Confront Looksmaxxers | Middle Ground','Jubilee','59:42',0]
-].map(([id,c,title,ch,len,cc])=>({id,cat:LIB_CATS[c],title,ch,len,cc:!!cc}));
+  ['h373Xpt6gvQ',0,0,'Listen to this everyday to become magnetic','Thewizardliz','2:46',0,'5.0–6.5'],
+  ['bWejiefPZt0',0,0,'You don’t get what you want, you get what you prepare for','Thewizardliz','14:31',0,'5.5–7.0'],
+  ['61H5iXSJznc',0,0,'10 things i learned at 26','Via Li','21:55',0,'6.0–7.5'],
+  ['N65Wd3KO28U',0,0,'alone in new york – trying to adjust to the city (again…)','Via Li','25:35',0,'5.5–7.0'],
+  ['K0PtX2BiowA',1,1,'Learn English with SUITS – Louis Wants to Be Harvey','Learn English With TV Series','18:36',0,'7.0–9.0'],
+  ['2c81cbv0SKk',4,1,'1 Millionaire Boss vs 20 Gen Z Workers (ft. Kevin O’Leary)','Jubilee','1:53:17',0,'7.0–9.0'],
+  ['uziY3iDy71U',1,2,'Learn English with UP – Russel Meets Kevin the Snipe','Learn English With TV Series','21:35',0,'5.0–6.5'],
+  ['wSgwNecMX_4',1,2,'Learn English with LITTLE WOMEN','Learn English With TV Series','19:28',0,'6.5–8.0'],
+  ['N5vBLtVW3po',2,3,'CORTIS Spill Secrets After Sipping the Truth Serum','Allure','10:03',1,'6.0–7.5'],
+  ['DN_o3DrGtL4',2,3,'CORTIS Play Truth or Dare','Teen Vogue','15:48',1,'6.0–7.5'],
+  ['TM_ioS5WR_Q',2,3,'CORTIS Reveal Uncomfortable Truths in the Hot Seat','Vanity Fair','16:32',1,'6.0–7.5'],
+  ['O2roQA060zk',2,3,'Martin & James of CORTIS: To Be Cringe Is To Be Free | Hey Tablo Ep. 32','TABLO','1:23:57',1,'6.5–8.0'],
+  ['AipMVd94VVs',3,4,'Everyday Habits Quietly Killing You','EverythingProfessor','15:05',0,'6.5–8.0'],
+  ['o05-SkstlbU',4,4,'Body Positivity Activists Confront Looksmaxxers | Middle Ground','Jubilee','59:42',0,'7.0–9.0'],
+  ['M378RpYDKqA',3,5,'Simply Explaining Complex Questions EVERYONE Has','EverythingProfessor','16:14',0,'6.5–8.0'],
+  ['rNjdRw0R4lA',3,5,'All of Human Psychology Explained in 20 Minutes','20 Minute Professor','20:44',0,'7.0–8.5'],
+  ['tULOWR3nY48',3,5,'All of Human Language Explained','20 Minute Professor','18:22',0,'7.0–8.5']
+].map(([id,c,tp,title,ch,len,cc,band])=>({id,cat:LIB_CATS[c],topic:LIB_TOPICS[tp],title,ch,len,cc:!!cc,band}));
 let libCat='Tất cả';
-function renderLibrary(){
-  $('libChips').innerHTML=['Tất cả',...LIB_CATS].map(c=>`<button type="button" class="chip" data-lc="${esc(c)}" aria-pressed="${c===libCat}">${esc(c)}</button>`).join('');
-  const list=LIB.filter(x=>libCat==='Tất cả'||x.cat===libCat);
-  $('libList').innerHTML=list.map(x=>{
-    const mine=lessons.find(l=>l.videoId===x.id);
-    const long=x.len.split(':').length>2||parseInt(x.len)>=25;
-    return`<article class="card">
+function libCard(x){
+  const mine=lessons.find(l=>l.videoId===x.id);
+  const long=x.len.split(':').length>2||parseInt(x.len)>=25;
+  return`<article class="card">
       <div class="thumb" style="background-image:url('https://i.ytimg.com/vi/${x.id}/mqdefault.jpg')"></div>
-      <div class="top"><span class="tag">${esc(x.cat)}</span><span class="tag s">${esc(x.len)}</span>${x.cc?'<span class="tag s">Phụ đề chuẩn</span>':''}</div>
+      <div class="top"><span class="tag b">Band ${esc(x.band)}</span><span class="tag">${esc(x.cat)}</span><span class="tag s">${esc(x.len)}</span>${x.cc?'<span class="tag s">Phụ đề chuẩn</span>':''}</div>
       <h3>${esc(x.title)}</h3>
-      <p class="note">${esc(x.ch)} · ${esc(LIB_USE[x.cat])}${long?' Video dài: mỗi lần làm 15–20 câu là vừa.':''}</p>
+      <p class="note">${esc(x.ch)}${long?' · Video dài: mỗi lần làm 15–20 câu là vừa.':''}</p>
       <div class="acts">${mine?`<button type="button" class="btn pri" data-open="${mine.id}">Luyện tiếp</button>`:`<button type="button" class="btn pri" data-pick="${x.id}">Chọn bài</button>`}
       <a class="btn" style="display:inline-flex;align-items:center;text-decoration:none;color:var(--ink)" href="https://www.youtube.com/watch?v=${x.id}" target="_blank" rel="noopener">Mở trên YouTube ↗</a></div>
-    </article>`}).join('');
+    </article>`;
+}
+function renderLibrary(){
+  $('libChips').innerHTML=['Tất cả',...LIB_TOPICS].map(c=>`<button type="button" class="chip" data-lc="${esc(c)}" aria-pressed="${c===libCat}">${esc(c)}</button>`).join('');
+  $('libList').innerHTML=LIB_TOPICS.filter(t=>libCat==='Tất cả'||t===libCat).map(t=>{
+    const g=LIB.filter(x=>x.topic===t);
+    return`<section style="grid-column:1/-1;margin-top:18px"><h3 style="font:500 22px 'Playfair Display',serif;margin:0 0 12px">${esc(t)} <span class="small">${g.length} video</span></h3><div class="lessons">${g.map(libCard).join('')}</div></section>`;
+  }).join('');
 }
 $('libChips').addEventListener('click',e=>{const b=e.target.closest('[data-lc]');if(!b)return;libCat=b.dataset.lc;renderLibrary()});
 $('libList').addEventListener('click',e=>{
