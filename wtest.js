@@ -48,6 +48,20 @@ function css(){
 .wt-act{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
 #wtestView:fullscreen{background:#050B2E;overflow:auto;padding:24px clamp(12px,4vw,48px)}
 #wtestView:fullscreen .wt-timer{top:0}
+#wtestView:fullscreen{padding:14px clamp(10px,2vw,24px)}
+.wt-tabs{display:flex;gap:6px}
+.wt-tabs .sub{height:36px}
+.wt-split{display:grid;grid-template-columns:var(--wl,45%) 12px minmax(0,1fr);height:calc(100vh - 170px);min-height:420px;margin-top:12px}
+#wtestView:fullscreen .wt-split{height:calc(100vh - 92px)}
+.wt-left{overflow:auto;padding-right:6px;display:flex;flex-direction:column;gap:12px}
+.wt-left .wt-prompt{margin:0;font-size:14px}
+.wt-left .wt-chart svg{max-height:52vh}
+.wt-gut{cursor:col-resize;display:grid;place-items:center;touch-action:none}
+.wt-gut::before{content:'';width:4px;height:48px;border-radius:4px;background:var(--line);transition:background .2s}
+.wt-gut:hover::before,.wt-gut.drag::before{background:var(--glow)}
+.wt-right{display:flex;flex-direction:column;min-height:0}
+.wt-right .wt-ta{flex:1;min-height:0;height:100%;resize:none;font-size:15px}
+@media(max-width:820px){.wt-split{grid-template-columns:1fr;height:auto}.wt-gut{display:none}.wt-right .wt-ta{min-height:360px}}
 #wtestView::backdrop{background:#050B2E}
 .wt-gate{position:fixed;inset:0;z-index:60;display:grid;place-items:center;background:rgba(5,11,46,.95);padding:20px}
 .wt-gate .wt-box{max-width:540px;text-align:center;background:rgba(10,31,92,.95)}
@@ -249,17 +263,29 @@ function renderDo(){
     return;
   }
   const s=left();
-  b.innerHTML=`<div class="wt-timer" role="timer"><span>Thời gian còn lại <span class="clk${s<600?' warn':''}" id="wtClk">${mmss(s)}</span></span>
-      <span class="wt-act"><span class="vio" id="wtV">Vi phạm: 0</span><span class="small" id="wtSaved">Đã lưu nháp</span><button class="btn pri" type="button" data-submit style="height:40px">Nộp bài</button></span></div>
-    <div class="wt-box"><h3>Task 1 · khoảng 20 phút</h3><p class="wt-prompt">${esc(TEST.t1)}</p>${chart()}
-      <textarea class="wt-ta" data-t="t1" spellcheck="false" autocomplete="off" aria-label="Bài làm Task 1" style="margin-top:12px">${esc(draft.t1)}</textarea>
-      <div class="wt-meta"><span>Tối thiểu 150 từ</span><span>Số từ: <b id="wc1">0</b></span></div></div>
-    <div class="wt-box"><h3>Task 2 · khoảng 40 phút</h3><p class="wt-prompt">${esc(TEST.t2)}</p>
-      <textarea class="wt-ta" data-t="t2" spellcheck="false" autocomplete="off" aria-label="Bài làm Task 2" style="min-height:420px">${esc(draft.t2)}</textarea>
-      <div class="wt-meta"><span>Tối thiểu 250 từ</span><span>Số từ: <b id="wc2">0</b></span></div></div>
+  const task=draft.cur||1,pane=k=>`<div class="wt-split" data-pane="${k}" ${task===k?'':'hidden'}>
+      <div class="wt-left"><p class="wt-prompt">${esc(k===1?TEST.t1:TEST.t2)}</p>${k===1?chart():'<p class="small" style="margin:0">Viết ít nhất 250 từ. Nên dành khoảng 40 phút.</p>'}</div>
+      <div class="wt-gut" role="separator" aria-orientation="vertical" aria-label="Kéo để chia lại màn hình" tabindex="0"></div>
+      <div class="wt-right"><textarea class="wt-ta" data-t="t${k}" spellcheck="false" autocomplete="off" aria-label="Bài làm Task ${k}">${esc(draft['t'+k])}</textarea>
+        <div class="wt-meta"><span>Tối thiểu ${k===1?150:250} từ · khoảng ${k===1?20:40} phút</span><span>Số từ: <b id="wc${k}">0</b></span></div></div></div>`;
+  b.innerHTML=`<div class="wt-timer" role="timer"><span class="wt-tabs" role="tablist">${[1,2].map(k=>`<button type="button" class="sub" role="tab" data-task-tab="${k}" aria-selected="${task===k}">Task ${k} · <span data-wcs="${k}">0</span> từ</button>`).join('')}</span>
+      <span>Còn lại <span class="clk${s<600?' warn':''}" id="wtClk">${mmss(s)}</span></span>
+      <span class="wt-act"><span class="vio" id="wtV">Vi phạm: 0</span><span class="small" id="wtSaved"></span><button class="btn pri" type="button" data-submit style="height:40px">Nộp bài</button></span></div>
+    ${pane(1)}${pane(2)}
     <div class="wt-act" id="wtConfirm"></div>`;
-  const upd=()=>{[1,2].forEach(i=>{const n=wc(draft['t'+i]),e=b.querySelector('#wc'+i);e.textContent=n;e.className=n>=(i===1?150:250)?'ok':'low'})};upd();
-  b.oninput=e=>{const t=e.target.dataset.t;if(!t)return;draft[t]=e.target.value;saveDraft();upd();b.querySelector('#wtSaved').textContent='Đã lưu nháp '+new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit',second:'2-digit'})};
+  const upd=()=>{[1,2].forEach(i=>{const n=wc(draft['t'+i]),e=b.querySelector('#wc'+i);e.textContent=n;e.className=n>=(i===1?150:250)?'ok':'low';b.querySelector('[data-wcs="'+i+'"]').textContent=n})};upd();
+  try{const w=localStorage.getItem('io-wtest-split');if(w)b.style.setProperty('--wl',w)}catch(e){}
+  b.querySelector('.wt-tabs').onclick=e=>{const t=e.target.closest('[data-task-tab]');if(!t)return;draft.cur=+t.dataset.taskTab;saveDraft();
+    b.querySelectorAll('[data-task-tab]').forEach(x=>x.setAttribute('aria-selected',x===t));b.querySelectorAll('[data-pane]').forEach(p=>p.hidden=+p.dataset.pane!==draft.cur);
+    const ta=b.querySelector('[data-pane="'+draft.cur+'"] .wt-ta');ta&&ta.focus()};
+  b.querySelectorAll('.wt-gut').forEach(g=>{
+    const set=pct=>{pct=Math.max(25,Math.min(70,pct));b.style.setProperty('--wl',pct+'%');try{localStorage.setItem('io-wtest-split',pct+'%')}catch(e){}};
+    g.onpointerdown=e=>{e.preventDefault();g.setPointerCapture(e.pointerId);g.classList.add('drag');const box=g.parentNode.getBoundingClientRect();
+      g.onpointermove=m=>set((m.clientX-box.left)/box.width*100);
+      g.onpointerup=()=>{g.classList.remove('drag');g.onpointermove=null}};
+    g.onkeydown=e=>{const cur=parseFloat(getComputedStyle(b).getPropertyValue('--wl'))||45;if(e.key==='ArrowLeft')set(cur-3);if(e.key==='ArrowRight')set(cur+3)};
+  });
+  b.oninput=e=>{const t=e.target.dataset.t;if(!t)return;draft[t]=e.target.value;saveDraft();upd();b.querySelector('#wtSaved').textContent='Đã lưu '+new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit',second:'2-digit'})};
   b.querySelector('[data-submit]').onclick=()=>{const c=b.querySelector('#wtConfirm'),n1=wc(draft.t1),n2=wc(draft.t2);
     c.innerHTML=`<div class="wt-box" style="width:100%"><p style="margin:0 0 10px">Nộp bài: Task 1 có ${n1} từ, Task 2 có ${n2} từ.${n1<150||n2<250?' <b style="color:#ffb48a">Có task chưa đủ số từ tối thiểu.</b>':''} Sau khi nộp không sửa được nữa.</p>
       <div class="wt-act"><button class="btn" type="button" data-cancel>Làm tiếp</button><button class="btn pri" type="button" data-yes>Nộp ngay</button></div><p class="err" id="wtErr" role="alert"></p></div>`;
