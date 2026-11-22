@@ -255,7 +255,7 @@ async function renderMine(){
 function result(d,teacher){
   const graded=d.status==='graded'&&d.grade,G=graded?d.grade:null;
   const g1=grade(1,d.t1),g2=grade(2,d.t2);
-  const crits=(g,k)=>Object.entries(g).map(([c,v])=>`<div><span class="small">${c}</span><b>${v}</b></div>`).join('');
+  const crits=(g,k)=>['TA','TR','CC','LR','GRA'].filter(c=>c in g).map(c=>[c,g[c]]).map(([c,v])=>`<div><span class="small">${c}</span><b>${v}</b></div>`).join('');
   return `<div class="wt">
     <button class="linkbtn" type="button" data-back style="justify-self:start">← Danh sách bài</button>
     ${graded?`<div class="wt-box"><h3>Kết quả</h3><div class="wt-band"><div class="ov"><span class="small">Writing</span><b>${Number(G.overall).toFixed(1)}</b></div>${crits(G.t1)}</div>
