@@ -274,6 +274,7 @@ footer{color:var(--mute);font-size:13px;text-align:center;padding:30px 16px 50px
   <div class="band" style="padding-top:22px">
     <div class="wrap">
       <div class="subtabs" id="subtabs" role="tablist" hidden></div>
+      <div id="home" class="srcOnly"></div>
       <div id="rules" class="srcOnly"></div>
       <div class="toolbar srcOnly">
         <input class="search" id="q" type="search" placeholder="Tìm nguồn, ví dụ Cambridge 19" aria-label="Tìm kiếm">
@@ -400,6 +401,7 @@ footer{color:var(--mute);font-size:13px;text-align:center;padding:30px 16px 50px
 <div id="toastBox"></div>
 
 <script src="bands.js?v=2" defer></script>
+<script src="home.js?v=1" defer></script>
 <script type="module">
 /* ====== DÁN CẤU HÌNH FIREBASE CỦA BẠN VÀO ĐÂY ====== */
 const FIREBASE_CONFIG = {
@@ -520,10 +522,10 @@ function renderFeature(){
   </section>`:'';
 }
 function renderRules(){
-  const r=$('rules');
-  if(filter!=='Tất cả'||!window.IOBands){r.innerHTML='';r._v=null;return}
-  if(r._v===vprog)return;r._v=vprog;
-  window.IOBands.render(r,{get:()=>vprog.__bands||{},set:b=>{vprog.__bands=b;save()}});
+  const h=$('home'),r=$('rules');
+  if(filter!=='Tất cả'){h.innerHTML='';r.innerHTML='';h._v=r._v=null;return}
+  if(window.IOHome&&h._v!==vprog){h._v=vprog;window.IOHome.render(h,{get:()=>vprog.__profile||{},set:p=>{vprog.__profile=p;save()},bands:()=>vprog.__bands||{},setBands:b=>{vprog.__bands=b;save();r._v=null;renderRules()}})}
+  if(window.IOBands&&r._v!==vprog){r._v=vprog;window.IOBands.render(r,{get:()=>vprog.__bands||{},set:b=>{vprog.__bands=b;save();h._v=null;renderRules()}})}
 }
 function render(){
   stats();chips();renderFeature();renderRules();
@@ -734,6 +736,8 @@ function routeFromHash(){
   if(h==='nguon-tu-vung'){filter='Từ vựng';setView('sources');return}
   const n=NAV.find(x=>x[2]===h);filter=n?n[0]:'Tất cả';if(filter==='Từ vựng'){setView('vocab');return}setView('sources');
 }
+window.addEventListener('hashchange',()=>{const h=location.hash.slice(1);if(!['dictation','hoc-tu-vung','tu-vung','nguon-tu-vung',...NAV.map(x=>x[2])].includes(h))return;
+  routeFromHash();const b=document.querySelector('.bar');b&&b.scrollIntoView({behavior:'smooth',block:'start'})});
 
 /* ---------- Dictation ---------- */
 let cur=null, idx=0, checked=false, player=null, playerReady=false, stopTimer=null, ytP=null, ctrlAlone=false;
