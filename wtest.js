@@ -182,7 +182,7 @@ function render(target,a){
   el.innerHTML=`<div class="wt">
     <div class="segnav"><h2 style="margin:0">Bài test Writing</h2><div class="subtabs" role="tablist" style="margin:0">${tabs.map(([k,l])=>`<button class="sub" role="tab" type="button" data-wt="${k}" aria-selected="${tab===k}">${l}</button>`).join('')}</div></div>
     <div id="wtBody"></div></div>`;
-  el.querySelector('.subtabs').onclick=e=>{const b=e.target.closest('[data-wt]');if(!b)return;tab=b.dataset.wt;openId=null;render(el,api)};
+  el.querySelector('.subtabs').onclick=e=>{const b=e.target.closest('[data-wt]');if(!b)return;tab=b.dataset.wt;openId=null;cache.mine=null;cache.all=null;render(el,api)};
   if(api.mode()!=='cloud'||!me()){el.querySelector('#wtBody').innerHTML=`<div class="wt-box"><h3>Cần đăng nhập</h3><p>Bài test Writing được giáo viên chấm, nên bạn cần đăng nhập bằng Google hoặc email để nộp bài và xem kết quả. Chế độ dùng thử không nộp bài được.</p><button class="btn pri" type="button" data-login>Đăng nhập</button></div>`;
     el.querySelector('[data-login]').onclick=()=>api.login();return}
   ({do:renderDo,mine:renderMine,grade:renderGrade})[tab]();
