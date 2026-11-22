@@ -46,6 +46,14 @@ function css(){
 .wt-band b{display:block;font:600 26px Inter,sans-serif;color:var(--glow)}
 .wt-band .ov{background:rgba(47,107,255,.3);border-color:var(--glow)}
 .wt-act{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+#wtestView:fullscreen{background:#050B2E;overflow:auto;padding:24px clamp(12px,4vw,48px)}
+#wtestView:fullscreen .wt-timer{top:0}
+#wtestView::backdrop{background:#050B2E}
+.wt-gate{position:fixed;inset:0;z-index:60;display:grid;place-items:center;background:rgba(5,11,46,.95);padding:20px}
+.wt-gate .wt-box{max-width:540px;text-align:center;background:rgba(10,31,92,.95)}
+.vio{font-size:13px;padding:4px 10px;border-radius:999px;background:rgba(127,209,255,.12);color:var(--mute)}
+.vio.on{background:rgba(255,110,110,.22);color:#ffb0b0}
+.wt-vlist{margin:6px 0 0;padding-left:18px;font-size:13px;color:#ffb0b0}
 `;document.head.appendChild(s);
 }
 
@@ -188,6 +196,38 @@ function render(target,a){
   ({do:renderDo,mine:renderMine,grade:renderGrade})[tab]();
 }
 
+/* ---------- Chế độ thi: toàn màn hình, chặn copy/paste, bắt chuyển tab ---------- */
+const VNAME={tab:'Chuyển tab hoặc thu nhỏ trình duyệt',blur:'Rời khỏi cửa sổ làm bài',fs:'Thoát chế độ toàn màn hình',copy:'Sao chép chữ',cut:'Cắt chữ',paste:'Dán chữ vào bài',drop:'Kéo thả chữ vào bài',reload:'Tải lại hoặc đóng trang khi đang làm'};
+const FS=()=>document.fullscreenElement||document.webkitFullscreenElement;
+const canFS=()=>{const d=document.documentElement;return !!(d.requestFullscreen||d.webkitRequestFullscreen)};
+function goFS(){if(!el||FS())return;try{const r=(el.requestFullscreen||el.webkitRequestFullscreen).call(el);r&&r.catch&&r.catch(()=>{})}catch(e){}}
+function leaveFS(){try{if(FS())(document.exitFullscreen||document.webkitExitFullscreen).call(document)}catch(e){}}
+function active(){return !!(el&&!el.hidden&&tab==='do'&&draft&&draft.start&&document.getElementById('wtClk'))}
+let lastV=0,session=false;
+function violate(type){
+  if(!active())return;const now=Date.now();if(now-lastV<1500)return;lastV=now;
+  (draft.v=draft.v||[]).push({type,at:now});saveDraft();updV();gate(type);
+}
+function updV(){const e=document.getElementById('wtV');if(!e)return;const n=(draft&&draft.v||[]).length;e.textContent='Vi phạm: '+n;e.className='vio'+(n?' on':'')}
+function gate(type){
+  const old=el.querySelector('.wt-gate');old&&old.remove();
+  if(!type&&(!canFS()||FS()))return;
+  const n=(draft.v||[]).length;
+  el.insertAdjacentHTML('beforeend',`<div class="wt-gate" data-k="${type||''}" role="alertdialog" aria-modal="true" aria-labelledby="wtGT"><div class="wt-box">
+    <h3 id="wtGT">${type?'Đã ghi nhận vi phạm: '+esc(VNAME[type]||type):'Bài đang làm dở'}</h3>
+    <p>${type?'Bạn đã có <b>'+n+'</b> lần vi phạm. Giáo viên sẽ thấy số lần và thời điểm từng lần. Đồng hồ vẫn đang chạy.':'Bài thi chỉ làm được ở chế độ toàn màn hình. Đồng hồ vẫn đang chạy.'}</p>
+    <button class="btn pri" type="button" data-back-test>${canFS()?'Quay lại làm bài (toàn màn hình)':'Quay lại làm bài'}</button></div></div>`);
+  el.querySelector('[data-back-test]').onclick=()=>{goFS();const g=el.querySelector('.wt-gate');g&&g.remove();const t=el.querySelector('.wt-ta');t&&t.focus()};
+}
+document.addEventListener('visibilitychange',()=>{if(document.hidden)violate('tab')});
+window.addEventListener('blur',()=>setTimeout(()=>{if(!document.hasFocus())violate(document.hidden?'tab':'blur')},300));
+['fullscreenchange','webkitfullscreenchange'].forEach(ev=>document.addEventListener(ev,()=>{if(FS()){const g=el&&el.querySelector('.wt-gate[data-k=""]');g&&g.remove();return}if(active())violate('fs')}));
+['copy','cut','paste','drop'].forEach(ev=>document.addEventListener(ev,e=>{if(!active())return;e.preventDefault();violate(ev)},true));
+['contextmenu','dragstart'].forEach(ev=>document.addEventListener(ev,e=>{if(active())e.preventDefault()},true));
+document.addEventListener('beforeinput',e=>{if(active()&&/^insertFrom(Paste|Drop)/.test(e.inputType)){e.preventDefault();violate('paste')}},true);
+document.addEventListener('keydown',e=>{if(!active())return;const k=(e.key||'').toLowerCase();
+  if(((e.ctrlKey||e.metaKey)&&['c','v','x','insert'].includes(k))||(e.shiftKey&&k==='insert')){e.preventDefault();violate(k==='c'||k==='insert'&&!e.shiftKey?'copy':k==='x'?'cut':'paste')}},true);
+
 /* ---------- Học sinh làm bài ---------- */
 const DKEY=()=>'io-wtest-'+TEST.id+'-'+me().uid;
 function loadDraft(){try{return JSON.parse(localStorage.getItem(DKEY()))||null}catch(e){return null}}
@@ -201,14 +241,16 @@ function renderDo(){
     b.innerHTML=`<div class="wt-box"><h3>${TEST.name}</h3>
       <p>Bài gồm Task 1 (ít nhất 150 từ) và Task 2 (ít nhất 250 từ), tổng thời gian <b>${TEST.min} phút</b>. Nên dành khoảng 20 phút cho Task 1 và 40 phút cho Task 2.</p>
       <ul class="small" style="line-height:1.7"><li>Đồng hồ chạy từ lúc bấm Bắt đầu, kể cả khi bạn đóng trang. Bài nháp tự lưu trên máy này.</li><li>Hết giờ, bài sẽ tự nộp.</li><li>Sau khi nộp, máy chấm sơ bộ rồi giáo viên duyệt; kết quả hiện ở tab "Bài của tôi".</li><li>Không dùng từ điển, công cụ dịch hay AI để kết quả phản ánh đúng trình độ.</li></ul>
+      <div class="wt-box" style="background:rgba(255,110,110,.08);border-color:rgba(255,150,150,.35);padding:14px"><b>Chế độ thi</b>
+      <ul class="small" style="line-height:1.7;margin:6px 0 0"><li>Bài làm ở chế độ toàn màn hình.</li><li>Không sao chép, cắt hay dán chữ.</li><li>Không chuyển tab, chuyển cửa sổ, thoát toàn màn hình hay tải lại trang.</li><li>Mỗi lần vi phạm đều bị ghi lại kèm thời điểm, và giáo viên sẽ thấy khi chấm.</li></ul></div>
       <label style="display:grid;gap:6px;max-width:420px;margin:12px 0">Họ tên hiển thị với giáo viên<input id="wtName" class="search" style="height:44px" value="${esc(me().displayName||'')}" autocomplete="name"></label>
       <button class="btn pri" type="button" data-start>Bắt đầu làm bài</button></div>`;
-    b.querySelector('[data-start]').onclick=()=>{const nm=b.querySelector('#wtName').value.trim();if(!nm){b.querySelector('#wtName').focus();return}draft={start:Date.now(),name:nm,t1:'',t2:''};saveDraft();renderDo()};
+    b.querySelector('[data-start]').onclick=()=>{const nm=b.querySelector('#wtName').value.trim();if(!nm){b.querySelector('#wtName').focus();return}draft={start:Date.now(),name:nm,t1:'',t2:'',v:[]};saveDraft();session=true;goFS();renderDo()};
     return;
   }
   const s=left();
   b.innerHTML=`<div class="wt-timer" role="timer"><span>Thời gian còn lại <span class="clk${s<600?' warn':''}" id="wtClk">${mmss(s)}</span></span>
-      <span class="wt-act"><span class="small" id="wtSaved">Đã lưu nháp</span><button class="btn pri" type="button" data-submit style="height:40px">Nộp bài</button></span></div>
+      <span class="wt-act"><span class="vio" id="wtV">Vi phạm: 0</span><span class="small" id="wtSaved">Đã lưu nháp</span><button class="btn pri" type="button" data-submit style="height:40px">Nộp bài</button></span></div>
     <div class="wt-box"><h3>Task 1 · khoảng 20 phút</h3><p class="wt-prompt">${esc(TEST.t1)}</p>${chart()}
       <textarea class="wt-ta" data-t="t1" spellcheck="false" autocomplete="off" aria-label="Bài làm Task 1" style="margin-top:12px">${esc(draft.t1)}</textarea>
       <div class="wt-meta"><span>Tối thiểu 150 từ</span><span>Số từ: <b id="wc1">0</b></span></div></div>
@@ -222,6 +264,9 @@ function renderDo(){
     c.innerHTML=`<div class="wt-box" style="width:100%"><p style="margin:0 0 10px">Nộp bài: Task 1 có ${n1} từ, Task 2 có ${n2} từ.${n1<150||n2<250?' <b style="color:#ffb48a">Có task chưa đủ số từ tối thiểu.</b>':''} Sau khi nộp không sửa được nữa.</p>
       <div class="wt-act"><button class="btn" type="button" data-cancel>Làm tiếp</button><button class="btn pri" type="button" data-yes>Nộp ngay</button></div><p class="err" id="wtErr" role="alert"></p></div>`;
     c.querySelector('[data-cancel]').onclick=()=>c.innerHTML='';c.querySelector('[data-yes]').onclick=()=>submit(false);c.scrollIntoView({behavior:'smooth',block:'center'})};
+  updV();
+  if(!session){session=true;lastV=0;(draft.v=draft.v||[]).push({type:'reload',at:Date.now()});saveDraft();updV();gate('reload')}
+  else if(canFS()&&!FS())gate(null);
   tick=setInterval(()=>{const k=document.getElementById('wtClk');if(!k){clearInterval(tick);return}const s=left();k.textContent=mmss(s);k.className='clk'+(s<600?' warn':'');if(s<=0){clearInterval(tick);submit(true)}},1000);
 }
 
@@ -230,11 +275,11 @@ async function submit(auto){
   const err=document.getElementById('wtErr');
   const g1=grade(1,draft.t1),g2=grade(2,draft.t2);
   const doc={uid:u.uid,email:u.email||'',name:draft.name||u.displayName||'',testId:TEST.id,status:'submitted',
-    t1:draft.t1,t2:draft.t2,w1:g1.n,w2:g2.n,used:Math.min(TEST.min*60,Math.round((Date.now()-draft.start)/1000)),auto:{t1:g1.crit,t2:g2.crit,overall:overall(g1.crit,g2.crit)},autoSubmit:!!auto,createdAt:f.serverTimestamp()};
+    t1:draft.t1,t2:draft.t2,w1:g1.n,w2:g2.n,used:Math.min(TEST.min*60,Math.round((Date.now()-draft.start)/1000)),auto:{t1:g1.crit,t2:g2.crit,overall:overall(g1.crit,g2.crit)},autoSubmit:!!auto,violations:(draft.v||[]).map(x=>({type:x.type,at:x.at})),vcount:(draft.v||[]).length,createdAt:f.serverTimestamp()};
   try{
     await f.addDoc(f.collection(f.db,'submissions'),doc);
     try{localStorage.removeItem(DKEY())}catch(e){}
-    draft=null;cache.mine=null;tab='mine';render(el,api);api.toast&&api.toast(auto?'Hết giờ, bài đã được nộp tự động':'Đã nộp bài');
+    draft=null;leaveFS();cache.mine=null;tab='mine';render(el,api);api.toast&&api.toast(auto?'Hết giờ, bài đã được nộp tự động':'Đã nộp bài');
   }catch(e){console.error(e);if(err)err.textContent='Chưa nộp được ('+(e.code||e.message)+'). Bài nháp vẫn còn, thử lại sau ít phút.';else alertFail()}
 }
 function alertFail(){const b=el.querySelector('#wtBody');b&&b.insertAdjacentHTML('afterbegin','<p class="err" role="alert">Hết giờ nhưng chưa nộp được bài. Bài nháp vẫn còn, bấm Nộp bài để thử lại.</p>')}
@@ -262,6 +307,7 @@ function result(d,teacher){
       <p class="small" style="margin:8px 0 4px">Task 1 ở trên · Task 2 bên dưới (Task 2 tính gấp đôi)</p><div class="wt-band">${crits(G.t2)}</div>
       ${G.comment?`<p style="white-space:pre-wrap;margin:14px 0 0"><b>Nhận xét chung:</b> ${esc(G.comment)}</p>`:''}<p class="small" style="margin:8px 0 0">Chấm ngày ${when(G.at)}</p></div>`
       :`<div class="wt-box"><p style="margin:0">Bài đang chờ giáo viên chấm. Kết quả sẽ hiện ở đây.</p></div>`}
+    ${d.vcount?`<p class="small" style="margin:0;color:#ffb0b0">Bài này có ${d.vcount} lần vi phạm chế độ thi.</p>`:''}
     <div class="wt-box"><h3>Task 1 · ${d.w1} từ</h3>${graded&&G.c1?`<p style="white-space:pre-wrap"><b>Nhận xét:</b> ${esc(G.c1)}</p>`:''}<div class="wt-text">${graded?marked(d.t1,g1.flags):esc(d.t1)}</div>${graded?'<p class="small" style="margin:10px 0 0">Lỗi máy tìm thấy (để bạn tự sửa):</p>'+flagList(g1):''}</div>
     <div class="wt-box"><h3>Task 2 · ${d.w2} từ</h3>${graded&&G.c2?`<p style="white-space:pre-wrap"><b>Nhận xét:</b> ${esc(G.c2)}</p>`:''}<div class="wt-text">${graded?marked(d.t2,g2.flags):esc(d.t2)}</div>${graded?'<p class="small" style="margin:10px 0 0">Lỗi máy tìm thấy (để bạn tự sửa):</p>'+flagList(g2):''}</div>
   </div>`;
@@ -277,7 +323,7 @@ async function renderGrade(){
   if(openId){const d=L.find(x=>x.id===openId);if(d){gradeOne(b,d);return}}
   const pend=L.filter(x=>x.status!=='graded').length;
   b.innerHTML=`<div class="segnav" style="margin-bottom:10px"><p style="margin:0">${pend} bài chờ chấm · ${L.length-pend} bài đã chấm</p><button class="btn" type="button" data-reload style="height:38px">Tải lại</button></div>
-    ${L.length?`<div class="wt-list">${L.map(d=>`<button type="button" class="wt-row" data-open="${d.id}"><span><b>${esc(d.name||d.email)}</b> <span class="small">${esc(d.email)}</span><br><span class="small">Nộp ${when(d.createdAt)} · ${Math.round((d.used||0)/60)} phút${d.autoSubmit?' (hết giờ tự nộp)':''} · T1 ${d.w1} từ · T2 ${d.w2} từ · máy gợi ý ${d.auto?Number(d.auto.overall).toFixed(1):'–'}</span></span>${d.status==='graded'?`<span class="st gr">Đã chấm · ${Number(d.grade.overall).toFixed(1)}</span>`:'<span class="st sub">Chờ chấm</span>'}</button>`).join('')}</div>`:'<div class="wt-box"><p style="margin:0">Chưa có học sinh nào nộp bài.</p></div>'}`;
+    ${L.length?`<div class="wt-list">${L.map(d=>`<button type="button" class="wt-row" data-open="${d.id}"><span><b>${esc(d.name||d.email)}</b> <span class="small">${esc(d.email)}</span><br><span class="small">Nộp ${when(d.createdAt)} · ${Math.round((d.used||0)/60)} phút${d.autoSubmit?' (hết giờ tự nộp)':''}${d.vcount?' · <b style="color:#ffb0b0">'+d.vcount+' vi phạm</b>':''} · T1 ${d.w1} từ · T2 ${d.w2} từ · máy gợi ý ${d.auto?Number(d.auto.overall).toFixed(1):'–'}</span></span>${d.status==='graded'?`<span class="st gr">Đã chấm · ${Number(d.grade.overall).toFixed(1)}</span>`:'<span class="st sub">Chờ chấm</span>'}</button>`).join('')}</div>`:'<div class="wt-box"><p style="margin:0">Chưa có học sinh nào nộp bài.</p></div>'}`;
   b.onclick=e=>{const r=e.target.closest('[data-open]');if(r){openId=r.dataset.open;renderGrade();return}if(e.target.closest('[data-reload]')){cache.all=null;renderGrade()}};
 }
 function gradeOne(b,d){
@@ -288,6 +334,7 @@ function gradeOne(b,d){
     <button class="linkbtn" type="button" data-back style="justify-self:start">← Danh sách bài</button>
     <div class="wt-box"><h3>${esc(d.name||d.email)} <span class="small">${esc(d.email)}</span></h3>
       <p class="small" style="margin:0">Nộp ${when(d.createdAt)} · làm ${Math.round((d.used||0)/60)} phút${d.autoSubmit?' · hết giờ tự nộp':''}${d.status==='graded'?' · đã gửi kết quả '+when(G.at):''}</p>
+      ${d.vcount?`<p style="margin:8px 0 0;color:#ffb0b0"><b>${d.vcount} lần vi phạm chế độ thi</b></p><ul class="wt-vlist">${(d.violations||[]).map(x=>`<li>${new Date(x.at).toLocaleTimeString('vi-VN')} · ${esc(VNAME[x.type]||x.type)}</li>`).join('')}</ul>`:'<p class="small" style="margin:6px 0 0">Không có vi phạm chế độ thi.</p>'}
       <p class="small" style="margin:6px 0 0">Điểm máy chỉ là gợi ý dựa trên độ dài, cấu trúc và các lỗi có mẫu. Máy không đọc hiểu được lập luận: hãy chỉnh lại trước khi gửi.</p></div>
     <div class="wt-box"><h3>Task 1 · ${d.w1} từ</h3><details><summary class="small" style="cursor:pointer;color:var(--glow)">Xem đề và biểu đồ</summary><p class="wt-prompt" style="margin-top:8px">${esc(TEST.t1)}</p>${chart()}</details>
       <div class="wt-text" style="margin-top:10px">${marked(d.t1,g1.flags)}</div>${flagList(g1)}
