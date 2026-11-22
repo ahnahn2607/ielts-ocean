@@ -34,7 +34,13 @@ function css(){
 .pill{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:rgba(5,11,46,.55);border:1px solid var(--line);font-size:13px}
 .pill b{color:var(--glow);font-size:15px}
 .pill.hot{border-color:rgba(255,170,120,.6);background:rgba(255,140,90,.14)}
-.hm .tabs{grid-template-columns:repeat(3,1fr);margin:0}
+.hm .tabs{grid-template-columns:repeat(auto-fit,minmax(120px,1fr));border-radius:22px;margin:0}
+.strk{display:flex;gap:6px;align-items:flex-end;flex-wrap:wrap}
+.strk span{display:grid;gap:4px;justify-items:center;font-size:11px;color:var(--mute)}
+.strk i{display:block;width:22px;height:22px;border-radius:7px;background:rgba(230,244,255,.08);border:1px solid var(--line)}
+.strk i.on{background:linear-gradient(160deg,#2F6BFF,#7FD1FF);border-color:transparent;box-shadow:0 0 10px rgba(127,209,255,.6)}
+.strk i.td{outline:2px solid var(--glow);outline-offset:2px}
+.sbox{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;padding:12px 14px;border-radius:14px;background:rgba(5,11,46,.5);border:1px solid var(--line)}
 .todo{list-style:none;margin:0;padding:0;display:grid;gap:10px}
 .todo li{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:12px 14px;border-radius:14px;background:rgba(5,11,46,.5);border:1px solid var(--line);transition:border-color .2s,transform .2s}
 .todo li:hover{border-color:var(--glow);transform:translateX(2px)}
@@ -76,6 +82,16 @@ function weakest(){
   return out[0]||null;
 }
 
+const dkey=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+function studied(days,k){const x=days[k];return !!x&&Object.values(x).some(v=>v>0)}
+function streak(){
+  const days=(P().days)||{},d=new Date();let cur=0,today=studied(days,dkey(d));
+  if(!today)d.setDate(d.getDate()-1);
+  while(studied(days,dkey(d))){cur++;d.setDate(d.getDate()-1)}
+  const ks=Object.keys(days).filter(k=>studied(days,k)).sort();let best=0,run=0,prev=null;
+  ks.forEach(k=>{const t=new Date(k+'T00:00:00');run=prev&&Math.round((t-prev)/864e5)===1?run+1:1;best=Math.max(best,run);prev=t});
+  return{cur,best,today,days};
+}
 function plan(){
   const p=P(),g=p.goals||{},pr=p.prefs||{},min=+(g.min||30),out=[];
   const left=daysTo(g.exam),fmt=pr.format||[],topics=pr.topics||[],focus=pr.focus||[];
@@ -114,6 +130,7 @@ function render(target,api){
     <div class="hm-pills">
       ${ov!=null?`<span class="pill">Mục tiêu <b>${ov.toFixed(1)}</b>${g.type?' · '+esc(g.type):''}</span>`:'<span class="pill">Chưa đặt band mục tiêu</span>'}
       ${left!=null?(left>=0?`<span class="pill${left<=30?' hot':''}">Còn <b>${left}</b> ngày đến ngày thi ${fmtDate(g.exam)}</span>`:`<span class="pill">Ngày thi ${fmtDate(g.exam)} đã qua</span>`):'<span class="pill">Chưa đặt ngày thi</span>'}
+      ${(()=>{const k=streak();return `<span class="pill${k.cur>=3?' hot':''}">Chuỗi <b>${k.cur}</b> ngày${k.best>k.cur?' · kỷ lục '+k.best:''}</span>`})()}
       <span class="pill">Mỗi ngày <b>${g.min||30}</b> phút${g.days?' · '+g.days+' ngày/tuần':''}</span>
       ${left!=null&&left>0&&g.min?`<span class="pill">≈ <b>${Math.round(left*(+(g.days||7))/7*(+g.min)/60)}</b> giờ học còn lại</span>`:''}
     </div>
@@ -121,11 +138,12 @@ function render(target,api){
       <button class="tab" role="tab" data-hm="today" aria-selected="${tab==='today'}">Gợi ý hôm nay</button>
       <button class="tab" role="tab" data-hm="goals" aria-selected="${tab==='goals'}">Mục tiêu</button>
       <button class="tab" role="tab" data-hm="prefs" aria-selected="${tab==='prefs'}">Sở thích học</button>
+      <button class="tab" role="tab" data-hm="test" aria-selected="${tab==='test'}">Test đầu vào</button>
     </div>
     <div id="hmBody"></div>
   </section>`;
   el.querySelector('.tabs').onclick=e=>{const b=e.target.closest('[data-hm]');if(!b)return;tab=b.dataset.hm;render(el,io)};
-  ({today:renderToday,goals:renderGoals,prefs:renderPrefs})[tab]();
+  ({today:renderToday,goals:renderGoals,prefs:renderPrefs,test:renderTest})[tab]();
   clearInterval(timer);
   timer=setInterval(()=>{const t=document.getElementById('hmT');if(!t){clearInterval(timer);return}const n=new Date();t.textContent=n.toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
     const d=document.getElementById('hmD');if(d&&d.textContent!==todayStr(n))render(el,io);else{const gg=document.getElementById('hmG');if(gg)gg.textContent=greet(n.getHours())}},20000);
@@ -134,9 +152,16 @@ function render(target,api){
 function renderToday(){
   const b=el.querySelector('#hmBody'),p=P(),L=plan();
   const noPref=!p.prefs||!Object.keys(p.prefs).length;
-  b.innerHTML=`<ul class="todo">${L.map(x=>`<li><span class="min">${x.m}′</span><div><b>${esc(x.t)}</b><p>${esc(x.d)}</p></div><a href="${x.a}"${x.a==='#lrT'?' data-jump':''}>${x.l}</a></li>`).join('')}</ul>
+  const k=streak(),t0=new Date(),strip=[];
+  for(let i=13;i>=0;i--){const d=new Date(t0);d.setDate(d.getDate()-i);const key=dkey(d);strip.push(`<span title="${d.toLocaleDateString('vi-VN')}"><i class="${studied(k.days,key)?'on':''}${i===0?' td':''}"></i>${i===0?'Nay':d.getDate()}</span>`)}
+  const td=k.days[dkey(t0)]||{},bits=[td.d?td.d+' câu dictation':'',td.v?td.v+' lượt từ vựng':'',td.s?td.s+' bài đã tick':'',td.x?'học ngoài web':''].filter(Boolean);
+  const msg=k.today?'Hôm nay: '+bits.join(' · '):k.cur?'Học một chút hôm nay để giữ chuỗi '+k.cur+' ngày.':'Làm một việc bất kỳ bên dưới để bắt đầu chuỗi ngày học.';
+  b.innerHTML=`<div class="sbox"><div><b style="font-size:15px">${esc(msg)}</b><div class="strk" style="margin-top:8px" aria-label="14 ngày gần nhất">${strip.join('')}</div></div>
+    <button class="btn" type="button" data-off style="height:38px">${td.x?'Bỏ đánh dấu học ngoài web':'Hôm nay tôi học ngoài web'}</button></div>
+  <ul class="todo">${L.map(x=>`<li><span class="min">${x.m}′</span><div><b>${esc(x.t)}</b><p>${esc(x.d)}</p></div><a href="${x.a}"${x.a==='#lrT'?' data-jump':''}>${x.l}</a></li>`).join('')}</ul>
     ${noPref?'<p class="small" style="margin:0">Chọn sở thích học ở tab bên cạnh để gợi ý hợp gu hơn.</p>':''}`;
-  b.onclick=e=>{const a=e.target.closest('[data-jump]');if(!a)return;e.preventDefault();const t=document.getElementById('lrT');t&&t.scrollIntoView({behavior:'smooth',block:'start'});const m=document.querySelector('[data-lrtab=me]');m&&m.click()};
+  b.onclick=e=>{if(e.target.closest('[data-off]')){const p=P(),d=p.days=p.days||{},key=dkey(new Date());d[key]=d[key]||{};d[key].x=d[key].x?0:1;put(p);render(el,io);return}
+    const a=e.target.closest('[data-jump]');if(!a)return;e.preventDefault();const t=document.getElementById('lrT');t&&t.scrollIntoView({behavior:'smooth',block:'start'});const m=document.querySelector('[data-lrtab=me]');m&&m.click()};
 }
 
 function sel(name,v,list,ph,attrs){return `<select ${attrs}>${'<option value="">'+ph+'</option>'+list.map(x=>`<option value="${x}"${v!=null&&String(v)===String(x)?' selected':''}>${x}</option>`).join('')}</select>`}
@@ -184,5 +209,11 @@ function renderPrefs(){
     if(q.m)c.setAttribute('aria-pressed',on);else b.querySelectorAll('[data-pk="'+q.k+'"]').forEach(x=>x.setAttribute('aria-pressed',x===c&&on))};
 }
 
+function renderTest(){
+  const b=el.querySelector('#hmBody'),p=P();
+  if(!window.IOTest){b.innerHTML='<p class="small">Đang tải bài test…</p>';return}
+  window.IOTest.render(b,{last:(p.tests||[]).slice(-1)[0],onSave:R=>{const p=P();p.tests=(p.tests||[]).concat([{at:R.at,O:R.O,L:R.L,R:R.R,W:R.W,S:R.S}]).slice(-10);p.goals=p.goals||{};p.goals.now=R.O.toFixed(1);put(p);
+    const pills=el.querySelector('.hm-pills');pills&&pills.insertAdjacentHTML('beforeend','<span class="pill">Band hiện tại <b>'+R.O.toFixed(1)+'</b> (test)</span>')}});
+}
 window.IOHome={render};
 })();

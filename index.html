@@ -401,7 +401,8 @@ footer{color:var(--mute);font-size:13px;text-align:center;padding:30px 16px 50px
 <div id="toastBox"></div>
 
 <script src="bands.js?v=2" defer></script>
-<script src="home.js?v=1" defer></script>
+<script src="placement.js?v=1" defer></script>
+<script src="home.js?v=2" defer></script>
 <script type="module">
 /* ====== DÁN CẤU HÌNH FIREBASE CỦA BẠN VÀO ĐÂY ====== */
 const FIREBASE_CONFIG = {
@@ -520,6 +521,12 @@ function renderFeature(){
     <div class="go"><a class="btn pri" style="display:inline-flex;align-items:center;text-decoration:none" href="${WRITING_TOOL}" target="_blank" rel="noopener">Mở Writing Mắt Xích ↗</a>
       <p class="small" style="margin:0">Công cụ mở trên claude.ai vì phần chấm bài cần Claude. Tiến độ được lưu ngay trong công cụ đó.</p></div>
   </section>`:'';
+}
+function logStudy(k){
+  const p=vprog.__profile=vprog.__profile||{},d=p.days=p.days||{},n=new Date(),t=n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0');
+  (d[t]=d[t]||{})[k]=(d[t][k]||0)+1;
+  const ks=Object.keys(d).sort();if(ks.length>400)ks.slice(0,ks.length-400).forEach(x=>delete d[x]);
+  const h=$('home');if(h)h._v=null;
 }
 function renderRules(){
   const h=$('home'),r=$('rules');
@@ -686,7 +693,7 @@ $('brand').addEventListener('click',e=>{e.preventDefault();filter='Tất cả';s
 $('q').addEventListener('input',e=>{query=e.target.value;render()});
 $('list').addEventListener('change',e=>{
   const t=e.target,i=items.find(x=>x.id===t.dataset.id);if(!i)return;
-  if(t.dataset.act==='done'){i.done=t.checked;i.doneDate=t.checked?new Date().toISOString().slice(0,10):'';save();render()}
+  if(t.dataset.act==='done'){if(t.checked)logStudy('s');i.done=t.checked;i.doneDate=t.checked?new Date().toISOString().slice(0,10):'';save();render()}
   if(t.dataset.act==='score'){i.score=t.value.trim().replace(',','.');save();stats()}
 });
 $('list').addEventListener('click',e=>{
@@ -988,7 +995,7 @@ function check(){
   const typed=$('dIn').value.trim();
   if(!typed){$('dInErr').textContent='Gõ câu bạn nghe được trước đã.';$('dIn').focus();return}
   const r=compare(cur.segs[idx].t,typed);
-  cur.scores=cur.scores||{};cur.scores[idx]=r.pct;checked=true;save();
+  cur.scores=cur.scores||{};cur.scores[idx]=r.pct;checked=true;logStudy('d');save();
   $('dBar').style.width=Math.round(Object.keys(cur.scores).length/cur.segs.length*100)+'%';
   $('dRes').innerHTML=`<p><span class="pct">${r.pct}%</span> <span class="small">${r.pct===100?'Chuẩn từng từ!':'Chữ đỏ là phần nghe sót hoặc sai.'}</span></p><p>${r.html}</p>${r.extra?`<p class="small">Bạn gõ thừa hoặc sai: ${r.extra}</p>`:''}`;
   $('dCheck').textContent=idx<cur.segs.length-1?'Câu tiếp':'Xem kết quả';
@@ -1137,7 +1144,7 @@ function vCheck(skip){
     $('vRes').innerHTML=`<p class="vres-bad">${skip?'Đáp án là:':'Chưa đúng. Đáp án là:'}</p><p style="font-size:20px">${esc(en)}</p>${typed&&!skip?`<p class="small">Bạn gõ: ${esc(typed)}</p>`:''}<p class="small">Gõ lại đáp án vào ô trên rồi bấm Enter. Mục này sẽ được hỏi lại sau vài câu.</p>${vExtra(vCur.items[vItem])}`;
     $('vCheck').textContent='Xác nhận';$('vHintBtn').hidden=true;$('vSkip').hidden=true;inp.focus();
   }
-  save();vUpdateBar();
+  logStudy('v');save();vUpdateBar();
 }
 function roundDone(){
   const m=vUpdateBar();$('vAsk').hidden=true;$('vCount').textContent='Xong lượt';
