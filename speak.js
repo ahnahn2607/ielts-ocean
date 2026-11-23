@@ -27,7 +27,7 @@ const TENSE=[
  ['mệnh đề quan hệ',/\b\w+\s+(which|who|whose|where)\s+\w+/i]
 ];
 const ERR=[
- [/\b(he|she|it)\s+(don't|do not|have|are|were)\b/gi,'GRA','Ngôi thứ ba số ít: he/she/it doesn’t / has / is.'],
+ [/(?<!\b(?:why|how|what|where|when|who)\s)\b(he|she|it)\s+(don't|are)\b/gi,'GRA','Ngôi thứ ba số ít: he/she/it doesn’t / is.'],
  [/\b(i|you|we|they)\s+(has|is|does)\b/gi,'GRA','Chủ ngữ I/you/we/they đi với have / are / do.'],
  [/\bpeople\s+(is|was|has|does)\b/gi,'GRA','people là số nhiều: people are / have.'],
  [/\bI\s*('m|am)\s+(agree|disagree)\b/gi,'GRA','agree là động từ: nói “I agree”, không có “am”.'],
@@ -45,7 +45,23 @@ const ERR=[
  [/\b(more|less)\s+(bigger|smaller|better|worse|easier|cheaper|faster|harder|happier|healthier|older|younger|busier)\b/gi,'GRA','So sánh kép: bỏ more/less.'],
  [/\bone of (my|the|his|her|our|their) (friend|thing|reason|place|hobby|problem|way|book|film|movie|song)\b(?!s)/gi,'GRA','“one of + danh từ số nhiều”: one of my friends.'],
  [/\b(a|an)\s+(people|children|information|advice|homework)\b/gi,'GRA','Không dùng a/an với danh từ này.'],
- [/\bhow to say\b/gi,'FC','“how to say” là dấu hiệu đang tìm từ: thử diễn giải vòng thay vì dừng lại.']
+ [/\bhow to say\b/gi,'FC','“how to say” là dấu hiệu đang tìm từ: thử diễn giải vòng thay vì dừng lại.'],
+ [/(?<!\b(?:did|does|do|can|could|will|would|should|might|must|may|to|let|make|made|help|helped|see|saw|watch|watched|hear|heard|why|how|when|where|what)\s(?:(?:uh|um),?\s)?)\b(he|she|it)\s+(?:(?:uh|um),?\s+)?(have|do|go|say|teach|wear|make|want|like|play|watch|live|come|get|know|think|feel|look|need|seem|use|give|take|tell|work|study|eat|love|try|become)\b/gi,'GRA','Ngôi thứ ba số ít phải thêm -s/-es: he has, she says, it makes…'],
+ [/\b(I'm|I am|he's|she's|it's|they're|we're|you're)\s+(?:(?:uh|um),?\s+)?(?:very\s+)?(have|play|like|go|do|want|need|think|know|eat|watch|study|live|work|love|enjoy)\b/gi,'GRA','Thừa “to be”: nói “I play”, “he has”, “I really like”, không phải “I’m play”.'],
+ [/\b(have|has)\s+(?:(?:uh|um),?\s+)?(play|go|eat|watch|see|teach|take|write|meet|visit|try|come|do|give|speak|wear)\b/gi,'GRA','Hiện tại hoàn thành dùng V3: have played, have gone, have seen…'],
+ [/\b(like|likes|love|loves|hate|hates|enjoy|enjoys|prefer)\s+(?:(?:uh|um),?\s+)?(eat|play|go|watch|use|read|study|cook|swim|listen|travel|see|learn|make|buy|drink|sleep|work|do)\b/gi,'GRA','Sau like/love/hate dùng V-ing hoặc to V: like eating, like to eat.'],
+ [/\ban\s+(?!(?:hour|honest|honour|honor|heir|uh|um|er|ah)\b)(?=[b-df-hj-np-tv-z])\w+/gi,'GRA','Trước phụ âm dùng “a”, không dùng “an”.'],
+ [/\ba\s+(?!(?:uni\w*|use\w*|usu\w*|euro\w*|one|once|uh|um|er|ah)\b)(?=[aeiou])\w+/gi,'GRA','Trước nguyên âm dùng “an”.'],
+ [/\b(watch|watched|follow|followed|help|helped|meet|met|call|called|teach|taught|tell|told|love|loved)\s+(he|she|they|I|we)\b(?!\s+(is|was|are|were|has|had|will|would|can|could|did|does))/gi,'GRA','Sau động từ dùng tân ngữ: him, her, them, me, us.'],
+ [/\b(will|would|can|could|should|might|must)\s+(?:(?:uh|um),?\s+)?(don't|doesn't|didn't)\b/gi,'GRA','Phủ định với modal: will not / won’t + V, không dùng “will don’t”.'],
+ [/\b(will|would|can|could|should|might|must)\s+(?:(?:uh|um),?\s+)?not\s+been\b/gi,'GRA','Sau modal dùng “not be”, không phải “not been”.'],
+ [/\b(many|several|a lot of|lots of|few|two|three|four|five|some|these|those)\s+(?:(?:uh|um),?\s+)?(friend|student|vegetable|person|thing|parent|teacher|book|game|video|skill|country|city|subject|team|fan|kid|child)\b(?!s)/gi,'GRA','Sau many / some / a lot of… danh từ đếm được phải ở số nhiều.'],
+ [/\bmore\s+(good|bad|easy|happy|big|small|fast|cheap|nice|young|old|busy|funny)\b/gi,'GRA','So sánh hơn của tính từ ngắn: better, worse, easier, bigger…'],
+ [/\b(easy|easier|hard|harder|difficult|convenient)\s+for\s+(use|learn|do|make|understand|read)\b/gi,'GRA','Dùng “easy to use”, không phải “easy for use”.'],
+ [/\b(study|studies|studied|play|plays|played|speak|speaks|spoke|cook|cooks|work|works|sing|sings|write|writes)\s+(?:very\s+|so\s+)?good\b/gi,'GRA','Bổ nghĩa cho động từ dùng trạng từ: study well, play well.'],
+ [/\b(think|because|but|and|so)\s+is\s+(?!it\b|this\b|that\b|there\b)/gi,'GRA','Thiếu chủ ngữ: “I think it is…”, “because it is…”.'],
+ [/\b(more|very|so|too|quite)\s+(convenience|confidence|importance|difference|independence|happiness|success|danger|beauty|health|fun)\b(?!\s+(of|to|for|in))/gi,'LR','Dùng tính từ, không dùng danh từ: convenient, confident, important, different…'],
+ [/\bI\s+(?:(?:uh|um),?\s+)?(want|like|need|use|go|play)\s+(?:(?:uh|um),?\s+)?(go|play|use|eat|watch|study)\b(?<!\bgo play\b)/gi,'GRA','Hai động từ liền nhau: want to go, need to study, like playing.']
 ];
 let el=null,api=null,st={part:1,q:'',t:'',dur:'',p:'',res:null},rec=null,recT0=0,recTick=null;
 
@@ -98,16 +114,21 @@ const clamp=b=>Math.max(4,Math.min(8,Math.floor(b)));
 function all(rx,t){rx.lastIndex=0;const o=[];let m;while((m=rx.exec(t))){o.push({s:m.index,e:m.index+m[0].length,x:m[0]});if(!m[0].length)rx.lastIndex++}return o}
 
 function analyse(t,part,dur){
-  t=String(t||'').replace(/\[[^\]]*\]|\(\d+:\d+\)|\b\d{1,2}:\d{2}\b/g,' ').replace(/[ \t]+/g,' ').trim();
+  let asks=0,viet=0;
+  t=String(t||'').split(/\n/).filter(line=>{const l=line.trim();if(!l)return true;
+    if(/^(can|could) you (say|repeat|ask)|^(sorry,?\s*)?(pardon|could you repeat)|^let me (see|think)\.?$/i.test(l)){asks++;return false}
+    const nonA=(l.match(/[À-ỹ]/g)||[]).length,al=(l.match(/[A-Za-zÀ-ỹ]/g)||[]).length;if(al&&nonA/al>.12){viet++;return false}return true}).join('\n');
+  t=t.replace(/\[[^\]]*\]|\(\d+:\d+\)|\b\d{1,2}:\d{2}\b/g,' ').replace(/[ \t]+/g,' ').replace(/\n{3,}/g,'\n\n').trim();
   const W=words(t),n=W.length,lw=W.map(w=>w.toLowerCase());
   const fill=all(FILL,t),marks=all(MARK,t),chunks=all(CHUNK,t),basic=all(BASIC,t),subs=all(SUBR,t);
   const F_=String.raw`(?:\s*,?\s*(?:u+m+|u+h+|e+r+m*|a+h+),?)?\s*,?\s+`;
   const rep=all(new RegExp(String.raw`\b(\w+)(?:`+F_+String.raw`\1\b)+`,'gi'),t).filter(x=>!/^(very|really|so|no|bye|ha)\b/i.test(x.x)).concat(all(new RegExp(String.raw`\b(\w+(?: \w+){1,2})`+F_+String.raw`\1\b`,'gi'),t));
   const selfc=all(/\b(sorry|no wait|let me rephrase|what i mean is|i mean)\b|--|—/gi,t);
-  const errs=[];ERR.forEach(([rx,c,m])=>all(rx,t).forEach(h=>errs.push({...h,c,m})));
+  const errs=[];ERR.forEach(([rx,c,m])=>all(rx,t).forEach(h=>{if(!errs.some(e=>h.s<e.e&&e.s<h.e))errs.push({...h,c,m})}));
   const ands=(t.match(/\b(and|so|but)\b/gi)||[]).length;
   const tenses=TENSE.filter(([,rx])=>rx.test(t)).map(x=>x[0]);
-  const u3=lw.filter(w=>w.length>=3),guir=new Set(u3).size/Math.sqrt(Math.max(1,u3.length));
+  const tok=lw.filter(w=>!/^(u+m+|u+h+|e+r+m*|a+h+|h+m+)$/.test(w));let mattr=0;
+  if(tok.length<40)mattr=tok.length?new Set(tok).size/tok.length*.85:0;else{let a=0,c=0;for(let i=0;i+40<=tok.length;i++){a+=new Set(tok.slice(i,i+40)).size/40;c++}mattr=a/c}
   const longs=lw.filter(w=>w.length>=8).length/Math.max(1,n);
   const d=+dur||0,wpm=d>0?n/(d/60):null;
   const markSet=new Set(marks.map(m=>m.x.toLowerCase()));
@@ -126,18 +147,26 @@ function analyse(t,part,dur){
   if(per(ands,n)>7){FC-=.5;add('FC',0,'Nối câu chủ yếu bằng and / so / but ('+ands+' lần).')}
   /* LR */
   let LR=5;
-  if(guir>=7){LR+=1;add('LR',1,'Vốn từ đa dạng, ít lặp.')}else if(guir>=6){LR+=.5;add('LR',1,'Vốn từ khá đa dạng.')}else add('LR',0,'Từ vựng còn lặp lại nhiều.');
+  if(mattr>=.88){LR+=1.5;add('LR',1,'Vốn từ rất đa dạng, gần như không lặp.')}else if(mattr>=.82){LR+=1;add('LR',1,'Vốn từ đa dạng, ít lặp.')}else if(mattr>=.76){LR+=.5;add('LR',1,'Vốn từ khá đa dạng.')}else if(mattr<.70){LR-=.5;add('LR',0,'Từ vựng lặp lại nhiều, vòng quanh một số từ quen.')}else add('LR',0,'Từ vựng còn lặp lại khá nhiều.');
   if(longs>=.12){LR+=.5;add('LR',1,'Có nhiều từ dài, ít phổ biến.')}
   const cs=new Set(chunks.map(c=>c.x.toLowerCase()));
   if(cs.size>=4){LR+=1;add('LR',1,'Dùng cụm tự nhiên: '+[...cs].slice(0,4).join(', ')+'.')}else if(cs.size>=2){LR+=.5;add('LR',1,'Có cụm tự nhiên: '+[...cs].join(', ')+'.')}else add('LR',0,'Ít collocation, cụm nói tự nhiên (keen on, it depends on, from time to time…).');
   if(per(basic.length,n)>6){LR-=.5;const top={};basic.forEach(b=>{const k=b.x.toLowerCase();top[k]=(top[k]||0)+1});add('LR',0,'Lạm dụng từ cơ bản: '+Object.entries(top).sort((a,b)=>b[1]-a[1]).slice(0,4).map(([k,v])=>k+' ×'+v).join(', ')+'.')}
   const eL=errs.filter(e=>e.c==='LR').length;if(eL){LR-=Math.min(1.5,eL*.5);add('LR',0,eL+' lỗi dùng từ (xem chỗ tô đỏ).')}
+  const totD=per(errs.length,n);const capL=totD>5?5:totD>3?6:9;if(LR>capL){LR=capL;add('LR',0,'Nhiều lỗi dùng từ và lỗi chung nên LR bị giới hạn ở '+capL+'.')}
+  if(fp>12&&LR>5){LR=5;add('LR',0,'Phải ngập ngừng tìm từ rất thường xuyên: dấu hiệu vốn từ chưa đủ dùng.')}
   /* GRA */
-  let GRA=5;const sp=per(subs.length,n);
-  if(sp>=4){GRA+=1;add('GRA',1,'Nhiều câu phức (because, which, if, although…).')}else if(sp>=2){GRA+=.5;add('GRA',1,'Có câu phức nhưng chưa nhiều.')}else add('GRA',0,'Chủ yếu câu đơn: thêm because, which, although, if.');
-  if(tenses.length>=4){GRA+=1;add('GRA',1,'Đa dạng cấu trúc: '+tenses.join(', ')+'.')}else if(tenses.length>=3){GRA+=.5;add('GRA',1,'Có '+tenses.join(', ')+'.')}else{const miss=['hiện tại hoàn thành','câu điều kiện','so sánh','bị động'].filter(x=>!tenses.includes(x));add('GRA',0,'Ít cấu trúc'+(tenses.length?' (mới có '+tenses.join(', ')+')':'')+': thử thêm '+miss.slice(0,3).join(', ')+'.')}
-  const eG=errs.filter(e=>e.c==='GRA').length;if(eG){GRA-=Math.min(2,eG*.5);add('GRA',0,eG+' lỗi ngữ pháp (xem chỗ tô đỏ).')}
+  let GRA=5;const sp=per(subs.length,n),eGd=per(errs.filter(e=>e.c==='GRA').length,n),eLd=per(errs.filter(e=>e.c==='LR').length,n);
+  if(eGd>2.5){add('GRA',0,'Có thử câu phức (because, when, if…) nhưng đi kèm nhiều lỗi nên chưa được tính điểm cộng.')}
+  else if(sp>=4){GRA+=1;add('GRA',1,'Nhiều câu phức (because, which, if, although…).')}else if(sp>=2){GRA+=.5;add('GRA',1,'Có câu phức nhưng chưa nhiều.')}else add('GRA',0,'Chủ yếu câu đơn: thêm because, which, although, if.');
+  if(eGd>2.5){}else if(tenses.length>=4){GRA+=1;add('GRA',1,'Đa dạng cấu trúc: '+tenses.join(', ')+'.')}else if(tenses.length>=3){GRA+=.5;add('GRA',1,'Có '+tenses.join(', ')+'.')}else{const miss=['hiện tại hoàn thành','câu điều kiện','so sánh','bị động'].filter(x=>!tenses.includes(x));add('GRA',0,'Ít cấu trúc'+(tenses.length?' (mới có '+tenses.join(', ')+')':'')+': thử thêm '+miss.slice(0,3).join(', ')+'.')}
+  const eG=errs.filter(e=>e.c==='GRA').length;
+  if(eG){GRA-=Math.min(1.5,eG*.5);add('GRA',0,eG+' lỗi ngữ pháp ('+eGd.toFixed(1)+' lỗi / 100 từ), xem chỗ tô đỏ.')}else if(n>=40)add('GRA',1,'Máy không thấy lỗi ngữ pháp nào trong danh sách lỗi thường gặp.');
+  const capG=eGd>5?4:eGd>3?5:eGd>1.5?6:eGd>.7?7:9;if(GRA>capG){GRA=capG;add('GRA',0,'Mật độ lỗi cao nên GRA bị giới hạn ở '+capG+': lỗi lặp lại ở những cấu trúc cơ bản (chia động từ, mạo từ, số nhiều).')}
   if(errs.some(e=>e.c==='FC')){FC-=.5;add('FC',0,'Có lúc dừng để tìm cách nói (“how to say”).')}
+  if(asks>=3){FC-=.5;add('FC',0,'Xin nhắc lại câu hỏi '+asks+' lần (đã bỏ những dòng này khi chấm).')}else if(asks)add('FC',0,'Có '+asks+' lần xin nhắc lại câu hỏi (đã bỏ khi chấm).');
+  if(viet)add('FC',0,viet+' dòng tiếng Việt đã được bỏ qua khi chấm.');
+  if(fp>12)FC=Math.min(FC,4);else if(fp>8)FC=Math.min(FC,5);
   if(n<low)FC=Math.min(FC,5);else if(n<goal)FC=Math.min(FC,7);
   const crit={FC:clamp(FC),LR:clamp(LR),GRA:clamp(GRA)};
   return{t,n,wpm,fp,fill,marks,chunks,errs,rep,selfc,tenses,subs,crit,why,short:n<(part===2?90:25)};
