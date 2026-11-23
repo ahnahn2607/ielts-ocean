@@ -13,12 +13,12 @@ const Q={
 const LEN={1:[30,15,'2–4 câu, khoảng 30–60 từ'],2:[180,90,'nói đủ 1,5–2 phút, khoảng 180–300 từ'],3:[70,35,'4–6 câu, khoảng 70–130 từ']};
 const FILL=/\b(u+m+|u+h+|e+r+m*|a+h+|h+m+|m{2,}|you know|i mean)\b/gi;
 const MARK=/\b(well|actually|to be honest|honestly|the thing is|i'd say|i would say|on the other hand|for example|for instance|as a result|in fact|personally|besides|what's more|having said that|that said|apart from that|let me think|i guess|i suppose|anyway|in my opinion|to be fair|mainly because|which means)\b/gi;
-const CHUNK=/\b(to be honest|a bit of|i'm really into|i am really into|keen on|can't stand|it depends on|on the whole|a great deal of|make the most of|go out of my way|once in a blue moon|from time to time|every now and then|at the end of the day|when it comes to|in the long run|take up|get the hang of|pick up|look forward to|catch up with|come up with|figure out|run out of|end up|a piece of cake|hit the books|broaden my horizons|step out of my comfort zone|it's not my cup of tea|a waste of time|worth it|on a daily basis|as far as i know|to some extent|it goes without saying|the main reason is|i'd rather|i would rather|be more likely to|plays an important role|have a huge impact on|spend quality time)\b/gi;
+const CHUNK=/\b(to be honest|a bit of|i'm really into|i am really into|keen on|can't stand|it depends on|on the whole|a great deal of|make the most of|go out of my way|once in a blue moon|from time to time|every now and then|at the end of the day|when it comes to|in the long run|(?:take|took|taken|taking) up|(?:get|got|getting) the hang of|(?:pick|picked|picking) up|look(?:ed|ing)? forward to|catch(?:ing)? up with|caught up with|(?:come|came|coming) up with|figur(?:e|ed|ing) out|r(?:u|a)n out of|end(?:ed|ing)? up|a piece of cake|hit the books|broaden my horizons|step out of my comfort zone|it's not my cup of tea|a waste of time|worth it|on a daily basis|as far as i know|to some extent|it goes without saying|the main reason is|i'd rather|i would rather|be more likely to|plays an important role|have a huge impact on|spend quality time)\b/gi;
 const BASIC=/\b(good|bad|nice|very|a lot|thing|things|stuff|interesting|happy|big|many|beautiful)\b/gi;
 const SUBR=/\b(because|although|though|while|whereas|which|who|whose|whom|if|unless|when|whenever|since|as soon as|so that|even though|in order to|not only|whether|until|before|after)\b/gi;
 const TENSE=[
  ['quá khứ đơn',/\b(was|were|did|went|had|got|made|saw|took|came|felt|thought|said|bought|told|became|left|began|knew|found|gave|ate|wrote|spent|met|tried|started|decided|moved|learned|learnt|visited)\b/i],
- ['hiện tại hoàn thành',/\b(have|has|i've|we've|they've|you've|she's|he's)\s+(been|done|seen|gone|had|made|taken|known|got|gotten|become|written|eaten|met|spent|tried|learned|learnt|lived|worked|visited|never|always|just|already|\w+ed)\b/i],
+ ['hiện tại hoàn thành',/\b(have|has|i've|we've|they've|you've|she's|he's)\s+(been|done|seen|gone|had|made|taken|known|got|gotten|become|written|eaten|met|spent|tried|learned|learnt|lived|worked|visited|never|always|just|already|taught|bought|brought|thought|found|given|kept|left|lost|read|said|told|felt|heard|built|won|grown|chosen|spoken|forgotten|driven|broken|begun|\w+ed)\b/i],
  ['tương lai',/\b(will|i'll|we'll|they'll|going to|gonna)\b/i],
  ['câu điều kiện',/\bif\b[^.?!]{0,80}\b(would|i'd|could|might|will)\b|\b(would|could) have\b/i],
  ['bị động',/\b(is|are|was|were|be|been|being)\s+(\w+ed|made|done|built|known|given|taken|seen|taught|written|held)\b/i],
@@ -101,7 +101,8 @@ function analyse(t,part,dur){
   t=String(t||'').replace(/\[[^\]]*\]|\(\d+:\d+\)|\b\d{1,2}:\d{2}\b/g,' ').replace(/[ \t]+/g,' ').trim();
   const W=words(t),n=W.length,lw=W.map(w=>w.toLowerCase());
   const fill=all(FILL,t),marks=all(MARK,t),chunks=all(CHUNK,t),basic=all(BASIC,t),subs=all(SUBR,t);
-  const rep=all(/\b(\w+)(\s*,?\s+\1\b)+/gi,t).filter(x=>!/^(very|really|so|no|bye|ha)\b/i.test(x.x)).concat(all(/\b(\w+ \w+)\s*,?\s+\1\b/gi,t));
+  const F_=String.raw`(?:\s*,?\s*(?:u+m+|u+h+|e+r+m*|a+h+),?)?\s*,?\s+`;
+  const rep=all(new RegExp(String.raw`\b(\w+)(?:`+F_+String.raw`\1\b)+`,'gi'),t).filter(x=>!/^(very|really|so|no|bye|ha)\b/i.test(x.x)).concat(all(new RegExp(String.raw`\b(\w+(?: \w+){1,2})`+F_+String.raw`\1\b`,'gi'),t));
   const selfc=all(/\b(sorry|no wait|let me rephrase|what i mean is|i mean)\b|--|—/gi,t);
   const errs=[];ERR.forEach(([rx,c,m])=>all(rx,t).forEach(h=>errs.push({...h,c,m})));
   const ands=(t.match(/\b(and|so|but)\b/gi)||[]).length;
@@ -137,6 +138,7 @@ function analyse(t,part,dur){
   if(tenses.length>=4){GRA+=1;add('GRA',1,'Đa dạng cấu trúc: '+tenses.join(', ')+'.')}else if(tenses.length>=3){GRA+=.5;add('GRA',1,'Có '+tenses.join(', ')+'.')}else{const miss=['hiện tại hoàn thành','câu điều kiện','so sánh','bị động'].filter(x=>!tenses.includes(x));add('GRA',0,'Ít cấu trúc'+(tenses.length?' (mới có '+tenses.join(', ')+')':'')+': thử thêm '+miss.slice(0,3).join(', ')+'.')}
   const eG=errs.filter(e=>e.c==='GRA').length;if(eG){GRA-=Math.min(2,eG*.5);add('GRA',0,eG+' lỗi ngữ pháp (xem chỗ tô đỏ).')}
   if(errs.some(e=>e.c==='FC')){FC-=.5;add('FC',0,'Có lúc dừng để tìm cách nói (“how to say”).')}
+  if(n<low)FC=Math.min(FC,5);else if(n<goal)FC=Math.min(FC,7);
   const crit={FC:clamp(FC),LR:clamp(LR),GRA:clamp(GRA)};
   return{t,n,wpm,fp,fill,marks,chunks,errs,rep,selfc,tenses,subs,crit,why,short:n<(part===2?90:25)};
 }
