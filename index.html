@@ -364,6 +364,7 @@ footer{color:var(--mute);font-size:13px;text-align:center;padding:30px 16px 50px
       </div>
 
       <div id="wtestView" hidden></div>
+      <div id="speakView" hidden></div>
 
       <div id="vocabView" hidden>
         <section id="vLib">
@@ -408,8 +409,9 @@ footer{color:var(--mute);font-size:13px;text-align:center;padding:30px 16px 50px
 
 <script src="bands.js?v=2" defer></script>
 <script src="placement.js?v=1" defer></script>
-<script src="home.js?v=2" defer></script>
+<script src="home.js?v=3" defer></script>
 <script src="wtest.js?v=5" defer></script>
+<script src="speak.js?v=1" defer></script>
 <script type="module">
 /* ====== DÁN CẤU HÌNH FIREBASE CỦA BẠN VÀO ĐÂY ====== */
 const FIREBASE_CONFIG = {
@@ -493,11 +495,11 @@ function stats(){
 }
 const NAV=[['Tất cả','Tổng quan','tong-quan'],['Listening','Listening','listening'],['Reading','Reading','reading'],['Writing','Writing','writing'],['Speaking','Speaking','speaking'],['Từ vựng','Từ vựng','tu-vung'],['Công cụ của tôi','Công cụ','cong-cu']];
 function chips(){
-  const act=view==='dictation'?'Listening':view==='vocab'?'Từ vựng':view==='wtest'?'Writing':filter;
+  const act=view==='dictation'?'Listening':view==='vocab'?'Từ vựng':view==='wtest'?'Writing':view==='speak'?'Speaking':filter;
   $('nav').innerHTML=NAV.map(([f,l])=>`<button type="button" class="navlink" data-f="${esc(f)}"${f===act?' aria-current="page"':''}>${esc(l)}</button>`).join('');
 }
 function setHash(){
-  const h=view==='dictation'?'dictation':view==='vocab'?'tu-vung':view==='wtest'?'writing-test':filter==='Từ vựng'?'nguon-tu-vung':(NAV.find(n=>n[0]===filter)||NAV[0])[2];
+  const h=view==='dictation'?'dictation':view==='vocab'?'tu-vung':view==='wtest'?'writing-test':view==='speak'?'cham-speaking':filter==='Từ vựng'?'nguon-tu-vung':(NAV.find(n=>n[0]===filter)||NAV[0])[2];
   try{history.replaceState(null,'',h==='tong-quan'?location.pathname+location.search:'#'+h)}catch(e){}
 }
 function fmt(d){if(!d)return'';const [y,m,dd]=d.split('-');return`${dd}/${m}`}
@@ -695,7 +697,7 @@ $('cancelBtn').onclick=closeEditor;
 $('form').addEventListener('submit',e=>{e.preventDefault();$('saveBtn').click()});
 ['fName','fUrl'].forEach(id=>$(id).addEventListener('input',()=>{$('fErr').textContent=''}));
 $('addBtn').onclick=()=>openEditor(null);
-$('nav').addEventListener('click',e=>{const b=e.target.closest('.navlink');if(!b)return;filter=b.dataset.f;if((view==='dictation'&&filter==='Listening')||(view==='vocab'&&filter==='Từ vựng')||(view==='wtest'&&filter==='Writing')){chips();return}if(filter==='Từ vựng'){setView('vocab');return}setView('sources');render();b.scrollIntoView({block:'nearest',inline:'center'})});
+$('nav').addEventListener('click',e=>{const b=e.target.closest('.navlink');if(!b)return;filter=b.dataset.f;if((view==='dictation'&&filter==='Listening')||(view==='vocab'&&filter==='Từ vựng')||(view==='wtest'&&filter==='Writing')||(view==='speak'&&filter==='Speaking')){chips();return}if(filter==='Từ vựng'){setView('vocab');return}setView('sources');render();b.scrollIntoView({block:'nearest',inline:'center'})});
 $('brand').addEventListener('click',e=>{e.preventDefault();filter='Tất cả';setView('sources');render();window.scrollTo({top:0,behavior:'smooth'})});
 $('q').addEventListener('input',e=>{query=e.target.value;render()});
 $('list').addEventListener('change',e=>{
@@ -730,13 +732,14 @@ $('io').addEventListener('input',()=>{$('ioErr').textContent=''});
 $('resetBtn').onclick=()=>{const old=items;items=clone(SAMPLE);save();render();toast('Đã khôi phục dữ liệu mẫu',()=>{items=old;save();render()})};
 
 /* ---------- Chuyển mục ---------- */
-const SUBS={'Writing':[['sources','Nguồn luyện đề'],['wtest','Bài test Writing']],'Listening':[['sources','Nguồn luyện đề'],['dictation','Dictation']],'Từ vựng':[['vocab','Học từ vựng'],['sources','Nguồn & bộ thẻ']]};
+const SUBS={'Speaking':[['sources','Nguồn luyện đề'],['speak','Chấm Speaking']],'Writing':[['sources','Nguồn luyện đề'],['wtest','Bài test Writing']],'Listening':[['sources','Nguồn luyện đề'],['dictation','Dictation']],'Từ vựng':[['vocab','Học từ vựng'],['sources','Nguồn & bộ thẻ']]};
 function setView(v){
-  view=v;if(v==='dictation')filter='Listening';if(v==='vocab')filter='Từ vựng';if(v==='wtest')filter='Writing';
+  view=v;if(v==='dictation')filter='Listening';if(v==='vocab')filter='Từ vựng';if(v==='wtest')filter='Writing';if(v==='speak')filter='Speaking';
   const subs=SUBS[filter];$('subtabs').hidden=!subs;
   $('subtabs').innerHTML=subs?subs.map(([k,l])=>`<button class="sub" role="tab" type="button" data-v="${k}" aria-selected="${k===v}">${esc(l)}</button>`).join(''):'';
   document.querySelectorAll('.srcOnly').forEach(el=>el.hidden=v!=='sources');
-  $('sourcesView').hidden=v!=='sources';$('dictView').hidden=v!=='dictation';$('vocabView').hidden=v!=='vocab';$('wtestView').hidden=v!=='wtest';
+  $('sourcesView').hidden=v!=='sources';$('dictView').hidden=v!=='dictation';$('vocabView').hidden=v!=='vocab';$('wtestView').hidden=v!=='wtest';$('speakView').hidden=v!=='speak';
+  if(v==='speak'&&window.IOSpeak)window.IOSpeak.render($('speakView'),{get:()=>vprog.__speak||[],set:L=>{vprog.__speak=L;save()},bandsGet:()=>vprog.__bands||{},bandsSet:b=>{vprog.__bands=b;const r=$('rules');if(r)r._v=null;save()},log:()=>{logStudy('sp');save()}});
   if(v==='wtest'&&window.IOWTest)window.IOWTest.render($('wtestView'),{fb:()=>fb,user:()=>user,mode:()=>mode,toast:m=>toast(m),login:()=>{lsSet(MODE_KEY,null);mode=null;items=[];showAuth()}});
   if(v==='dictation'){if(!cur)showLib()}else stopPlayer();
   if(v==='vocab'&&!vCur)showVLib();
@@ -748,11 +751,12 @@ function routeFromHash(){
   const h=location.hash.slice(1);
   if(h==='dictation'){setView('dictation');return}
   if(h==='writing-test'){setView('wtest');return}
+  if(h==='cham-speaking'){setView('speak');return}
   if(h==='hoc-tu-vung'||h==='tu-vung'){setView('vocab');return}
   if(h==='nguon-tu-vung'){filter='Từ vựng';setView('sources');return}
   const n=NAV.find(x=>x[2]===h);filter=n?n[0]:'Tất cả';if(filter==='Từ vựng'){setView('vocab');return}setView('sources');
 }
-window.addEventListener('hashchange',()=>{const h=location.hash.slice(1);if(!['dictation','writing-test','hoc-tu-vung','tu-vung','nguon-tu-vung',...NAV.map(x=>x[2])].includes(h))return;
+window.addEventListener('hashchange',()=>{const h=location.hash.slice(1);if(!['dictation','writing-test','cham-speaking','hoc-tu-vung','tu-vung','nguon-tu-vung',...NAV.map(x=>x[2])].includes(h))return;
   routeFromHash();const b=document.querySelector('.bar');b&&b.scrollIntoView({behavior:'smooth',block:'start'})});
 
 /* ---------- Dictation ---------- */

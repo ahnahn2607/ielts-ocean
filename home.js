@@ -154,7 +154,7 @@ function renderToday(){
   const noPref=!p.prefs||!Object.keys(p.prefs).length;
   const k=streak(),t0=new Date(),strip=[];
   for(let i=13;i>=0;i--){const d=new Date(t0);d.setDate(d.getDate()-i);const key=dkey(d);strip.push(`<span title="${d.toLocaleDateString('vi-VN')}"><i class="${studied(k.days,key)?'on':''}${i===0?' td':''}"></i>${i===0?'Nay':d.getDate()}</span>`)}
-  const td=k.days[dkey(t0)]||{},bits=[td.d?td.d+' câu dictation':'',td.v?td.v+' lượt từ vựng':'',td.s?td.s+' bài đã tick':'',td.x?'học ngoài web':''].filter(Boolean);
+  const td=k.days[dkey(t0)]||{},bits=[td.d?td.d+' câu dictation':'',td.v?td.v+' lượt từ vựng':'',td.s?td.s+' bài đã tick':'',td.sp?td.sp+' lượt chấm speaking':'',td.x?'học ngoài web':''].filter(Boolean);
   const msg=k.today?'Hôm nay: '+bits.join(' · '):k.cur?'Học một chút hôm nay để giữ chuỗi '+k.cur+' ngày.':'Làm một việc bất kỳ bên dưới để bắt đầu chuỗi ngày học.';
   b.innerHTML=`<div class="sbox"><div><b style="font-size:15px">${esc(msg)}</b><div class="strk" style="margin-top:8px" aria-label="14 ngày gần nhất">${strip.join('')}</div></div>
     <button class="btn" type="button" data-off style="height:38px">${td.x?'Bỏ đánh dấu học ngoài web':'Hôm nay tôi học ngoài web'}</button></div>
