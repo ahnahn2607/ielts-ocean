@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>IELTS Ocean</title>
+<title>Mossy English</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fleur+De+Leah&family=Sansita+Swashed:wght@600;800&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ole&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,400&display=swap">
 <style>
 html,body{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M4.5 3.5 L11.5 9.2 Q16 8 20.5 9.2 L27.5 3.5 L27.8 15 Q29.5 19.5 27 23.5 Q23 29 16 29 Q9 29 5 23.5 Q2.5 19.5 4.2 15 Z' fill='%230d0d14' stroke='%23E6F4FF' stroke-width='1.6' stroke-linejoin='round'/%3E%3Cpath d='M7 7 L10.5 9.8 L7.4 11.6 Z M25 7 L21.5 9.8 L24.6 11.6 Z' fill='%23ff9bb8' opacity='.75'/%3E%3Cellipse cx='11.3' cy='17.3' rx='2.7' ry='3.1' fill='%237FD1FF'/%3E%3Cellipse cx='20.7' cy='17.3' rx='2.7' ry='3.1' fill='%237FD1FF'/%3E%3Cellipse cx='11.3' cy='17.5' rx='.9' ry='2.3' fill='%23050B2E'/%3E%3Cellipse cx='20.7' cy='17.5' rx='.9' ry='2.3' fill='%23050B2E'/%3E%3Cpath d='M14.9 22 H17.1 L16 23.4 Z' fill='%23ff9bb8'/%3E%3Cpath d='M16 23.4 Q15 25 13.6 24.6 M16 23.4 Q17 25 18.4 24.6' stroke='%23E6F4FF' stroke-width='.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") 16 16,auto}
 a,button,select,summary,label,[role=tab],.chip,.navlink,.card a,input[type=checkbox],input[type=radio],input[type=date],.wt-row{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M4.5 3.5 L11.5 9.2 Q16 8 20.5 9.2 L27.5 3.5 L27.8 15 Q29.5 19.5 27 23.5 Q23 29 16 29 Q9 29 5 23.5 Q2.5 19.5 4.2 15 Z' fill='%230d0d14' stroke='%23E6F4FF' stroke-width='1.6' stroke-linejoin='round'/%3E%3Cpath d='M7 7 L10.5 9.8 L7.4 11.6 Z M25 7 L21.5 9.8 L24.6 11.6 Z' fill='%23ff9bb8' opacity='.75'/%3E%3Cellipse cx='11.3' cy='17.3' rx='2.7' ry='3.1' fill='%23FFD166'/%3E%3Cellipse cx='20.7' cy='17.3' rx='2.7' ry='3.1' fill='%23FFD166'/%3E%3Cellipse cx='11.3' cy='17.5' rx='.9' ry='2.3' fill='%23050B2E'/%3E%3Cellipse cx='20.7' cy='17.5' rx='.9' ry='2.3' fill='%23050B2E'/%3E%3Cpath d='M14.9 22 H17.1 L16 23.4 Z' fill='%23ff9bb8'/%3E%3Cpath d='M16 23.4 Q15 25 13.6 24.6 M16 23.4 Q17 25 18.4 24.6' stroke='%23E6F4FF' stroke-width='.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") 16 16,pointer}
@@ -199,7 +199,7 @@ footer{color:var(--mute);font-size:13px;text-align:center;padding:30px 16px 50px
 h1,h2,h3,p,li,b,span,a,label{overflow-wrap:anywhere}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}.card:hover,.btn:hover,.stat:hover{transform:none}.jf,.bub,.bigjf,.jf .bell{animation:none}.bub{display:none}}
 </style>
-<link rel="stylesheet" href="theme.css?v=4">
+<link rel="stylesheet" href="theme.css?v=6">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -243,7 +243,7 @@ h1,h2,h3,p,li,b,span,a,label{overflow-wrap:anywhere}
 
 <section class="auth" id="authScreen">
   <div class="authcard">
-    <h1>IELTS Ocean</h1>
+    <h1>Mossy English</h1>
     <p class="lede">Đăng nhập để lưu tiến độ và mở trên mọi máy.</p>
     <p class="loading" id="authLoading">Đang kết nối…</p>
     <div id="authBody" hidden>
@@ -272,43 +272,27 @@ h1,h2,h3,p,li,b,span,a,label{overflow-wrap:anywhere}
 </section>
 
 <main id="app" hidden>
-  <header class="band hero">
-    <div class="wrap win">
-      <div class="pane pane-title">
-        <svg class="flo tl" aria-hidden="true"><use href="#flo"/></svg><svg class="flo tr" aria-hidden="true"><use href="#flo"/></svg>
-        <svg class="flo bl" aria-hidden="true"><use href="#flo"/></svg><svg class="flo br" aria-hidden="true"><use href="#flo"/></svg>
-        <span class="spark s1" aria-hidden="true">✦</span><span class="spark s2" aria-hidden="true">✧</span><span class="spark s3" aria-hidden="true">✦</span><span class="spark s4" aria-hidden="true">♡</span>
-        <h1>IELTS Ocean</h1>
-        <p class="slogan">Don’t rush · từng ngày một</p>
-        <p class="lede">Mọi nguồn luyện đề, từ vựng và công cụ học IELTS của bạn, gom về một chỗ. Bấm là mở, làm xong thì tick và ghi điểm.</p>
-        <div class="stats" id="stats"></div>
-        <span class="film" data-film aria-hidden="true"></span>
-      </div>
-      <aside class="pane pane-sign" aria-label="Lộ trình các kỹ năng">
-        <div class="sign">
-          <p class="sign-top">Tuyến IELTS</p>
-          <p class="sign-no">★</p>
-          <ol class="route">
-            <li><a href="#listening">Listening<span>Dictation, đề nghe</span></a></li>
-            <li><a href="#reading">Reading<span>Đề đọc</span></a></li>
-            <li><a href="#writing">Writing<span>Bài test, Mắt Xích</span></a></li>
-            <li><a href="#speaking">Speaking<span>Chấm từ transcript</span></a></li>
-            <li><a href="#tu-vung">Từ vựng<span>40 từ mỗi bài</span></a></li>
-          </ol>
-          <p class="sign-foot">Không chen lấn. Học đều mỗi ngày.</p>
-        </div>
-      </aside>
-    </div>
+ <div class="shell">
+  <aside class="side">
+    <a class="brand" href="#" id="brand">Mossy English</a>
+    <p class="brand-sub">Một góc yên tĩnh để lớn lên</p>
+    <div class="acct" id="acct"></div>
+    <p class="nav-label">Góc học của bạn</p>
+    <nav class="nav" id="nav" aria-label="Chọn kỹ năng"></nav>
+    <div class="side-streak" id="sideStreak"><small>Từng chút một</small><strong>0 ngày</strong><p>Bắt đầu chuỗi bằng một bài nhỏ hôm nay.</p></div>
+  </aside>
+  <div class="mainc">
+  <div class="topbar"><span class="crumb" id="crumb">Góc học của bạn / <b>Tổng quan</b></span><span class="tdate" id="tdate"></span></div>
+  <header class="mhero homeOnly">
+    <h1>Mỗi ngày một chút, <em>tiến bộ đều.</em></h1>
+    <p class="subtitle">Một góc yên tĩnh cho hành trình IELTS của bạn. Hít một hơi, rồi làm bước nhỏ tiếp theo.</p>
+    <section class="photo">
+      <img class="photo-img" src="img/hero.webp" alt="Nắng xuyên qua tán lá bên khung cửa sổ">
+      <div class="photo-copy"><div class="eyebrow">Gợi ý hôm nay · 25 phút</div><h2>Describe a place you love to spend time in.</h2><p>Luyện một câu trả lời Speaking tự nhiên, có chi tiết giác quan, từ vựng chính xác và thêm chút tự tin.</p><a class="cta" href="#cham-speaking">Luyện Speaking hôm nay ↗</a></div>
+      <div class="photo-label">SPEAKING · PART 2</div>
+    </section>
+    <div class="stats" id="stats"></div>
   </header>
-
-  <div class="bar">
-    <div class="wrap navwrap">
-      <a class="brand" href="#" id="brand">IELTS Ocean</a>
-      <nav class="nav" id="nav" aria-label="Chọn kỹ năng"></nav>
-      <div class="acct" id="acct"></div>
-    </div>
-  </div>
-
   <div class="band" style="padding-top:22px">
     <div class="wrap">
       <div class="subtabs" id="subtabs" role="tablist" hidden></div>
@@ -441,12 +425,19 @@ h1,h2,h3,p,li,b,span,a,label{overflow-wrap:anywhere}
       </details>
     </div>
   </div>
-  <footer>IELTS Ocean · lặn sâu mỗi ngày một chút</footer>
+  <section class="koi homeOnly">
+    <img class="koi-img" src="img/pond.webp" alt="Cá koi cam trắng bơi trong hồ nước xanh có nắng" loading="lazy">
+    <div class="koi-copy"><small>Một phút dừng lại</small><h3>Gặp nhau bên hồ cá koi.</h3><p>Để nắng nhảy trên mặt nước. Nghỉ một phút cho đầu óc thông thoáng, rồi quay lại học tiếp.</p></div>
+    <div class="koi-chip">CHẬM LẠI · HÍT THỞ · LỚN LÊN</div>
+  </section>
+  <footer><span>© Mossy English · học theo nhịp của bạn</span><span>Bước nhỏ vẫn là bước tiến.</span></footer>
+  </div>
+ </div>
 </main>
 <div id="toastBox"></div>
 
 <script>
-(function(){function f(){var d=new Date(),p=function(n){return String(n).padStart(2,'0')};var t="'"+String(d.getFullYear()).slice(2)+" "+p(d.getMonth()+1)+" "+p(d.getDate());document.querySelectorAll('[data-film]').forEach(function(e){e.textContent=t})}document.addEventListener('DOMContentLoaded',f);setInterval(f,60000)})();
+(function(){function f(){var d=new Date(),p=function(n){return String(n).padStart(2,'0')};var t="'"+String(d.getFullYear()).slice(2)+" "+p(d.getMonth()+1)+" "+p(d.getDate());document.querySelectorAll('[data-film]').forEach(function(e){e.textContent=t});var td=document.getElementById('tdate');if(td){var W=['Chủ Nhật','Thứ Hai','Thứ Ba','Thứ Tư','Thứ Năm','Thứ Sáu','Thứ Bảy'];td.textContent=W[d.getDay()]+', '+d.getDate()+' tháng '+(d.getMonth()+1)}}document.addEventListener('DOMContentLoaded',f);setInterval(f,60000)})();
 </script>
 <script src="bands.js?v=3" defer></script>
 <script src="placement.js?v=2" defer></script>
@@ -538,6 +529,8 @@ const NAV=[['Tất cả','Tổng quan','tong-quan'],['Listening','Listening','li
 function chips(){
   const act=view==='dictation'?'Listening':view==='vocab'?'Từ vựng':view==='wtest'?'Writing':view==='speak'?'Speaking':filter;
   $('nav').innerHTML=NAV.map(([f,l])=>`<button type="button" class="navlink" data-f="${esc(f)}"${f===act?' aria-current="page"':''}>${esc(l)}</button>`).join('');
+  document.body.classList.toggle('is-home',view==='sources'&&filter==='Tất cả');
+  {const cb=$('crumb'),n=NAV.find(x=>x[0]===act);if(cb)cb.innerHTML='Góc học của bạn / <b>'+esc(n?n[1]:act)+'</b>'}
 }
 function setHash(){
   const h=view==='dictation'?'dictation':view==='vocab'?'tu-vung':view==='wtest'?'writing-test':view==='speak'?'cham-speaking':filter==='Từ vựng'?'nguon-tu-vung':filter==='Listening'?'nguon-listening':(NAV.find(n=>n[0]===filter)||NAV[0])[2];

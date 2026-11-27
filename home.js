@@ -143,6 +143,7 @@ function render(target,api){
     <div id="hmBody"></div>
   </section>`;
   el.querySelector('.tabs').onclick=e=>{const b=e.target.closest('[data-hm]');if(!b)return;tab=b.dataset.hm;render(el,io)};
+  {const ss=document.getElementById('sideStreak');if(ss){const k=streak();ss.querySelector('strong').textContent=k.cur+' ngày';ss.querySelector('p').textContent=k.cur?(k.today?'Hôm nay bạn đã học rồi. Mai quay lại nhé.':'Học một chút hôm nay để giữ chuỗi.'):'Bắt đầu chuỗi bằng một bài nhỏ hôm nay.'}}
   document.querySelectorAll('.sign-no').forEach(x=>{x.textContent=ov!=null?ov.toFixed(1):'★';x.title=ov!=null?'Band mục tiêu của bạn':'Đặt band mục tiêu ở tab Mục tiêu'});
   ({today:renderToday,goals:renderGoals,prefs:renderPrefs,test:renderTest})[tab]();
   clearInterval(timer);
