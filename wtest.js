@@ -89,94 +89,160 @@ const RX=[
  [/\b\d+(\.\d+)?\s+(millions|thousands|hundreds|billions)\b/gi,'LR','Sau con số, million/thousand không thêm -s.'],
  [/\bpercents\b/gi,'LR','percent không thêm -s.'],
  [/\b(depend(s|ed|ing)?\s+(of|in)|discuss(es|ed|ing)?\s+about|emphasi[sz]e(s|d)?\s+on|interested\s+(on|about)|responsible\s+of|according\s+with)\b/gi,'LR','Sai giới từ đi kèm.'],
- [/\b\w+n't\b|\b\w+'(re|ve|ll|d)\b|\bI'm\b/g,'LR','Viết tắt là văn nói; bài thi nên viết đầy đủ.'],
+ [/\b\w+n't\b|\b\w+'(re|ve|ll|d)\b|\b[Ii]'?m\b(?=\s)/g,'LR','Viết tắt là văn nói; bài thi viết đầy đủ (I am, do not…).'],
  [/\b(more|less)\s+(bigger|smaller|higher|lower|larger|greater|better|worse|easier|cheaper|faster|stronger|longer|wider|richer|poorer|younger|older|smarter|happier|healthier)\b/gi,'GRA','So sánh kép: bỏ more/less.'],
  [/\bthe\s+most\s+\w+est\b/gi,'GRA','So sánh nhất kép.'],
+ [/\b(a|an)\s+(highest|lowest|largest|smallest|biggest|greatest|most|least)\b/gi,'GRA','So sánh nhất đi với “the”: the highest, the lowest.'],
  [/\b(can|could|will|would|should|may|might|must)\s+(can|could|will|would|should|may|might|must)\b/gi,'GRA','Hai động từ khuyết thiếu liền nhau.'],
  [/\b(must|can|should|will|could|would|may|might)\s+to\s+\w+/gi,'GRA','Sau modal không dùng to.'],
- [/\bpeople\s+(is|was|has|does)\b/gi,'GRA','people là số nhiều.'],
- [/\b(he|she|it)\s+(have|do|are|were|don't)\b/gi,'GRA','Hòa hợp chủ ngữ số ít với động từ.'],
- [/,\s+(it|this|they|these|there)\s+(is|are|was|were|has|have|will|can)\b/gi,'GRA','Có thể là comma splice: hai mệnh đề nối chỉ bằng dấu phẩy.'],
- [/(^|[.!?]\s+)[a-z]/g,'GRA','Đầu câu phải viết hoa.'],
- [/\si\s/g,'GRA','Đại từ I phải viết hoa.']
+ [/\bpeople\s+(is|was|has|does)\b/gi,'GRA','people là số nhiều: people are / were / have.'],
+ [/(?<!\b(?:did|does|do|can|could|will|would|should|might|must|may|to|let|make|made|help|why|how|when|where|what)\s)\b(he|she|it|my teacher|the leader|a leader|this leader|my mother|my father|this nation|this country|the government|everyone|everybody|someone|nobody|the team)\s+(have|do|go|say|give|teach|wear|make|want|like|need|know|think|feel|look|seem|use|take|tell|work|study|become|show|start|remain|stay|increase|decrease|rise|fall|don't)\b/gi,'GRA','Chủ ngữ số ít: động từ thêm -s / -es (has, needs, gives…), hoặc chia quá khứ.'],
+ [/(?<!\b(?:will|would|can|could|should|might|must|may|to|not|cannot|and|or|also|never|always|it'll)\s)\b(nation|country|it|he|she|this|that|which|who|they|we|I|figure|figures|rate|rates|percentage|proportion|Iceland|Canada|Germany|Chile|Turkey)\s+(?:still\s+|also\s+|always\s+)?be\s+(?!able\b)/gi,'GRA','Động từ to be chưa chia: is / are / was / were.'],
+ [/\b(this|that)\s+(?!(?:\w*ss|\w*us|\w*is|news|series|species|means|process|basis|analysis|crisis|bus|gas|status|plus)\b)\w{3,}s\b(?!\s+(is|was|has)\b)/gi,'GRA','this/that đi với danh từ số ít; số nhiều dùng these/those.'],
+ [/\b(these|those)\s+(nation|country|figure|rate|year|period|group|person|student|leader|quality|trend|change)\b(?!s)/gi,'GRA','these/those đi với danh từ số nhiều.'],
+ [/\ban\s+(?!(?:hour\w*|honest\w*|honou?r\w*|heir\w*|uh|um)\b)(?=[b-df-hj-np-tv-z])\w+/gi,'GRA','Trước phụ âm dùng “a”: a steady, a red, a video.'],
+ [/\ba\s+(?!(?:uni\w*|use\w*|usu\w*|euro\w*|one|once|u)\b)(?=[aeiou])\w+/gi,'GRA','Trước nguyên âm dùng “an”.'],
+ [/\b(make|makes|made|making|let|lets)\s+(?:\w+\s+){1,2}to\s+(?!be\b)\w+/gi,'GRA','make / let + O + V nguyên mẫu, không có to: make people work.'],
+ [/\b(need|needs|want|wants|have|has|able|going)\s+to\s+(good|bad|happy|confident|able|important|better|careful|responsible|smart|intelligent|honest|clever|kind)\b/gi,'GRA','Thiếu “be”: need to be good, want to be confident.'],
+ [/\b(like|likes|love|loves|hate|hates|enjoy|enjoys)\s+(eat|play|go|watch|use|read|study|cook|work|do|make|help|lead)\b/gi,'GRA','Sau like/love/enjoy dùng V-ing hoặc to V.'],
+ [/\bmore\s+(good|bad|easy|happy|big|small|fast|cheap|nice|young|old|busy|smart)\b/gi,'GRA','So sánh hơn của tính từ ngắn: better, easier, bigger…'],
+ [/\b(work|works|worked|study|studies|studied|play|plays|perform|performs|do|does|did)\s+(very\s+|so\s+)?(perfect|good|bad|quick|careful|effective|flexible)\b(?!\s+(job|work|results?|team))/gi,'GRA','Bổ nghĩa cho động từ dùng trạng từ: work perfectly, study well.'],
+ [/,\s+(it|this|they|these|there|he|she|i|we|my|the leader)\s+(is|are|was|were|has|have|will|can|need|needs|know|do|did|showed|recorded)\b/gi,'GRA','Có thể là comma splice: hai mệnh đề nối chỉ bằng dấu phẩy, nên tách câu hoặc dùng từ nối.'],
+ [/\brated\s+(?:about|roughly|around|approximately|at|nearly|almost)?\s*\d/gi,'LR','“rated” không dùng để nói đạt mức: dùng stood at / reached / was.'],
+ [/(^|[.!?]\s*)[a-z]/g,'GRA','Đầu câu phải viết hoa.'],
+ [/(^|[\s,(])i(?=[\s,.'’])/g,'GRA','Đại từ I phải viết hoa.'],
+ [/[,.;:!?](?=[A-Za-z])/g,'GRA','Thiếu dấu cách sau dấu câu.']
 ];
 const RX1=[
  [/\b(rank(ed|s)?|first place|second place|third place|surpass(ed|es)?|overtook|overtake|won|win|beat)\b/gi,'TA','Giọng "đua xe" trong Task 1: dùng ngôn ngữ báo cáo (was the highest, had the largest share…).'],
- [/\b(I think|I believe|in my opinion|in my view)\b/gi,'TA','Task 1 không đưa ý kiến cá nhân.']
+ [/\b(I think|I believe|in my opinion|in my view)\b/gi,'TA','Task 1 không đưa ý kiến cá nhân.'],
+ [/\b(Iceland|Canada|Germany|Chile|Turkey|it|this nation|this country|the figure|the rate)\s+(shows|has|is|increases|decreases|remains|stays|rises|falls|records|starts)\b/gi,'GRA','Số liệu 2003–2009 là quá khứ: dùng thì quá khứ (was, rose, remained…).']
 ];
+/* lỗi kiểu hệ thống chỉ tính tối đa 3 lần vào mật độ lỗi */
+const SYS=['Đầu câu phải viết hoa.','Đại từ I phải viết hoa.','Thiếu dấu cách sau dấu câu.','Viết tắt là văn nói; bài thi viết đầy đủ (I am, do not…).'];
 const LINK=/^(firstly|secondly|thirdly|first of all|moreover|furthermore|in addition|additionally|besides|however|therefore|thus|hence|finally|lastly|also|on the other hand)\b/i;
-const SUB=/\b(which|who|whom|whose|that|because|although|though|while|whereas|if|unless|when|since|as|so that|despite|in order to|not only)\b/i;
+const SUB=/\b(which|who|whom|whose|because|although|though|while|whereas|if|unless|when|since|so that|despite|in order to|not only|before|after)\b|,\s+\w+ing\b/i;
 const STOP=new Set('the a an and or but of to in on at for with by from as is are was were be been being this that these those it its they them their there which who what when while than then so such into over under between during about more most less least very also can could will would should may might must not no have has had do does did i we you he she his her our your my me us one two three'.split(' '));
 
-function sentences(t){return t.replace(/\s+/g,' ').trim().split(/(?<=[.!?])\s+/).filter(s=>s.trim().split(' ').length>1)}
-function paras(t){return t.split(/\n+/).map(x=>x.trim()).filter(x=>x.split(/\s+/).length>3)}
-function words(t){return t.match(/[A-Za-z][A-Za-z'-]*/g)||[]}
-function wc(t){return (String(t||'').trim().match(/\S+/g)||[]).length}
-const clamp=b=>Math.max(4,Math.min(8,Math.floor(b)));
+/* ---- Từ điển chính tả (tải khi cần) ---- */
+let DICT=null,dictP=null;
+function loadDict(){if(DICT)return Promise.resolve(DICT);if(!dictP)dictP=fetch('words.txt?v=1').then(r=>r.ok?r.text():'').then(t=>{DICT=t?new Set(t.split('\n')):new Set();return DICT}).catch(()=>{DICT=new Set();return DICT});return dictP}
+const KNOWN=new Set(['iceland','canada','germany','chile','turkey','covid','ok','tiktok','facebook','youtube','internet','email','online','smartphone','teammate','teammates','percent','per','etc','vs']);
+function known(w){
+  if(!DICT||!DICT.size)return true;w=w.toLowerCase().replace(/’/g,"'");
+  if(w.length<=2||KNOWN.has(w)||DICT.has(w))return true;
+  if(/'(s|t|re|ve|ll|d|m)$/.test(w))return known(w.replace(/'.*$/,''))||w==="can't"||w==="won't";
+  const alt=[w.replace(/is(e|ed|es|ing|ation|ations)$/,'iz$1'),w.replace(/our(s|ed|ing|ful|ite|ites)?$/,'or$1'),w.replace(/tre(s)?$/,'ter$1'),w.replace(/ll(ed|ing|er|ers)$/,'l$1'),w.replace(/yse(d|s)?$/,'yze$1'),w.replace(/ence$/,'ense'),w.replace(/ogue(s)?$/,'og$1'),w.replace(/^(\w+)-(\w+)$/,'$1$2')];
+  if(alt.some(x=>x!==w&&DICT.has(x)))return true;
+  if(w.includes('-'))return w.split('-').every(x=>!x||known(x));
+  return false;
+}
+function spell(t){const out=[];const rx=/[A-Za-z][A-Za-z'’-]*/g;let m;while((m=rx.exec(t))){const w=m[0],before=t.slice(Math.max(0,m.index-2),m.index);
+  const start=/(^|[.!?]\s*)$/.test(t.slice(0,m.index).replace(/\s+$/,' ').slice(-2))||m.index===0;
+  if(/[A-Z]/.test(w.slice(1)))continue; /* viết tắt, tên riêng kiểu TikTok */
+  if(/^[A-Z]/.test(w)&&!start)continue; /* tên riêng giữa câu */
+  if(!known(w))out.push({s:m.index,e:m.index+w.length,c:'LR',m:'Có thể sai chính tả: “'+w+'”.'})}return out}
 
-function hits(t,list){const out=[];list.forEach(([rx,c,m])=>{rx.lastIndex=0;let x;while((x=rx.exec(t))){let s=x.index,e=s+x[0].length;if(m==='Đầu câu phải viết hoa.'){s=e-1}out.push({s,e,c,m});if(x[0].length===0)rx.lastIndex++}});return out}
+function norm(t){return String(t||'').replace(/([,.;:!?])(?=[A-Za-z])/g,'$1 ')}
+function sentences(t){return norm(t).replace(/\s+/g,' ').trim().split(/(?<=[.!?])\s+/).filter(s=>s.trim().split(' ').length>1)}
+function paras(t){return t.split(/\n+/).map(x=>x.trim()).filter(x=>x.split(/\s+/).length>3)}
+function words(t){return norm(t).match(/[A-Za-z][A-Za-z'-]*/g)||[]}
+function wc(t){return (norm(t).trim().match(/\S+/g)||[]).length}
+const clamp=b=>Math.max(3,Math.min(8,Math.floor(b+1e-9)));
+
+function hits(t,list){const out=[];list.forEach(([rx,c,m])=>{rx.lastIndex=0;let x;while((x=rx.exec(t))){let s=x.index,e=s+x[0].length;
+  if(m==='Đầu câu phải viết hoa.'||m==='Đại từ I phải viết hoa.'){s=e-1}
+  if(!out.some(o=>s<o.e&&o.s<e))out.push({s,e,c,m});if(x[0].length===0)rx.lastIndex++}});return out}
 
 function grade(task,t){
-  t=String(t||'');const ws=words(t),n=wc(t),S=sentences(t),Pg=paras(t),F=[];
-  const flags=hits(t,RX.concat(task===1?RX1:[]));
-  /* lặp từ */
+  t=String(t||'');const F=[],caps=[];
+  const prompt=(task===1?TEST.t1:TEST.t2).toLowerCase(),pw=new Set(prompt.match(/[a-z]{3,}/g));
+  /* phần chép lại đề: không tính vào số từ */
+  let copied=0;const S0=sentences(t);
+  S0.forEach(x=>{const w=(x.toLowerCase().match(/[a-z]{3,}/g)||[]);if(w.length>=6&&w.filter(y=>pw.has(y)).length/w.length>=.7){copied+=x.split(/\s+/).length}});
+  const n=wc(t),nE=Math.max(0,n-copied),ws=words(t),S=S0,Pg=paras(t);
+  if(copied)F.push([task===1?'TA':'TR','Có khoảng '+copied+' từ gần như chép lại đề. Phần chép đề không được tính, nên bài còn khoảng '+nE+' từ.']);
+  const unfinished=!!t.trim()&&!/[.!?]["'”’)]*$/.test(t.trim());
+  if(unfinished)F.push([task===1?'TA':'TR','Bài bị bỏ dở (câu cuối chưa kết thúc).']);
+  const flags=hits(t,RX.concat(task===1?RX1:[])).concat(spell(t).filter(x=>!0));
+  /* gộp chính tả không chồng lên lỗi khác */
+  const fl=[];flags.forEach(f=>{if(!fl.some(o=>f.s<o.e&&o.s<f.e))fl.push(f)});
   const cnt={};ws.forEach(w=>{w=w.toLowerCase();if(w.length>3&&!STOP.has(w))cnt[w]=(cnt[w]||0)+1});
   const top=Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0];
-  const topic=task===1?/^(women|percentage|employment|iceland|canada|germany|chile|turkey|employed|figure|figures)$/:/^(leader|leaders|intelligence|intelligent|quality|qualities)$/;
-  if(top&&n>80&&top[1]/n>0.035&&!topic.test(top[0]))F.push(['LR','Lặp từ "'+top[0]+'" '+top[1]+' lần: tìm cách thay thế.']);
-  /* câu quá dài */
-  S.forEach(s=>{if(s.split(' ').length>45)F.push(['GRA','Câu quá dài ('+s.split(' ').length+' từ), dễ rối: "'+s.slice(0,60)+'…"'])});
-  const lk=S.filter(s=>LINK.test(s.trim())).length,ratio=S.length?lk/S.length:0;
+  const topic=task===1?/^(women|percentage|employment|iceland|canada|germany|chile|turkey|employed|figure|figures|percent|rate|rates)$/:/^(leader|leaders|intelligence|intelligent|quality|qualities)$/;
+  if(top&&n>80&&top[1]/n>0.03&&!topic.test(top[0]))F.push(['LR','Lặp từ "'+top[0]+'" '+top[1]+' lần: tìm cách thay thế.']);
+  const runOn=S.filter(x=>x.split(' ').length>40);
+  runOn.forEach(x=>F.push(['GRA','Câu quá dài ('+x.split(' ').length+' từ), nhiều mệnh đề dồn bằng dấu phẩy: "'+x.slice(0,60)+'…"']));
+  const lk=S.filter(x=>LINK.test(x.trim())).length,ratio=S.length?lk/S.length:0;
   const linkSet=new Set((t.match(/\b(firstly|secondly|moreover|furthermore|in addition|however|therefore|thus|while|whereas|in contrast|similarly|meanwhile|consequently|as a result|for example|for instance|in conclusion|overall)\b/gi)||[]).map(x=>x.toLowerCase()));
   if(ratio>0.5&&S.length>=5)F.push(['CC','Hơn nửa số câu mở đầu bằng từ nối: dễ bị coi là máy móc.']);
   const refs=(t.match(/\b(this|these|such|which|its|their|the former|the latter)\b/gi)||[]).length;
-  const cx=S.length?S.filter(s=>SUB.test(s)).length/S.length:0,avgS=S.length?n/S.length:0;
-  const uniq=new Set(ws.filter(w=>w.length>=3).map(w=>w.toLowerCase())).size,guiraud=uniq/Math.sqrt(Math.max(1,ws.filter(w=>w.length>=3).length));
+  const cx=S.length?S.filter(x=>SUB.test(x)).length/S.length:0,avgS=S.length?n/S.length:n;
+  /* đa dạng từ vựng, không phụ thuộc độ dài */
+  const tok=ws.map(w=>w.toLowerCase());let mattr=0;
+  if(tok.length<40)mattr=tok.length?new Set(tok).size/tok.length*.85:0;else{let a=0,c=0;for(let i=0;i+40<=tok.length;i++){a+=new Set(tok.slice(i,i+40)).size/40;c++}mattr=a/c}
   const avgL=ws.length?ws.reduce((a,w)=>a+w.length,0)/ws.length:0;
-  const e=c=>flags.filter(f=>f.c===c).length+F.filter(f=>f[0]===c).length;
-  let A,CC=5,LR=5,GRA=5;
+  /* mật độ lỗi (lỗi kiểu hệ thống tính tối đa 3 lần) */
+  const wsum=c=>{const by={};fl.filter(f=>f.c===c).forEach(f=>by[f.m]=(by[f.m]||0)+1);let x=0;for(const k in by)x+=SYS.includes(k)?Math.min(3,by[k]):/sai chính tả/.test(k)?Math.min(1,by[k]):by[k];return x};
+  const eG=wsum('GRA')+F.filter(f=>f[0]==='GRA').length*.5,eL=wsum('LR')+F.filter(f=>f[0]==='LR').length*.5;
+  const base=Math.max(nE,40),dG=eG/base*100,dL=eL/base*100,dAll=dG+dL;
+  const why={},note=(c,s)=>(why[c]=why[c]||[]).push(s);
+  const cap=(c,v,s)=>{caps.push([c,v,s])};
+  let A=4.5,CC=5,LR=5,GRA=5;
   if(task===1){
-    A=4.5;
     const ov=/\b(overall|in general|generally|it is (clear|evident|noticeable|obvious)|it can be seen|as can be seen|at a glance)\b/i.test(t);
-    const ctry=DATA.filter(([c])=>new RegExp('\\b'+c+'\\b','i').test(t)).length;
+    const named=DATA.filter(([c])=>new RegExp('\\b'+c+'\\b','i').test(t)).map(d=>d[0]),ctry=named.length;
     const nums=(t.match(/\d+(\.\d+)?\s*(%|percent|per cent)/gi)||[]).length;
     const cmp=(t.match(/\b(higher|lower|than|whereas|while|compared|in contrast|the highest|the lowest|similar|twice|double)\b/gi)||[]).length;
     const yrs=YEARS.filter(y=>t.includes(String(y))).length;
-    if(ov)A+=1;else F.push(['TA','Không thấy câu overview (Overall / It is clear that…). Thiếu overview khó vượt band 5.']);
-    if(ctry>=4)A+=.5;else F.push(['TA','Mới nhắc '+ctry+'/5 quốc gia.']);
-    if(nums>=6)A+=.5;else F.push(['TA','Ít số liệu minh họa ('+nums+' con số %).']);
+    if(ov)A+=1;else{F.push(['TA','Không có câu overview (Overall / It is clear that…).']);cap('TA',5,'không có overview (band 6 cần có overview)')}
+    if(ctry===5)A+=.5;else{const miss=DATA.map(d=>d[0]).filter(c=>!named.includes(c));F.push(['TA','Bỏ sót '+miss.join(', ')+': biểu đồ chỉ có 5 đường, thiếu một đường là thiếu đặc điểm chính.']);cap('TA',ctry<=3?5:6,'chưa phủ hết các đặc điểm chính')}
+    if(nums>=8)A+=.5;else if(nums<4){F.push(['TA','Rất ít số liệu ('+nums+' con số %).']);cap('TA',5,'thiếu số liệu minh họa')}else F.push(['TA','Ít số liệu minh họa ('+nums+' con số %).']);
     if(cmp>=3)A+=.5;else F.push(['TA','Ít so sánh giữa các quốc gia.']);
     if(yrs<2)F.push(['TA','Thiếu mốc năm (2003, 2009…).']);
-    /* đối chiếu số liệu */
-    let bad=0;S.forEach(s=>{const cs=DATA.filter(([c])=>new RegExp('\\b'+c+'\\b','i').test(s));if(!cs.length)return;const vals=cs.flatMap(d=>d[2]);
-      (s.match(/\d+(\.\d+)?(?=\s*(%|percent|per cent))/gi)||[]).forEach(v=>{v=+v;if(!vals.some(d=>Math.abs(d-v)<=3)&&!(v<=20&&cs.length>=1&&/\b(by|of|around|nearly|about|points?)\b/i.test(s))){bad++;F.push(['TA','Số liệu có thể sai: '+v+'% trong câu về '+cs.map(d=>d[0]).join(', ')+'.'])}})});
-    A-=Math.min(1.5,bad*.5);
-    if(n<150){A-=n<100?2:1;F.push(['TA','Bài '+n+' từ, dưới 150 từ.'])}
-    A-=Math.min(1,e('TA')*.5);
-    if(Pg.length>=3)CC+=1;else if(Pg.length<=1){CC-=1;F.push(['CC','Không chia đoạn.'])}
+    let bad=0;S.forEach(x=>{const cs=DATA.filter(([c])=>new RegExp('\\b'+c+'\\b','i').test(x));if(!cs.length)return;const vals=cs.flatMap(d=>d[2]);
+      (x.match(/\d+(\.\d+)?(?=\s*(%|percent|per cent))/gi)||[]).forEach(v=>{v=+v;if(!vals.some(d=>Math.abs(d-v)<=3)&&!(v<=20&&/\b(by|of|around|nearly|about|points?)\b/i.test(x))){bad++;F.push(['TA','Số liệu có thể sai: '+v+'% trong câu về '+cs.map(d=>d[0]).join(', ')+'.'])}})});
+    /* xu hướng sai: Turkey không giảm, Germany/Chile không giảm */
+    if(S.some(x=>/\bTurkey\b/i.test(x)&&/\b(downward trend|overall decrease|declined over|decreased over|fell over the period|steady decline)\b/i.test(x)&&!/\b(recover|rebound|back to|returned|same level|picked up|rose again|increased again)/i.test(x))){bad++;F.push(['TA','Mô tả sai xu hướng: Turkey giảm rồi tăng lại về đúng mức 25% năm 2009, không phải xu hướng giảm.'])}
+    A-=Math.min(1.5,bad*.5);if(bad>=2)cap('TA',5,'mô tả sai số liệu hoặc xu hướng');
+    if(nE<150){A-=nE<100?2:nE<130?1.5:1;F.push(['TA','Bài '+nE+' từ (không tính phần chép đề), dưới 150 từ.'])}
+    if(unfinished)cap('TA',5,'bài bị bỏ dở');
+    A-=Math.min(1,fl.filter(f=>f.c==='TA').length*.5);
+    if(Pg.length>=3)CC+=1;else if(Pg.length<=1){F.push(['CC','Không chia đoạn.']);cap('CC',5,'không chia đoạn')}
   }else{
-    A=4.5;
-    const pos=/\b(I (completely |strongly |partly |totally |firmly |fully |largely )?(agree|disagree)|I believe|in my (opinion|view)|I would argue|I am convinced)\b/i;
+    const pos=/\b(I (completely |strongly |partly |totally |firmly |fully |largely |do not |don't )?(agree|disagree)|I believe|in my (opinion|view)|I would argue|I am convinced)\b/i;
     const first=Pg[0]||'',last=Pg[Pg.length-1]||'';
-    if(pos.test(first))A+=1;else F.push(['TR','Mở bài chưa nêu rõ quan điểm (đồng ý / không đồng ý đến mức nào).']);
-    if(Pg.length>1&&(pos.test(last)||/\b(In conclusion|To conclude|To sum up|In summary)\b/i.test(last)))A+=.5;else F.push(['TR','Kết bài chưa nhắc lại quan điểm.']);
+    if(pos.test(first))A+=1;else if(pos.test(t)){A+=.5;F.push(['TR','Có nêu quan điểm nhưng không rõ ngay từ mở bài.'])}else{F.push(['TR','Không nêu rõ quan điểm đồng ý / không đồng ý.']);cap('TR',5,'không có quan điểm rõ')}
+    if(Pg.length>1&&(pos.test(last)||/\b(In conclusion|To conclude|To sum up|In summary)\b/i.test(last)))A+=.5;else F.push(['TR','Không có kết bài nhắc lại quan điểm.']);
     if(/\b(for example|for instance|such as|e\.g\.)/i.test(t))A+=.5;else F.push(['TR','Chưa có ví dụ cụ thể.']);
     if(/\bleader/i.test(t)&&/\bintelligen/i.test(t))A+=.5;else F.push(['TR','Chưa bám từ khóa của đề (leader, intelligence).']);
-    if(/\b(honest|integrity|empathy|communicat|vision|courage|decisive|responsib|trust|experience|charisma|moral)/i.test(t))A+=.5;else F.push(['TR','Chưa so sánh trí thông minh với phẩm chất khác: đề hỏi "most important".']);
-    if(n<250){A-=n<180?2:1;F.push(['TR','Bài '+n+' từ, dưới 250 từ.'])}
-    if(Pg.length>=4)CC+=1;else if(Pg.length<=2){CC-=1;F.push(['CC','Chỉ có '+Pg.length+' đoạn; nên có mở bài, 2 thân bài, kết bài.'])}
+    if(/\b(honest|integrity|empathy|communicat|vision|courage|decisive|responsib|trust|experience|charisma|moral|relationship|teamwork)/i.test(t))A+=.5;else F.push(['TR','Chưa so sánh trí thông minh với phẩm chất khác: đề hỏi "most important".']);
+    if(nE<250){A-=.5;F.push(['TR','Bài '+nE+' từ (không tính phần chép đề), dưới 250 từ.']);cap('TR',nE<150?4:nE<200?5:6,'bài thiếu độ dài nên ý chưa được phát triển đủ')}
+    if(unfinished)cap('TR',5,'bài bị bỏ dở');
+    if(Pg.length>=4)CC+=1;else if(Pg.length<=2){F.push(['CC','Chỉ có '+Pg.length+' đoạn; cần mở bài, 2 thân bài, kết bài.']);cap('CC',5,'chia đoạn chưa đủ hoặc không có (đặc điểm band 5)');if(Pg.length<=1)A-=.5}
   }
   if(linkSet.size>=4)CC+=.5;
   if(refs>=3)CC+=.5;
-  CC-=Math.min(1.5,e('CC')*.5);
-  LR+=guiraud>=7.5?1.5:guiraud>=6.5?1:guiraud>=5.5?.5:0;
+  const punct=fl.filter(f=>/Thiếu dấu cách|comma splice/.test(f.m)).length;
+  if(runOn.length>=2||avgS>32||punct>=4){CC-=.5;cap('CC',5,'ranh giới câu không rõ: nhiều câu dồn ý bằng dấu phẩy, dấu câu sai')}
+  if(dG>6)cap('CC',5,'lỗi ngữ pháp dày đặc làm các câu nối với nhau không trôi');
+  if(unfinished)CC-=.5;
+  if(F.some(f=>/máy móc/.test(f[1])))CC-=.5;
+  /* LR */
+  LR+=mattr>=.82?1.5:mattr>=.76?1:mattr>=.70?.5:mattr<.62?-.5:0;
   if(avgL>=4.7)LR+=.5;
-  LR-=Math.min(1.5,e('LR')*.5);
-  GRA+=cx>=.5?1:cx>=.3?.5:0;
-  if(avgS>=14&&avgS<=28)GRA+=.5;
-  GRA-=Math.min(2,e('GRA')*.5);
-  const crit=task===1?{TA:clamp(A),CC:clamp(CC),LR:clamp(LR),GRA:clamp(GRA)}:{TR:clamp(A),CC:clamp(CC),LR:clamp(LR),GRA:clamp(GRA)};
-  return{crit,flags,notes:F,n};
+  LR-=Math.min(1,eL*.2);
+  const capL=dL>4||dAll>9?4:dL>2.5||dAll>6?5:dL>1.2||dAll>3.5?6:9;if(capL<9)cap('LR',capL,'nhiều lỗi dùng từ / chính tả ('+dL.toFixed(1)+' lỗi từ vựng trên 100 từ)');
+  if(nE<100)cap('LR',5,'bài quá ngắn để thể hiện vốn từ');
+  /* GRA */
+  if(dG<=2.5){GRA+=cx>=.5?1:cx>=.3?.5:0;if(avgS>=14&&avgS<=28)GRA+=.5}else note('GRA','Có thử câu phức nhưng lỗi nhiều nên không được cộng điểm.');
+  GRA-=Math.min(1,eG*.15);
+  if(dG<.7&&nE>=120){GRA+=.5;note('GRA','Gần như không có lỗi trong danh sách lỗi thường gặp.')}
+  const capG=dG>6?4:dG>4?5:dG>2.5?6:dG>1.2?7:9;if(capG<9)cap('GRA',capG,'mật độ lỗi ngữ pháp '+dG.toFixed(1)+' lỗi trên 100 từ');
+  const val={A,CC,LR,GRA},key=task===1?'TA':'TR';
+  caps.forEach(([c,v,s])=>{const k=c==='TA'||c==='TR'?'A':c;if(val[k]>v){val[k]=v;F.push([c,'Giới hạn '+c+' ở band '+v+': '+s+'.'])}});
+  const crit=task===1?{TA:clamp(val.A),CC:clamp(val.CC),LR:clamp(val.LR),GRA:clamp(val.GRA)}:{TR:clamp(val.A),CC:clamp(val.CC),LR:clamp(val.LR),GRA:clamp(val.GRA)};
+  return{crit,flags:fl,notes:F,n:nE,raw:n,dG,dL,mattr};
 }
 function taskBand(o){const v=Object.values(o).map(Number);return v.reduce((a,b)=>a+b,0)/v.length}
 function overall(g1,g2){return Math.round(((taskBand(g1)+2*taskBand(g2))/3)*2+1e-9)/2}
@@ -349,7 +415,7 @@ async function renderGrade(){
   if(openId){const d=L.find(x=>x.id===openId);if(d){gradeOne(b,d);return}}
   const pend=L.filter(x=>x.status!=='graded').length;
   b.innerHTML=`<div class="segnav" style="margin-bottom:10px"><p style="margin:0">${pend} bài chờ chấm · ${L.length-pend} bài đã chấm</p><button class="btn" type="button" data-reload style="height:38px">Tải lại</button></div>
-    ${L.length?`<div class="wt-list">${L.map(d=>`<button type="button" class="wt-row" data-open="${d.id}"><span><b>${esc(d.name||d.email)}</b> <span class="small">${esc(d.email)}</span><br><span class="small">Nộp ${when(d.createdAt)} · ${Math.round((d.used||0)/60)} phút${d.autoSubmit?' (hết giờ tự nộp)':''}${d.vcount?' · <b style="color:#ffb0b0">'+d.vcount+' vi phạm</b>':''} · T1 ${d.w1} từ · T2 ${d.w2} từ · máy gợi ý ${d.auto?Number(d.auto.overall).toFixed(1):'–'}</span></span>${d.status==='graded'?`<span class="st gr">Đã chấm · ${Number(d.grade.overall).toFixed(1)}</span>`:'<span class="st sub">Chờ chấm</span>'}</button>`).join('')}</div>`:'<div class="wt-box"><p style="margin:0">Chưa có học sinh nào nộp bài.</p></div>'}`;
+    ${L.length?`<div class="wt-list">${L.map(d=>`<button type="button" class="wt-row" data-open="${d.id}"><span><b>${esc(d.name||d.email)}</b> <span class="small">${esc(d.email)}</span><br><span class="small">Nộp ${when(d.createdAt)} · ${Math.round((d.used||0)/60)} phút${d.autoSubmit?' (hết giờ tự nộp)':''}${d.vcount?' · <b style="color:#ffb0b0">'+d.vcount+' vi phạm</b>':''} · T1 ${d.w1} từ · T2 ${d.w2} từ · máy gợi ý ${overall(grade(1,d.t1).crit,grade(2,d.t2).crit).toFixed(1)}</span></span>${d.status==='graded'?`<span class="st gr">Đã chấm · ${Number(d.grade.overall).toFixed(1)}</span>`:'<span class="st sub">Chờ chấm</span>'}</button>`).join('')}</div>`:'<div class="wt-box"><p style="margin:0">Chưa có học sinh nào nộp bài.</p></div>'}`;
   b.onclick=e=>{const r=e.target.closest('[data-open]');if(r){openId=r.dataset.open;renderGrade();return}if(e.target.closest('[data-reload]')){cache.all=null;renderGrade()}};
 }
 function gradeOne(b,d){
@@ -390,5 +456,5 @@ function gradeOne(b,d){
   };
 }
 
-window.IOWTest={render,grade,TEACHERS};
+window.IOWTest={render,grade,loadDict,TEACHERS};
 })();
