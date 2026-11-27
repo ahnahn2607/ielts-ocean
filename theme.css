@@ -1,0 +1,184 @@
+/* IELTS Ocean · giao diện "Biển sâu, tối giản"
+   Lớp này nằm sau mọi style khác và dùng "html body" để thắng các style mà module tự chèn. */
+:root{
+  --bg:#071521;--surface:#0E2333;--inset:#0A1C2B;--line:#1F3A4F;--line-2:#2B4C63;
+  --ink:#DCEBF2;--mute:#8FA9B8;--accent:#5FE0D0;--accent-ink:#04211F;--warn:#F2B05E;--bad:#F08A7E;--good:#7FD9A0;
+  --sel:#1E6F86;
+  /* tên cũ mà các module đang dùng */
+  --deep:#0E2333;--card:#0E2333;--glow:#5FE0D0;--blue:#1E6F86;
+  --display:'Bricolage Grotesque',system-ui,sans-serif;--text:'Be Vietnam Pro',system-ui,sans-serif;
+}
+html body{background:var(--bg);color:var(--ink);font:400 15.5px/1.6 var(--text);-webkit-font-smoothing:antialiased}
+html body :is(button,input,select,textarea,h3,h4,p,span,li,label,a,b,div,summary,small,strong,em,td,th){font-family:var(--text)}
+html body :is(h1,h2,.brand,.lr-title,.vprompt,.segnav b,.pct,.stat b,.res .big,.sp-band b,.wt-band b,.pt-res b,.hm-date,.hm-time,details.backup summary,.lad .num,.wt-timer .clk){font-family:var(--display);text-shadow:none}
+html body :is(.hint,.kbd){font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+html body ::selection{background:rgba(95,224,208,.3)}
+html body :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* bỏ trang trí: sứa bay nền, bong bóng, phát sáng */
+html body .sea{display:none}
+html body :is(.card,.btn,.stat,.chip,.brand,.gbtn):hover{transform:none;box-shadow:none}
+html body .card:hover .thumb{background-size:100% auto}
+
+/* ---------- Thanh điều hướng ---------- */
+html body .bar{background:rgba(7,21,33,.96);backdrop-filter:none;border-top:0;border-bottom:1px solid var(--line)}
+html body .bar .wrap{padding-block:8px}
+html body .brand{font:700 21px/1 var(--display);letter-spacing:-.02em;color:var(--ink)}
+html body .brand:hover{color:var(--accent)}
+html body .navlink{height:46px;padding:0 12px;border-radius:0;font:500 14.5px var(--text);color:var(--mute)}
+html body .navlink:hover{background:none;color:var(--ink)}
+html body .navlink::after{left:12px;right:12px;bottom:0;height:2px;border-radius:0;background:var(--accent);box-shadow:none}
+html body .navlink:hover::after{transform:scaleX(0)}
+html body .navlink[aria-current=page]{color:var(--ink);font-weight:600}
+html body .navlink[aria-current=page]::after{transform:scaleX(1);box-shadow:none}
+html body .av{background:var(--sel)}
+html body .sync.ok{color:var(--good)}
+
+/* ---------- Hero ---------- */
+html body .hero{padding-block:clamp(28px,5vw,64px) clamp(18px,3vw,36px)}
+html body .hero .wrap{grid-template-columns:minmax(0,1fr) auto;gap:clamp(20px,5vw,72px)}
+html body .hero h1,html body .authcard h1{font:800 clamp(52px,8.5vw,112px)/.92 var(--display);letter-spacing:-.045em;color:var(--ink)}
+html body .lede{font-size:16.5px;line-height:1.6;color:var(--mute);max-width:52ch;margin:16px 0 24px}
+html body .bigjf{max-width:200px;color:var(--accent);filter:none;animation:jfbob 9s ease-in-out infinite}
+html body .bigjf .bell{animation:none}
+@keyframes jfbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+/* số liệu nhanh: một hàng chữ, không phải ô thẻ */
+html body .stats{display:flex;flex-wrap:wrap;gap:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);width:fit-content;max-width:100%}
+html body .stat{background:none;border:0;border-radius:0;padding:10px 18px 10px 0;margin-right:18px;min-width:0;border-right:1px solid var(--line)}
+html body .stat:last-child{border-right:0;margin-right:0}
+html body .stat b{display:inline;font:700 22px/1 var(--display);color:var(--ink);margin-right:6px}
+html body .stat span{font-size:13px;color:var(--mute)}
+
+/* ---------- Chữ ---------- */
+html body h2{font:700 clamp(23px,2.4vw,29px)/1.15 var(--display);letter-spacing:-.02em;color:var(--ink)}
+html body h2 small{font:400 13.5px var(--text);color:var(--mute)}
+html body h3{font:600 16px/1.4 var(--text);letter-spacing:0}
+html body h3 a:hover{color:var(--accent)}
+html body .small,html body .note,html body .sample-note{color:var(--mute)}
+html body a{color:inherit}
+html body :is(.linkbtn,.go,.todo a,.plan .go){color:var(--accent)}
+
+/* ---------- Khối nội dung ---------- */
+html body :is(.panel,.card,.dpanel,.feat,.lr,.hm,.wt-box,.sp-box,.authcard,.res){background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:none;backdrop-filter:none}
+html body :is(.sc,.gl,.pt-q,.sbox,.todo li,.lr-box,.lr-doc,.sp-why div,.sp-met span,.wt-row,.sp-hist button,.pt-res div,.wt-band div,.sp-band div,.plan li,.vsyn,.wt-chart,.pt-pass,.wt-text,.sp-text,.mine-box){background:var(--inset);border:1px solid var(--line);border-radius:8px;box-shadow:none}
+html body :is(.card,.wt-row,.sp-hist button,.lr-doc,.todo li):hover{border-color:var(--line-2);transform:none;box-shadow:none}
+html body .card.done{background:var(--surface);box-shadow:inset 3px 0 0 var(--accent)}
+html body .feat,html body .lr,html body .hm{padding:clamp(18px,2.5vw,28px)}
+html body .hm{margin-top:0}
+html body .panel{margin-top:16px}
+html body .row{border-top-color:var(--line)}
+html body .thumb{border-radius:6px}
+
+/* ---------- Nút ---------- */
+html body .btn{border-radius:6px;border:1px solid var(--line-2);background:transparent;color:var(--ink);font:500 14.5px/1.25 var(--text);min-height:42px;padding:8px 16px}
+html body .btn:not(.pri):hover{background:var(--inset);border-color:var(--mute)}
+html body .btn.pri{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+html body .btn.pri:hover{background:#7FE9DC;border-color:#7FE9DC}
+html body .btn.danger{border-color:var(--bad);color:var(--bad)}
+html body .gbtn{border-radius:6px}
+html body .acts button{border-radius:6px}
+
+/* ---------- Chip, tab ---------- */
+html body .chip{border-radius:6px;border:1px solid var(--line-2);color:var(--mute);font-size:14px;background:transparent}
+html body .chip:hover{color:var(--ink);border-color:var(--mute);background:none}
+html body .chip[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:var(--bg);font-weight:600}
+html body :is(.subtabs,.tabs,.views){display:flex;flex-wrap:wrap;gap:0;background:none;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:0}
+html body .subtabs{margin-bottom:22px;width:100%}
+html body :is(.sub,.tab,.view){height:auto;min-height:42px;padding:8px 14px;border-radius:0;background:none;color:var(--mute);font:500 14.5px var(--text);position:relative;flex:0 0 auto}
+html body :is(.sub,.tab,.view):hover{background:none;color:var(--ink)}
+html body :is(.sub,.tab,.view)[aria-selected=true]{background:none;color:var(--ink);font-weight:600}
+html body :is(.sub,.tab,.view)[aria-selected=true]::after{content:'';position:absolute;left:14px;right:14px;bottom:-1px;height:2px;background:var(--accent)}
+html body .hm .tabs,html body .lr .tabs{grid-template-columns:none}
+html body .wt-tabs .sub{min-height:36px}
+
+/* ---------- Tag ---------- */
+html body .tag{border-radius:4px;background:transparent;border:1px solid var(--line-2);color:var(--mute);font-size:12px;padding:1px 8px}
+html body .tag.b{background:rgba(95,224,208,.1);border-color:rgba(95,224,208,.35);color:var(--accent);font-weight:600}
+html body .tag.s{background:transparent}
+
+/* ---------- Ô nhập ---------- */
+html body :is(.search,.form input,.form select,.form textarea,.dinput,.vinput,.wt-ta,.wt-cm,.wt-crit select,.sp-ta,.sp-q,.sp-in,.sc select,.gl select,.gl input,.pt-gap input,.ctrls select,.score input,details.backup textarea,#wtName){background:var(--inset);border:1px solid var(--line-2);border-radius:6px;color:var(--ink);box-shadow:none}
+html body :is(.search,.form input,.form select,.form textarea,.dinput,.vinput,.wt-ta,.wt-cm,.sp-ta,.sp-q,.sp-in,.sc select,.gl select,.gl input):hover{border-color:var(--mute)}
+html body :is(.search,.form input,.form select,.form textarea,.dinput,.vinput,.wt-ta,.wt-cm,.sp-ta,.sp-q,.sp-in,.sc select,.gl select,.gl input,.pt-gap input,.ctrls select,.score input):focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+html body ::placeholder{color:#5E788A}
+html body .chk input,html body .pt-ck input{accent-color:var(--accent)}
+
+/* ---------- Trạng thái ---------- */
+html body :is(.w-ok,.vres-ok,.sync.ok){color:var(--good)}
+html body :is(.w-miss,.vres-bad,.err,.nolink){color:var(--bad)}
+html body .vinput.ok{border-color:var(--good)}html body .vinput.bad{border-color:var(--bad)}
+html body :is(.warn,.warnb){background:rgba(242,176,94,.08);border:1px solid rgba(242,176,94,.4);color:#F6CD94;border-radius:8px}
+html body .trap{background:var(--inset);border:1px solid rgba(242,176,94,.35);border-radius:8px}
+html body .toast{background:var(--ink);color:var(--bg);border-radius:6px}
+html body .pbar,html body .pt-bar{background:var(--line);border-radius:2px}
+html body .pbar i,html body .pt-bar i{background:var(--accent)}
+html body .pct{color:var(--accent)}
+
+/* ---------- Mục Tổng quan: Hôm nay ---------- */
+html body .hm-date{font:700 clamp(24px,3vw,32px)/1.15 var(--display);letter-spacing:-.02em}
+html body .hm-time{font:600 clamp(28px,3.6vw,40px)/1 var(--display);color:var(--ink);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+html body .pill{background:none;border:0;border-left:1px solid var(--line-2);border-radius:0;padding:2px 14px 2px 12px;font-size:13.5px;color:var(--mute)}
+html body .hm-pills{gap:8px 0}
+html body .hm-pills .pill:first-child{border-left:0;padding-left:0}
+html body .pill b{color:var(--ink);font:700 16px var(--display)}
+html body .pill.hot{background:none;color:var(--warn)}html body .pill.hot b{color:var(--warn)}
+html body .todo .min{background:none;border:1px solid var(--line-2);color:var(--ink);border-radius:4px;font-variant-numeric:tabular-nums}
+html body .strk i{border-radius:3px;background:var(--inset);border-color:var(--line)}
+html body .strk i.on{background:var(--accent);box-shadow:none}
+html body .strk i.td{outline-color:var(--mute)}
+
+/* ---------- Luật rừng ---------- */
+html body .lr-title{font:800 clamp(28px,4vw,42px)/1.05 var(--display);letter-spacing:-.03em;color:var(--ink)}
+html body .lr-doc .ic{background:none;border:1px solid var(--line-2);color:var(--accent);border-radius:4px}
+html body .lad .num{background:none;border:1px solid var(--line-2);color:var(--ink);border-radius:6px;font-weight:700}
+html body .lad .b.me{background:rgba(95,224,208,.06);border-color:rgba(95,224,208,.45);border-radius:8px}
+html body .lad .b.me .num{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+html body .lad .b:hover{background:none;border-color:transparent}
+html body .lad .step{color:var(--mute);border-left-color:var(--line-2)}
+html body .lad .step.me{color:var(--accent)}
+html body .bars .tr{background:var(--line);border-radius:2px}
+html body .bars .fl{background:var(--accent);border-radius:2px}
+html body .bars .fl.low{background:var(--warn)}
+html body .bars .tg{background:var(--ink)}
+html body .res .big{color:var(--ink)}
+html body .sp-band b,html body .wt-band b,html body .pt-res b{color:var(--ink)}
+html body :is(.sp-band .ov,.wt-band .ov,.pt-res .ov){background:var(--surface);border-color:var(--accent)}
+html body :is(.sp-band .ov,.wt-band .ov,.pt-res .ov) b{color:var(--accent)}
+
+/* ---------- Bài test Writing ---------- */
+html body .wt-timer{background:var(--surface);border:1px solid var(--line-2);border-radius:8px;box-shadow:none}
+html body .wt-timer .clk{color:var(--ink);font-weight:700}
+html body .wt-timer .clk.warn{color:var(--warn)}
+html body .vio{border-radius:4px;background:none;border:1px solid var(--line-2)}
+html body .vio.on{border-color:var(--bad);color:var(--bad);background:none}
+html body .wt-prompt{background:none;border-left:2px solid var(--line-2);border-radius:0}
+html body .st{border-radius:4px}
+html body .st.sub{background:none;border:1px solid rgba(242,176,94,.5);color:var(--warn)}
+html body .st.gr{background:none;border:1px solid rgba(127,217,160,.5);color:var(--good)}
+html body .wt-gate{background:rgba(7,21,33,.96)}
+html body .wt-gut::before{background:var(--line-2)}
+html body #wtestView:fullscreen,html body #wtestView::backdrop{background:var(--bg)}
+
+/* ---------- Dictation, từ vựng ---------- */
+html body .player{border-radius:8px}
+html body .hint{color:var(--accent)}
+html body .vprompt{font:600 22px/1.4 var(--display);letter-spacing:-.01em}
+html body .segnav b{font:700 19px var(--display)}
+html body .sp-rec.on{background:#7A2B23;border-color:var(--bad);color:#fff}
+
+/* ---------- Đăng nhập ---------- */
+html body .authcard{padding:30px 26px 24px}
+html body .authcard h1{font-size:clamp(44px,12vw,64px);text-align:left}
+html body .authcard .lede{text-align:left;margin:10px 0 0}
+html body .gbtn{background:var(--ink);color:#0B1A26}
+html body .gbtn:hover{background:#fff}
+
+html body details.backup summary{font:700 19px var(--display)}
+html body footer{color:#5E788A}
+
+@media(max-width:700px){
+  html body .hero .wrap{grid-template-columns:1fr}
+  html body .bigjf{display:none}
+  html body .stat{padding-right:12px;margin-right:12px}
+}
+@media(prefers-reduced-motion:reduce){html body .bigjf{animation:none}}
