@@ -65,27 +65,27 @@ function css(){
   if(document.getElementById('ptCss'))return;
   const s=document.createElement('style');s.id='ptCss';s.textContent=`
 .pt{display:grid;gap:14px}
-.pt-q{border:1px solid var(--line);border-radius:16px;padding:14px;background:rgba(5,11,46,.5)}
+.pt-q{border:1px solid var(--line);border-radius:16px;padding:14px;background:var(--inset)}
 .pt-q p{margin:0 0 10px;font-size:15px;line-height:1.5}
 .pt-o{display:flex;flex-wrap:wrap;gap:8px}
 .pt-o .chip{height:auto;min-height:36px;padding:6px 14px;text-align:left}
 .pt-o .chip:hover{border-color:var(--glow);color:var(--ink)}
-.pt-o .chip.ok{background:rgba(80,200,140,.25);border-color:#5fd29a;color:#fff}
-.pt-o .chip.no{background:rgba(255,110,110,.2);border-color:#ff8a8a;color:#fff}
-.pt-pass{border-radius:16px;padding:16px;background:rgba(230,244,255,.05);border:1px solid var(--line);font-size:15px;line-height:1.7;max-height:340px;overflow:auto}
+.pt-o .chip.ok{background:rgba(80,200,140,.25);border-color:var(--good);color:#fff}
+.pt-o .chip.no{background:rgba(255,110,110,.2);border-color:var(--bad);color:#fff}
+.pt-pass{border-radius:16px;padding:16px;background:var(--tint);border:1px solid var(--line);font-size:15px;line-height:1.7;max-height:340px;overflow:auto}
 .pt-pass p{margin:0 0 10px}
-.pt-bar{height:8px;border-radius:99px;background:rgba(230,244,255,.08);overflow:hidden}
+.pt-bar{height:8px;border-radius:99px;background:var(--tint);overflow:hidden}
 .pt-bar i{display:block;height:100%;background:linear-gradient(90deg,#2F6BFF,#7FD1FF);transition:width .3s}
 .pt-nav{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .pt-gap{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.pt-gap input{height:40px;border-radius:999px;border:1px solid var(--line);background:rgba(5,11,46,.8);color:var(--ink);padding:0 14px;font-size:15px;min-width:180px}
+.pt-gap input{height:40px;border-radius:999px;border:1px solid var(--line);background:var(--inset);color:var(--ink);padding:0 14px;font-size:15px;min-width:180px}
 .pt-ck{display:flex;gap:10px;align-items:flex-start;padding:8px 0;font-size:15px;cursor:pointer}
 .pt-ck input{width:18px;height:18px;margin-top:2px;accent-color:#2F6BFF}
 .pt-exp{font-size:13px;color:var(--mute);margin-top:8px}
 .pt-res{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
-.pt-res div{border:1px solid var(--line);border-radius:14px;padding:12px;background:rgba(5,11,46,.5);text-align:center}
+.pt-res div{border:1px solid var(--line);border-radius:14px;padding:12px;background:var(--inset);text-align:center}
 .pt-res b{display:block;font:600 28px Inter,sans-serif;color:var(--glow)}
-.pt-res .ov{background:rgba(47,107,255,.3);border-color:var(--glow)}
+.pt-res .ov{background:var(--tint-2);border-color:var(--glow)}
 `;document.head.appendChild(s);
 }
 function shuffle(a,seed){const r=a.slice();let x=seed;for(let i=r.length-1;i>0;i--){x=(x*9301+49297)%233280;const j=Math.floor(x/233280*(i+1));[r[i],r[j]]=[r[j],r[i]]}return r}

@@ -26,32 +26,32 @@ let io=null,el=null,tab='today',timer=null;
 function css(){
   if(document.getElementById('hmCss'))return;
   const s=document.createElement('style');s.id='hmCss';s.textContent=`
-.hm{margin:6px 0 18px;padding:22px;gap:14px;background:linear-gradient(140deg,rgba(47,107,255,.28),rgba(10,31,92,.8));border-color:rgba(127,209,255,.45)}
+.hm{margin:6px 0 18px;padding:22px;gap:14px;background:linear-gradient(140deg,var(--tint-2),var(--surface));border-color:var(--tint)}
 .hm-top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:flex-end}
 .hm-date{font:600 clamp(22px,3vw,30px)/1.2 Inter,sans-serif;margin:2px 0 0}
 .hm-time{font:300 clamp(30px,4vw,44px)/1 Inter,sans-serif;color:var(--glow);letter-spacing:1px}
 .hm-pills{display:flex;gap:8px;flex-wrap:wrap}
-.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:rgba(5,11,46,.55);border:1px solid var(--line);font-size:13px}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:var(--inset);border:1px solid var(--line);font-size:13px}
 .pill b{color:var(--glow);font-size:15px}
 .pill.hot{border-color:rgba(255,170,120,.6);background:rgba(255,140,90,.14)}
 .hm .tabs{grid-template-columns:repeat(auto-fit,minmax(120px,1fr));border-radius:22px;margin:0}
 .strk{display:flex;gap:6px;align-items:flex-end;flex-wrap:wrap}
 .strk span{display:grid;gap:4px;justify-items:center;font-size:11px;color:var(--mute)}
-.strk i{display:block;width:22px;height:22px;border-radius:7px;background:rgba(230,244,255,.08);border:1px solid var(--line)}
-.strk i.on{background:linear-gradient(160deg,#2F6BFF,#7FD1FF);border-color:transparent;box-shadow:0 0 10px rgba(127,209,255,.6)}
+.strk i{display:block;width:22px;height:22px;border-radius:7px;background:var(--tint);border:1px solid var(--line)}
+.strk i.on{background:linear-gradient(160deg,#2F6BFF,#7FD1FF);border-color:transparent;box-shadow:0 0 10px var(--tint)}
 .strk i.td{outline:2px solid var(--glow);outline-offset:2px}
-.sbox{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;padding:12px 14px;border-radius:14px;background:rgba(5,11,46,.5);border:1px solid var(--line)}
+.sbox{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;padding:12px 14px;border-radius:14px;background:var(--inset);border:1px solid var(--line)}
 .todo{list-style:none;margin:0;padding:0;display:grid;gap:10px}
-.todo li{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:12px 14px;border-radius:14px;background:rgba(5,11,46,.5);border:1px solid var(--line);transition:border-color .2s,transform .2s}
+.todo li{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:12px 14px;border-radius:14px;background:var(--inset);border:1px solid var(--line);transition:border-color .2s,transform .2s}
 .todo li:hover{border-color:var(--glow);transform:translateX(2px)}
-.todo .min{font:600 13px Inter,sans-serif;color:#050B2E;background:var(--glow);border-radius:999px;padding:4px 10px;white-space:nowrap}
+.todo .min{font:600 13px Inter,sans-serif;color:var(--accent-ink);background:var(--glow);border-radius:999px;padding:4px 10px;white-space:nowrap}
 .todo a{color:var(--glow);font-size:14px;white-space:nowrap}
 .todo p{margin:2px 0 0;font-size:13px;color:var(--mute)}
 .gl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
-.gl{border:1px solid var(--line);border-radius:16px;padding:14px;background:rgba(5,11,46,.5)}
+.gl{border:1px solid var(--line);border-radius:16px;padding:14px;background:var(--inset)}
 .gl h3,.pf h3{margin:0 0 8px;font-size:15px}
 .gl label{display:grid;grid-template-columns:1fr 110px;gap:8px;align-items:center;margin:6px 0;font-size:14px}
-.gl select,.gl input{height:38px;border-radius:999px;border:1px solid var(--line);background:rgba(5,11,46,.8);color:var(--ink);padding:0 12px;font-size:14px;width:100%;color-scheme:dark}
+.gl select,.gl input{height:38px;border-radius:999px;border:1px solid var(--line);background:var(--inset);color:var(--ink);padding:0 12px;font-size:14px;width:100%;color-scheme:dark}
 .gl select:focus-visible,.gl input:focus-visible,.pf .chip:focus-visible{outline:2px solid var(--glow);outline-offset:2px}
 .pf{display:grid;gap:16px}
 .pf .chips{display:flex;gap:8px;flex-wrap:wrap}
@@ -175,7 +175,7 @@ function renderGoals(){
       <label>Overall${sel('O',g.O!=null?(+g.O).toFixed(1):null,HALF,'—','data-g="O"')}</label>
       ${SKILLS.map(([k,n])=>`<label>${n}${sel(k,sk(k)!=null?(+sk(k)).toFixed(1):null,HALF,'—','data-g="'+k+'"')}</label>`).join('')}
       <button class="btn" type="button" data-fill style="height:36px;margin-top:6px">Đặt 4 kỹ năng bằng overall</button>
-      ${ov!=null&&g.O!=null&&ov<+g.O?`<p class="small" style="margin:8px 0 0;color:#ffb48a">4 kỹ năng hiện chỉ cộng ra ${ov.toFixed(1)}, thấp hơn overall ${(+g.O).toFixed(1)}.</p>`:''}
+      ${ov!=null&&g.O!=null&&ov<+g.O?`<p class="small" style="margin:8px 0 0;color:var(--warn)">4 kỹ năng hiện chỉ cộng ra ${ov.toFixed(1)}, thấp hơn overall ${(+g.O).toFixed(1)}.</p>`:''}
       <p class="small" style="margin:8px 0 0">Mục tiêu Writing và Speaking dùng chung với phần "Luật rừng".</p></div>
     <div class="gl"><h3>Kỳ thi</h3>
       <label>Loại bài thi${sel('type',g.type,['Academic','General Training'],'—','data-g="type"')}</label>

@@ -5,7 +5,7 @@ const TEST={id:'entry-w1',name:'Writing đầu vào · Đề 1',min:60,
   t1:'The line graph below gives information about the percentage of women aged 15-64 in employment between 2003 and 2009. Summarise the information by selecting and reporting the main features and make comparisons where relevant.',
   t2:'Intelligence is the most important quality that a leader needs to have. To what extent do you agree or disagree?'};
 const YEARS=[2003,2005,2007,2009];
-const DATA=[['Iceland','#F4C95D',[81,81,81,78]],['Canada','#9DB4FF',[69,69,70,70]],['Germany','#FF6B6B',[59,60,61,65]],['Chile','#7BD88F',[35,39,40,41]],['Turkey','#2EC4D6',[25,21,22,25]]];
+const DATA=[['Iceland','#C9962B',[81,81,81,78]],['Canada','#4A6FB0',[69,69,70,70]],['Germany','#C2473A',[59,60,61,65]],['Chile','#4E8C3A',[35,39,40,41]],['Turkey','#1E8C9A',[25,21,22,25]]];
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 let el=null,api=null,tab='do',draft=null,tick=null,cache={mine:null,all:null},openId=null;
 
@@ -15,36 +15,36 @@ function css(){
 .wt{display:grid;gap:16px}
 .wt-box{border:1px solid var(--line);border-radius:18px;padding:18px;background:var(--card)}
 .wt-box h3{margin:0 0 8px;font-size:17px}
-.wt-prompt{font-size:15px;line-height:1.6;margin:0 0 12px;padding:12px 14px;border-left:3px solid var(--glow);background:rgba(127,209,255,.06);border-radius:0 12px 12px 0}
-.wt-chart{background:rgba(5,11,46,.6);border-radius:14px;padding:8px;border:1px solid var(--line)}
+.wt-prompt{font-size:15px;line-height:1.6;margin:0 0 12px;padding:12px 14px;border-left:3px solid var(--glow);background:var(--tint);border-radius:0 12px 12px 0}
+.wt-chart{background:var(--inset);border-radius:14px;padding:8px;border:1px solid var(--line)}
 .wt-chart svg{width:100%;height:auto;display:block}
-.wt-ta{width:100%;min-height:320px;border-radius:14px;border:1px solid var(--line);background:rgba(5,11,46,.75);color:var(--ink);padding:14px;font:16px/1.7 Inter,sans-serif;resize:vertical}
+.wt-ta{width:100%;min-height:320px;border-radius:14px;border:1px solid var(--line);background:var(--inset);color:var(--ink);padding:14px;font:16px/1.7 Inter,sans-serif;resize:vertical}
 .wt-ta:focus-visible{outline:2px solid var(--glow);outline-offset:2px}
 .wt-meta{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:13px;color:var(--mute);margin-top:6px}
-.wt-meta b.low{color:#ff9a8a}.wt-meta b.ok{color:#7BD88F}
-.wt-timer{position:sticky;top:64px;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 16px;border-radius:999px;background:rgba(10,31,92,.95);border:1px solid var(--glow);box-shadow:0 10px 30px -15px rgba(0,0,0,.8)}
+.wt-meta b.low{color:var(--bad)}.wt-meta b.ok{color:var(--good)}
+.wt-timer{position:sticky;top:64px;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 16px;border-radius:999px;background:var(--surface);border:1px solid var(--glow);box-shadow:0 10px 30px -15px rgba(0,0,0,.8)}
 .wt-timer .clk{font:600 22px Inter,sans-serif;color:var(--glow);font-variant-numeric:tabular-nums}
-.wt-timer .clk.warn{color:#ffb48a}
+.wt-timer .clk.warn{color:var(--warn)}
 .wt-list{display:grid;gap:10px}
-.wt-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:rgba(5,11,46,.5);cursor:pointer;transition:border-color .2s,transform .2s;text-align:left;color:var(--ink);font:inherit;width:100%}
+.wt-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:var(--inset);cursor:pointer;transition:border-color .2s,transform .2s;text-align:left;color:var(--ink);font:inherit;width:100%}
 .wt-row:hover{border-color:var(--glow);transform:translateX(2px)}
 .st{font-size:12px;padding:3px 10px;border-radius:999px;white-space:nowrap}
-.st.sub{background:rgba(255,190,90,.18);color:#ffd38a}.st.gr{background:rgba(80,200,140,.2);color:#8be3b4}
-.wt-text{white-space:pre-wrap;font-size:15px;line-height:1.75;padding:14px;border-radius:14px;background:rgba(5,11,46,.6);border:1px solid var(--line)}
-.wt-text mark{background:rgba(255,120,120,.28);color:inherit;border-bottom:2px solid #ff8a8a;border-radius:3px;padding:0 1px;cursor:help}
-.wt-text mark.ok{background:rgba(127,209,255,.16);border-bottom-color:var(--glow)}
+.st.sub{background:rgba(255,190,90,.18);color:var(--warn)}.st.gr{background:rgba(80,200,140,.2);color:var(--good)}
+.wt-text{white-space:pre-wrap;font-size:15px;line-height:1.75;padding:14px;border-radius:14px;background:var(--inset);border:1px solid var(--line)}
+.wt-text mark{background:rgba(255,120,120,.28);color:inherit;border-bottom:2px solid var(--bad);border-radius:3px;padding:0 1px;cursor:help}
+.wt-text mark.ok{background:var(--tint);border-bottom-color:var(--glow)}
 .wt-flags{margin:10px 0 0;padding-left:18px;font-size:14px;line-height:1.55}
 .wt-flags li{margin:3px 0}
-.wt-flags .c{font:600 11px Inter,sans-serif;padding:2px 7px;border-radius:999px;background:rgba(127,209,255,.15);color:var(--glow);margin-right:6px}
+.wt-flags .c{font:600 11px Inter,sans-serif;padding:2px 7px;border-radius:999px;background:var(--tint);color:var(--glow);margin-right:6px}
 .wt-crit{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:12px}
 .wt-crit label{display:grid;gap:4px;font-size:13px;color:var(--mute)}
-.wt-crit select{height:40px;border-radius:999px;border:1px solid var(--line);background:rgba(5,11,46,.85);color:var(--ink);padding:0 12px;font-size:15px}
+.wt-crit select{height:40px;border-radius:999px;border:1px solid var(--line);background:var(--inset);color:var(--ink);padding:0 12px;font-size:15px}
 .wt-crit .auto{font-size:12px;color:var(--glow)}
-.wt-cm{width:100%;min-height:90px;border-radius:14px;border:1px solid var(--line);background:rgba(5,11,46,.75);color:var(--ink);padding:12px;font:15px/1.6 Inter,sans-serif;margin-top:10px}
+.wt-cm{width:100%;min-height:90px;border-radius:14px;border:1px solid var(--line);background:var(--inset);color:var(--ink);padding:12px;font:15px/1.6 Inter,sans-serif;margin-top:10px}
 .wt-band{display:flex;gap:10px;flex-wrap:wrap}
-.wt-band div{flex:1;min-width:110px;text-align:center;border:1px solid var(--line);border-radius:14px;padding:10px;background:rgba(5,11,46,.5)}
+.wt-band div{flex:1;min-width:110px;text-align:center;border:1px solid var(--line);border-radius:14px;padding:10px;background:var(--inset)}
 .wt-band b{display:block;font:600 26px Inter,sans-serif;color:var(--glow)}
-.wt-band .ov{background:rgba(47,107,255,.3);border-color:var(--glow)}
+.wt-band .ov{background:var(--tint-2);border-color:var(--glow)}
 .wt-act{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
 #wtestView:fullscreen{background:#050B2E;overflow:auto;padding:24px clamp(12px,4vw,48px)}
 #wtestView:fullscreen .wt-timer{top:0}
@@ -63,11 +63,11 @@ function css(){
 .wt-right .wt-ta{flex:1;min-height:0;height:100%;resize:none;font-size:15px}
 @media(max-width:820px){.wt-split{grid-template-columns:1fr;height:auto}.wt-gut{display:none}.wt-right .wt-ta{min-height:360px}}
 #wtestView::backdrop{background:#050B2E}
-.wt-gate{position:fixed;inset:0;z-index:60;display:grid;place-items:center;background:rgba(5,11,46,.95);padding:20px}
-.wt-gate .wt-box{max-width:540px;text-align:center;background:rgba(10,31,92,.95)}
-.vio{font-size:13px;padding:4px 10px;border-radius:999px;background:rgba(127,209,255,.12);color:var(--mute)}
-.vio.on{background:rgba(255,110,110,.22);color:#ffb0b0}
-.wt-vlist{margin:6px 0 0;padding-left:18px;font-size:13px;color:#ffb0b0}
+.wt-gate{position:fixed;inset:0;z-index:60;display:grid;place-items:center;background:var(--inset);padding:20px}
+.wt-gate .wt-box{max-width:540px;text-align:center;background:var(--surface)}
+.vio{font-size:13px;padding:4px 10px;border-radius:999px;background:var(--tint);color:var(--mute)}
+.vio.on{background:rgba(255,110,110,.22);color:var(--bad)}
+.wt-vlist{margin:6px 0 0;padding-left:18px;font-size:13px;color:var(--bad)}
 `;document.head.appendChild(s);
 }
 
@@ -75,11 +75,11 @@ function css(){
 function chart(){
   const W=720,H=380,L=56,R=20,T=56,B=46,x=i=>L+40+i*((W-L-R-80)/3),y=v=>T+(H-T-B)*(1-v/100);
   let g='';
-  for(let v=0;v<=100;v+=20)g+=`<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" stroke="rgba(230,244,255,.12)"/><text x="${L-10}" y="${y(v)+4}" text-anchor="end" font-size="12" fill="#cfe3f7">${v}</text>`;
-  YEARS.forEach((yr,i)=>g+=`<text x="${x(i)}" y="${H-B+24}" text-anchor="middle" font-size="13" font-weight="600" fill="#E6F4FF">${yr}</text>`);
+  for(let v=0;v<=100;v+=20)g+=`<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" style="stroke:var(--line-2)"/><text x="${L-10}" y="${y(v)+4}" text-anchor="end" font-size="12" style="fill:var(--mute)">${v}</text>`;
+  YEARS.forEach((yr,i)=>g+=`<text x="${x(i)}" y="${H-B+24}" text-anchor="middle" font-size="13" font-weight="600" style="fill:var(--ink)">${yr}</text>`);
   DATA.forEach(([n,c,v])=>{g+=`<polyline fill="none" stroke="${c}" stroke-width="3" points="${v.map((d,i)=>x(i)+','+y(d)).join(' ')}"/>`+v.map((d,i)=>`<rect x="${x(i)-5}" y="${y(d)-5}" width="10" height="10" fill="${c}"><title>${n} ${YEARS[i]}: ${d}%</title></rect>`).join('')});
-  let lx=L+10;DATA.forEach(([n,c])=>{g+=`<rect x="${lx}" y="16" width="14" height="14" rx="3" fill="${c}"/><text x="${lx+20}" y="28" font-size="14" font-weight="600" fill="#E6F4FF">${n}</text>`;lx+=n.length*9+44});
-  g+=`<text x="14" y="${(T+H-B)/2}" transform="rotate(-90 14 ${(T+H-B)/2})" text-anchor="middle" font-size="12" fill="#cfe3f7">% phụ nữ 15–64 tuổi có việc làm</text>`;
+  let lx=L+10;DATA.forEach(([n,c])=>{g+=`<rect x="${lx}" y="16" width="14" height="14" rx="3" fill="${c}"/><text x="${lx+20}" y="28" font-size="14" font-weight="600" style="fill:var(--ink)">${n}</text>`;lx+=n.length*9+44});
+  g+=`<text x="14" y="${(T+H-B)/2}" transform="rotate(-90 14 ${(T+H-B)/2})" text-anchor="middle" font-size="12" style="fill:var(--mute)">% phụ nữ 15–64 tuổi có việc làm</text>`;
   return `<div class="wt-chart"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Biểu đồ đường: tỷ lệ phụ nữ 15–64 tuổi có việc làm ở Iceland, Canada, Germany, Chile, Turkey từ 2003 đến 2009">${g}</svg></div>`;
 }
 
@@ -353,7 +353,7 @@ function renderDo(){
   });
   b.oninput=e=>{const t=e.target.dataset.t;if(!t)return;draft[t]=e.target.value;saveDraft();upd();b.querySelector('#wtSaved').textContent='Đã lưu '+new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit',second:'2-digit'})};
   b.querySelector('[data-submit]').onclick=()=>{const c=b.querySelector('#wtConfirm'),n1=wc(draft.t1),n2=wc(draft.t2);
-    c.innerHTML=`<div class="wt-box" style="width:100%"><p style="margin:0 0 10px">Nộp bài: Task 1 có ${n1} từ, Task 2 có ${n2} từ.${n1<150||n2<250?' <b style="color:#ffb48a">Có task chưa đủ số từ tối thiểu.</b>':''} Sau khi nộp không sửa được nữa.</p>
+    c.innerHTML=`<div class="wt-box" style="width:100%"><p style="margin:0 0 10px">Nộp bài: Task 1 có ${n1} từ, Task 2 có ${n2} từ.${n1<150||n2<250?' <b style="color:var(--warn)">Có task chưa đủ số từ tối thiểu.</b>':''} Sau khi nộp không sửa được nữa.</p>
       <div class="wt-act"><button class="btn" type="button" data-cancel>Làm tiếp</button><button class="btn pri" type="button" data-yes>Nộp ngay</button></div><p class="err" id="wtErr" role="alert"></p></div>`;
     c.querySelector('[data-cancel]').onclick=()=>c.innerHTML='';c.querySelector('[data-yes]').onclick=()=>submit(false);c.scrollIntoView({behavior:'smooth',block:'center'})};
   updV();
@@ -399,7 +399,7 @@ function result(d,teacher){
       <p class="small" style="margin:8px 0 4px">Task 1 ở trên · Task 2 bên dưới (Task 2 tính gấp đôi)</p><div class="wt-band">${crits(G.t2)}</div>
       ${G.comment?`<p style="white-space:pre-wrap;margin:14px 0 0"><b>Nhận xét chung:</b> ${esc(G.comment)}</p>`:''}<p class="small" style="margin:8px 0 0">Chấm ngày ${when(G.at)}</p></div>`
       :`<div class="wt-box"><p style="margin:0">Bài đang chờ giáo viên chấm. Kết quả sẽ hiện ở đây.</p></div>`}
-    ${d.vcount?`<p class="small" style="margin:0;color:#ffb0b0">Bài này có ${d.vcount} lần vi phạm chế độ thi.</p>`:''}
+    ${d.vcount?`<p class="small" style="margin:0;color:var(--bad)">Bài này có ${d.vcount} lần vi phạm chế độ thi.</p>`:''}
     <div class="wt-box"><h3>Task 1 · ${d.w1} từ</h3>${graded&&G.c1?`<p style="white-space:pre-wrap"><b>Nhận xét:</b> ${esc(G.c1)}</p>`:''}<div class="wt-text">${graded?marked(d.t1,g1.flags):esc(d.t1)}</div>${graded?'<p class="small" style="margin:10px 0 0">Lỗi máy tìm thấy (để bạn tự sửa):</p>'+flagList(g1):''}</div>
     <div class="wt-box"><h3>Task 2 · ${d.w2} từ</h3>${graded&&G.c2?`<p style="white-space:pre-wrap"><b>Nhận xét:</b> ${esc(G.c2)}</p>`:''}<div class="wt-text">${graded?marked(d.t2,g2.flags):esc(d.t2)}</div>${graded?'<p class="small" style="margin:10px 0 0">Lỗi máy tìm thấy (để bạn tự sửa):</p>'+flagList(g2):''}</div>
   </div>`;
@@ -415,7 +415,7 @@ async function renderGrade(){
   if(openId){const d=L.find(x=>x.id===openId);if(d){gradeOne(b,d);return}}
   const pend=L.filter(x=>x.status!=='graded').length;
   b.innerHTML=`<div class="segnav" style="margin-bottom:10px"><p style="margin:0">${pend} bài chờ chấm · ${L.length-pend} bài đã chấm</p><button class="btn" type="button" data-reload style="height:38px">Tải lại</button></div>
-    ${L.length?`<div class="wt-list">${L.map(d=>`<button type="button" class="wt-row" data-open="${d.id}"><span><b>${esc(d.name||d.email)}</b> <span class="small">${esc(d.email)}</span><br><span class="small">Nộp ${when(d.createdAt)} · ${Math.round((d.used||0)/60)} phút${d.autoSubmit?' (hết giờ tự nộp)':''}${d.vcount?' · <b style="color:#ffb0b0">'+d.vcount+' vi phạm</b>':''} · T1 ${d.w1} từ · T2 ${d.w2} từ · máy gợi ý ${overall(grade(1,d.t1).crit,grade(2,d.t2).crit).toFixed(1)}</span></span>${d.status==='graded'?`<span class="st gr">Đã chấm · ${Number(d.grade.overall).toFixed(1)}</span>`:'<span class="st sub">Chờ chấm</span>'}</button>`).join('')}</div>`:'<div class="wt-box"><p style="margin:0">Chưa có học sinh nào nộp bài.</p></div>'}`;
+    ${L.length?`<div class="wt-list">${L.map(d=>`<button type="button" class="wt-row" data-open="${d.id}"><span><b>${esc(d.name||d.email)}</b> <span class="small">${esc(d.email)}</span><br><span class="small">Nộp ${when(d.createdAt)} · ${Math.round((d.used||0)/60)} phút${d.autoSubmit?' (hết giờ tự nộp)':''}${d.vcount?' · <b style="color:var(--bad)">'+d.vcount+' vi phạm</b>':''} · T1 ${d.w1} từ · T2 ${d.w2} từ · máy gợi ý ${overall(grade(1,d.t1).crit,grade(2,d.t2).crit).toFixed(1)}</span></span>${d.status==='graded'?`<span class="st gr">Đã chấm · ${Number(d.grade.overall).toFixed(1)}</span>`:'<span class="st sub">Chờ chấm</span>'}</button>`).join('')}</div>`:'<div class="wt-box"><p style="margin:0">Chưa có học sinh nào nộp bài.</p></div>'}`;
   b.onclick=e=>{const r=e.target.closest('[data-open]');if(r){openId=r.dataset.open;renderGrade();return}if(e.target.closest('[data-reload]')){cache.all=null;renderGrade()}};
 }
 function gradeOne(b,d){
@@ -426,7 +426,7 @@ function gradeOne(b,d){
     <button class="linkbtn" type="button" data-back style="justify-self:start">← Danh sách bài</button>
     <div class="wt-box"><h3>${esc(d.name||d.email)} <span class="small">${esc(d.email)}</span></h3>
       <p class="small" style="margin:0">Nộp ${when(d.createdAt)} · làm ${Math.round((d.used||0)/60)} phút${d.autoSubmit?' · hết giờ tự nộp':''}${d.status==='graded'?' · đã gửi kết quả '+when(G.at):''}</p>
-      ${d.vcount?`<p style="margin:8px 0 0;color:#ffb0b0"><b>${d.vcount} lần vi phạm chế độ thi</b></p><ul class="wt-vlist">${(d.violations||[]).map(x=>`<li>${new Date(x.at).toLocaleTimeString('vi-VN')} · ${esc(VNAME[x.type]||x.type)}</li>`).join('')}</ul>`:'<p class="small" style="margin:6px 0 0">Không có vi phạm chế độ thi.</p>'}
+      ${d.vcount?`<p style="margin:8px 0 0;color:var(--bad)"><b>${d.vcount} lần vi phạm chế độ thi</b></p><ul class="wt-vlist">${(d.violations||[]).map(x=>`<li>${new Date(x.at).toLocaleTimeString('vi-VN')} · ${esc(VNAME[x.type]||x.type)}</li>`).join('')}</ul>`:'<p class="small" style="margin:6px 0 0">Không có vi phạm chế độ thi.</p>'}
       <p class="small" style="margin:6px 0 0">Điểm máy chỉ là gợi ý dựa trên độ dài, cấu trúc và các lỗi có mẫu. Máy không đọc hiểu được lập luận: hãy chỉnh lại trước khi gửi.</p></div>
     <div class="wt-box"><h3>Task 1 · ${d.w1} từ</h3><details><summary class="small" style="cursor:pointer;color:var(--glow)">Xem đề và biểu đồ</summary><p class="wt-prompt" style="margin-top:8px">${esc(TEST.t1)}</p>${chart()}</details>
       <div class="wt-text" style="margin-top:10px">${marked(d.t1,g1.flags)}</div>${flagList(g1)}
