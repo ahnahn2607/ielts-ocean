@@ -78,8 +78,8 @@ function weakest(){
   const b=B(),out=[];
   [['w2','W',2],['w1','W',1],['sp','S',1]].forEach(([k,sk,w])=>{const o=b[k];if(!o)return;const t=sk==='W'?b.tw:b.ts;
     SKC[k].forEach(c=>{if(o[c]!=null)out.push({k,c,v:+o[c],gap:(t!=null?+t:7)-o[c],w})})});
-  out.sort((a,b)=>b.gap-a.gap||b.w-a.w||a.v-b.v);
-  return out[0]||null;
+  const L=out.filter(x=>x.v<9);L.sort((a,b)=>b.gap-a.gap||a.v-b.v||b.w-a.w);
+  return L[0]||null;
 }
 
 const dkey=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
@@ -97,7 +97,7 @@ function plan(){
   const left=daysTo(g.exam),fmt=pr.format||[],topics=pr.topics||[],focus=pr.focus||[];
   const w=weakest();
   if(left!=null&&left>=0&&left<=21&&(fmt.includes('Đề full có bấm giờ')||left<=10))
-    out.push({m:Math.max(30,Math.round(min*.6)),t:'Làm một phần đề có bấm giờ',d:'Còn '+left+' ngày: ưu tiên làm đề như thi thật rồi chữa kỹ.',a:'#listening',l:'Chọn đề →'});
+    out.push({m:Math.max(30,Math.round(min*.6)),t:'Làm một phần đề có bấm giờ',d:'Còn '+left+' ngày: ưu tiên làm đề như thi thật rồi chữa kỹ.',a:'#nguon-listening',l:'Chọn đề →'});
   if(w){
     const label=(w.k==='sp'?'Speaking':w.k==='w2'?'Writing Task 2':'Writing Task 1')+' · '+CNAME[w.c];
     out.push({m:Math.round(min*.4),t:'Kéo điểm yếu nhất: '+label+' (đang '+w.v+')',d:'Xem bậc thang ở "Luật rừng" để biết bước '+w.v+' → '+(w.v+1)+' cần đổi gì.',a:PRAC[w.c],l:'Luyện →'});
