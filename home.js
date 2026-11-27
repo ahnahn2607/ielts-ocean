@@ -143,6 +143,7 @@ function render(target,api){
     <div id="hmBody"></div>
   </section>`;
   el.querySelector('.tabs').onclick=e=>{const b=e.target.closest('[data-hm]');if(!b)return;tab=b.dataset.hm;render(el,io)};
+  document.querySelectorAll('.sign-no').forEach(x=>{x.textContent=ov!=null?ov.toFixed(1):'★';x.title=ov!=null?'Band mục tiêu của bạn':'Đặt band mục tiêu ở tab Mục tiêu'});
   ({today:renderToday,goals:renderGoals,prefs:renderPrefs,test:renderTest})[tab]();
   clearInterval(timer);
   timer=setInterval(()=>{const t=document.getElementById('hmT');if(!t){clearInterval(timer);return}const n=new Date();t.textContent=n.toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
