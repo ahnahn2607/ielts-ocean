@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mossy English · bản xem trước</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ole&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&family=Be+Vietnam+Pro:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dseg@0.46.0/css/dseg.css">
+<style>
+/* VOICE: ấm, chậm rãi, như một góc học bên cửa sổ buổi sáng
+   IDEA: trang vở và bìa sổ xanh in nổi hoa cỏ, đặt trên bàn gỗ cạnh cửa sổ
+   PICTURE: ảnh bàn học nhìn ra cây xanh trong khung cửa, bong bóng trôi, góc ngày phim cam
+   COLOUR and TYPE: giấy kem, bìa rêu, lá non, một điểm cam cá koi; Ole cho tên, Source Serif 4 cho tiêu đề, Be Vietnam Pro cho chữ thường
+   LAYOUT: hero chia đôi giấy và cửa sổ, dải Hôm nay, lưới 5 kỹ năng, dải xanh Luật rừng, chân trang */
+:root{color-scheme:light dark;
+--paper:light-dark(#FAF7EE,#171D17);--paper2:light-dark(#F1ECDC,#1F271F);--line:light-dark(#E2DAC4,#2E3A2D);
+--ink:light-dark(#2B2A22,#ECE8DA);--soft:light-dark(#5D5B4C,#B9B6A6);
+--moss:light-dark(#4E7036,#9CC46A);--deep:light-dark(#2F4A2A,#DDEBC9);--leaf:light-dark(#C9DFA0,#3E5530);
+--cover:#5E7F3A;--cover2:#53722F;--koi:light-dark(#D9692A,#F08A45);--koiBg:light-dark(#FBE6D6,#3A2618)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.6 'Be Vietnam Pro',system-ui,sans-serif;overflow-x:clip}
+a{color:inherit}
+.band{padding:clamp(28px,4vw,64px) max(5vw,16px)}
+.wrap{max-width:1240px;margin:0 auto}
+.serif{font-family:'Source Serif 4',Georgia,serif}
+h1,h2,h3{font-family:'Source Serif 4',Georgia,serif;font-weight:300;line-height:1.08;text-wrap:balance;margin:0;color:var(--deep)}
+h2{font-size:clamp(30px,4vw,44px)}h3{font-size:22px;font-weight:400}
+em{font-style:italic}
+/* nav */
+.nav{display:flex;align-items:center;gap:20px;flex-wrap:wrap;padding:14px max(5vw,16px);border-bottom:1px solid var(--line);background:var(--paper)}
+.brand{font-family:'Ole',cursive;font-size:34px;line-height:1;color:var(--deep);text-decoration:none;margin-right:auto}
+.nav nav{display:flex;gap:4px;flex-wrap:wrap}
+.nav nav a{text-decoration:none;padding:10px 12px;border-radius:999px;font-size:15px;color:var(--soft)}
+.nav nav a:hover,.nav nav a[aria-current]{background:var(--paper2);color:var(--deep)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 20px;border-radius:999px;font:500 15px 'Be Vietnam Pro',sans-serif;text-decoration:none;border:1.5px solid var(--moss);color:var(--deep);background:transparent;cursor:pointer}
+.btn.fill{background:var(--cover);border-color:var(--cover);color:#F7F4E6}
+.btn:hover{filter:brightness(1.06)}
+:focus-visible{outline:3px solid var(--koi);outline-offset:3px}
+/* hero */
+.hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);min-height:min(78vh,640px)}
+.hero-text{padding:clamp(32px,5vw,72px) max(5vw,16px);display:flex;flex-direction:column;justify-content:center;gap:18px;position:relative}
+.hero-text .name{font-family:'Ole',cursive;font-size:clamp(56px,7vw,92px);line-height:.95;color:var(--deep)}
+.hero-text h1{font-size:clamp(32px,3.6vw,48px)}
+.hero-text p{max-width:30em;color:var(--soft);margin:0;font-size:17px}
+.hero-text .hello{font-family:'Source Serif 4',serif;font-style:italic;font-size:20px;color:var(--koi)}
+.cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.window{position:relative;background:var(--cover);overflow:hidden;min-height:340px}
+.window img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(1.08) contrast(.96) sepia(.12)}
+.window::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 85% 10%,rgba(255,236,170,.35),transparent 55%),linear-gradient(180deg,rgba(0,0,0,0) 60%,rgba(20,30,15,.35));pointer-events:none}
+.stamp{position:absolute;right:20px;bottom:16px;font-family:'DSEG7-Classic',monospace;font-size:15px;color:#FF8A2B;letter-spacing:2px;z-index:2;text-shadow:0 0 6px rgba(255,120,30,.5)}
+.bubbles{position:absolute;inset:0;z-index:1;pointer-events:none}
+.bubbles circle{fill:rgba(255,255,255,.06);stroke-width:1.4}
+@media (prefers-reduced-motion:no-preference){.bubbles g{animation:rise 14s ease-in-out infinite alternate}.bubbles g:nth-child(2n){animation-duration:18s}.bubbles g:nth-child(3n){animation-duration:11s}}
+@keyframes rise{to{transform:translateY(-40px)}}
+/* emboss */
+.emb{color:var(--cover2);filter:drop-shadow(1px 1px 0 rgba(255,255,255,.18)) drop-shadow(-1px -1px 0 rgba(0,0,0,.18))}
+.flora{position:absolute;pointer-events:none}
+/* today */
+.today{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr) minmax(0,1fr);gap:16px}
+.card{background:var(--paper2);border:1px solid var(--line);border-radius:14px;padding:22px;position:relative;overflow:hidden}
+.date{font-family:'Source Serif 4',serif;font-size:40px;font-weight:300;line-height:1.05;color:var(--deep)}
+.muted{color:var(--soft);font-size:14px}
+.streak{background:var(--koiBg);border-color:transparent}
+.streak .num{font-family:'Source Serif 4',serif;font-size:56px;font-weight:300;line-height:1;color:var(--koi)}
+.koi{position:absolute;right:-6px;bottom:6px;width:120px;opacity:.9}
+.plan{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:8px}
+.plan li{display:flex;gap:10px;align-items:flex-start}
+.plan input{width:20px;height:20px;accent-color:var(--cover);margin-top:3px;flex:none}
+.plan label{cursor:pointer}
+.plan .done{text-decoration:line-through;color:var(--soft)}
+.goal{display:flex;align-items:baseline;gap:10px}
+.goal b{font-family:'Source Serif 4',serif;font-weight:300;font-size:56px;line-height:1;color:var(--deep)}
+.meter{height:8px;border-radius:99px;background:var(--line);overflow:hidden;margin-top:12px}.meter i{display:block;height:100%;background:var(--moss);border-radius:99px}
+/* skills */
+.head{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+.skills{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}
+.skill{text-decoration:none;display:flex;flex-direction:column;gap:8px;min-height:210px;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:20px;position:relative;overflow:hidden;transition:transform .2s}
+.skill:hover{transform:translateY(-3px);border-color:var(--moss)}
+.skill .flora{right:-14px;top:-14px;width:84px;color:var(--leaf)}
+.skill p{margin:0;color:var(--soft);font-size:14.5px}
+.skill .go{margin-top:auto;font-size:14px;font-weight:500;color:var(--moss)}
+.tag{align-self:flex-start;font-size:12.5px;padding:3px 10px;border-radius:99px;background:var(--koiBg);color:var(--koi)}
+/* law band */
+.law{background:var(--cover);color:#F5F2E4;position:relative;overflow:hidden}
+.law h2{color:#F7F4E6}
+.law .wrap{position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:clamp(24px,4vw,56px);align-items:center}
+.law p{color:#E3E8D2;max-width:32em}
+.crit{display:grid;gap:14px;background:rgba(20,35,15,.28);border-radius:14px;padding:22px}
+.crit .row{display:grid;grid-template-columns:9em minmax(0,1fr) 3em;gap:12px;align-items:center;font-size:15px}
+.crit .bar{height:10px;border-radius:99px;background:rgba(255,255,255,.18);overflow:hidden}.crit .bar i{display:block;height:100%;background:#C9DFA0;border-radius:99px}
+.crit .row.low .bar i{background:#FF9B5A}.crit .v{text-align:right;font-variant-numeric:tabular-nums}
+.crit .tip{font-size:14px;color:#F3E2C8;border-top:1px solid rgba(255,255,255,.18);padding-top:12px}
+footer{border-top:1px solid var(--line)}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;color:var(--soft);font-size:14px}
+.note{font-size:13px;color:var(--soft)}
+@media(max-width:980px){.today{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.today .card:first-child{grid-column:1/-1}.skills{grid-template-columns:repeat(2,minmax(0,1fr))}.law .wrap{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:720px){.hero{grid-template-columns:minmax(0,1fr)}.window{min-height:300px;order:-1}.nav nav{width:100%;overflow-x:auto;flex-wrap:nowrap}.nav nav a{flex:none}}
+@media(max-width:560px){.today,.skills{grid-template-columns:minmax(0,1fr)}.crit .row{grid-template-columns:7em minmax(0,1fr) 2.5em;font-size:14px}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+ <defs>
+  <symbol id="fl" viewBox="0 0 40 40"><g fill="currentColor"><circle cx="20" cy="10" r="7"/><circle cx="29.5" cy="17" r="7"/><circle cx="26" cy="28" r="7"/><circle cx="14" cy="28" r="7"/><circle cx="10.5" cy="17" r="7"/></g><circle cx="20" cy="20" r="4" fill="currentColor" opacity=".6"/></symbol>
+  <symbol id="cl" viewBox="0 0 40 40"><g fill="currentColor"><path d="M20 20c-6-2-10-7-8-11s8-3 8 3c0-6 6-7 8-3s-2 9-8 11z"/><path d="M20 20c2 6 0 12-4 13s-6-5-1-8c-5 3-9-1-7-5s9-2 12 0z"/><path d="M20 20c5 4 11 5 13 1s-3-8-7-3c4-5 1-10-3-9s-5 7-3 11z"/><path d="M20 21c0 6 1 11 3 15" stroke="currentColor" stroke-width="1.6" fill="none"/></g></symbol>
+  <symbol id="lf" viewBox="0 0 40 40"><path fill="currentColor" d="M20 3c9 6 12 16 7 26-2 4-5 7-7 8-2-1-5-4-7-8C8 19 11 9 20 3z"/></symbol>
+ </defs>
+</svg>
+
+<header class="nav">
+ <a class="brand" href="#top">Mossy English</a>
+ <nav aria-label="Mục chính">
+  <a href="#top" aria-current="page">Tổng quan</a><a href="#ky-nang">Listening</a><a href="#ky-nang">Reading</a><a href="#ky-nang">Writing</a><a href="#ky-nang">Speaking</a><a href="#ky-nang">Từ vựng</a>
+ </nav>
+ <a class="btn" href="#top">Đăng nhập</a>
+</header>
+
+<main id="top">
+<section class="hero">
+ <div class="hero-text">
+  <div class="name">Mossy English</div>
+  <h1>Mọi thứ <em>lớn lên</em> đúng nhịp của nó.</h1>
+  <div class="hello">Moshi moshi? Let's talk.</div>
+  <p>Học IELTS chậm mà chắc, mỗi ngày một chút: luyện nghe chép chính tả, đọc, viết có chấm theo band descriptor, nói từ transcript.</p>
+  <div class="cta"><a class="btn fill" href="#hom-nay">Bắt đầu học hôm nay</a><a class="btn" href="#luat-rung">Làm bài test đầu vào</a></div>
+ </div>
+ <div class="window">
+  <img src="https://unsplash.com/photos/W5WiOvWsRY4/download?w=1600" alt="Bàn ghế đặt cạnh cửa sổ lớn nhìn ra cây xanh" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1489644484856-f3ddc0adc923?w=1600&q=80'">
+  <svg class="bubbles" viewBox="0 0 600 500" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+   <defs><linearGradient id="ir" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E6F6FF"/><stop offset=".35" stop-color="#FFE3F1"/><stop offset=".7" stop-color="#F3FFD8"/><stop offset="1" stop-color="#FFF1C9"/></linearGradient></defs>
+   <g><circle cx="90" cy="380" r="34" stroke="url(#ir)"/><circle cx="80" cy="368" r="6" fill="#fff" opacity=".7" stroke="none"/></g>
+   <g><circle cx="170" cy="300" r="16" stroke="url(#ir)"/></g>
+   <g><circle cx="470" cy="420" r="26" stroke="url(#ir)"/><circle cx="462" cy="411" r="4" fill="#fff" opacity=".7" stroke="none"/></g>
+   <g><circle cx="530" cy="300" r="11" stroke="url(#ir)"/></g>
+   <g><circle cx="250" cy="440" r="20" stroke="url(#ir)"/></g>
+   <g><circle cx="360" cy="360" r="9" stroke="url(#ir)"/></g>
+  </svg>
+  <span class="stamp" id="stamp">'26 11 27</span>
+ </div>
+</section>
+
+<section class="band" id="hom-nay">
+ <div class="wrap today">
+  <article class="card">
+   <div class="muted">Hôm nay</div>
+   <div class="date" id="today">Thứ Sáu, 27 tháng 11</div>
+   <ul class="plan" id="plan"></ul>
+  </article>
+  <article class="card streak">
+   <div class="muted">Chuỗi ngày học</div>
+   <div class="num">12 <span style="font-size:22px">ngày</span></div>
+   <p class="muted" style="margin:.4em 0 0;max-width:12em">Học thêm hôm nay để cá koi bơi tiếp.</p>
+   <svg class="koi" viewBox="0 0 120 60" aria-hidden="true"><path fill="var(--koi)" d="M10 30c14-16 46-20 70-10 8 3 14 7 18 10-4 3-10 7-18 10-24 10-56 6-70-10z"/><path fill="var(--koi)" d="M96 30l20-14-6 14 6 14z"/><path fill="#FAF7EE" d="M34 22c6-4 16-4 20 2-6 2-14 2-20-2zM58 36c6 3 12 3 16 0-4 5-12 5-16 0z"/><circle cx="22" cy="28" r="2.4" fill="#2B2A22"/></svg>
+  </article>
+  <article class="card">
+   <div class="muted">Mục tiêu</div>
+   <div class="goal"><b>7.0</b><span class="muted">band, thi tháng 3</span></div>
+   <div class="meter" aria-label="Tiến độ 62%"><i style="width:62%"></i></div>
+   <p class="muted" style="margin:.6em 0 0">Hiện ước tính 6.0. Còn 98 ngày.</p>
+  </article>
+ </div>
+ <p class="wrap note" style="margin-top:10px">Số liệu trong bản xem trước là ví dụ.</p>
+</section>
+
+<section class="band" id="ky-nang" style="background:var(--paper2)">
+ <div class="wrap">
+  <div class="head"><h2>Năm góc <em>luyện tập</em></h2><span class="muted">Chọn một góc, làm một bài nhỏ, thế là đủ cho hôm nay.</span></div>
+  <div class="skills" id="skills"></div>
+ </div>
+</section>
+
+<section class="band law" id="luat-rung">
+ <svg class="flora emb" style="left:-20px;top:-10px;width:100%;height:100%" aria-hidden="true" id="lawflora"></svg>
+ <div class="wrap">
+  <div>
+   <h2>Luật rừng: đi đêm lắm có ngày <em>kẹt band</em></h2>
+   <p>Band tổng bị kéo xuống bởi tiêu chí yếu nhất. Nhập điểm từng tiêu chí, xem mình đang kẹt ở đâu và nên luyện gì trước.</p>
+   <div class="cta"><a class="btn fill" style="background:#F7F4E6;border-color:#F7F4E6;color:#2F4A2A" href="#luat-rung">Nhập điểm của tôi</a><a class="btn" style="border-color:#E3E8D2;color:#F7F4E6" href="#luat-rung">Xem band descriptor</a></div>
+  </div>
+  <div class="crit" id="crit"></div>
+ </div>
+</section>
+</main>
+
+<footer class="band">
+ <div class="wrap"><span><span style="font-family:Ole;font-size:24px;color:var(--deep)">Mossy English</span> · Don't rush, từng ngày một</span><span>Ảnh: fan yang trên Unsplash · Bản xem trước giao diện</span></div>
+</footer>
+
+<script>
+{
+const plan=[["Nghe chép chính tả 10 phút",1],["Writing Task 1: viết overview",0],["Ôn 15 từ vựng chủ đề Environment",0]];
+const P=document.getElementById('plan');
+P.innerHTML=plan.map(([t,d],i)=>`<li><input type="checkbox" id="p${i}" ${d?'checked':''}><label for="p${i}" class="${d?'done':''}">${t}</label></li>`).join('');
+P.addEventListener('change',e=>{const l=e.target.nextElementSibling;l.classList.toggle('done',e.target.checked)});
+const sk=[["Listening","Dictation từng câu, tự lọc yeah, um.","Mới: bài 14",'lf'],["Reading","Bài đọc theo chủ đề, có giải thích đáp án.","",'cl'],["Writing","Viết Task 1 và 2, chấm sát band descriptor.","2 bài chờ chấm",'fl'],["Speaking","Dán transcript, máy chấm FC, LR, GRA.","",'cl'],["Từ vựng","Học theo cụm, ôn lặp lại mỗi ngày.","15 từ đến hạn",'lf']];
+document.getElementById('skills').innerHTML=sk.map(([n,d,t,s])=>`<a class="skill" href="#ky-nang"><svg class="flora emb" style="color:var(--leaf)"><use href="#${s}"/></svg><h3>${n}</h3><p>${d}</p>${t?`<span class="tag">${t}</span>`:''}<span class="go">Vào học</span></a>`).join('');
+const cr=[["Task Response",6.5],["Coherence",6.5],["Lexical Resource",6],["Grammar",5.5]];
+const C=document.getElementById('crit');
+C.innerHTML=cr.map(([n,v])=>`<div class="row ${v<6?'low':''}"><span>${n}</span><span class="bar"><i style="width:${v/9*100}%"></i></span><span class="v">${v.toFixed(1)}</span></div>`).join('')+`<div class="tip">Grammar đang kéo band xuống. Ưu tiên câu phức và sửa lỗi chia động từ trước.</div>`;
+const lf=document.getElementById('lawflora');let h='';const ids=['fl','cl','lf'];
+for(let i=0;i<22;i++){const x=(i*137)%100,y=(i*61)%100,s=26+(i*7)%28;h+=`<use href="#${ids[i%3]}" x="${x}%" y="${y}%" width="${s}" height="${s}"/>`}
+lf.innerHTML=h;
+const d=new Date();const days=['Chủ Nhật','Thứ Hai','Thứ Ba','Thứ Tư','Thứ Năm','Thứ Sáu','Thứ Bảy'];
+document.getElementById('today').textContent=`${days[d.getDay()]}, ${d.getDate()} tháng ${d.getMonth()+1}`;
+const p=n=>String(n).padStart(2,'0');document.getElementById('stamp').textContent=`'${p(d.getFullYear()%100)} ${p(d.getMonth()+1)} ${p(d.getDate())}`;
+}
+</script>
+</body>
+</html>
